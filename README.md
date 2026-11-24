@@ -19,6 +19,18 @@ Live at https://clockrequest.netlify.app
 No build step. Netlify serves the repo root; `netlify.toml` sets that.
 Pushes to `main` deploy automatically.
 
+## Access code
+
+Every request passes through `netlify/edge-functions/gate.ts`, which asks for a
+code before serving anything. Netlify's built-in password protection is a paid
+feature; this does the same job on the free tier.
+
+The code lives in the `ACCESS_CODE` environment variable, never in this repo.
+Change it under Project configuration > Environment variables, then redeploy.
+Visitors are remembered for 30 days by an HttpOnly cookie holding a hash of the
+code, not the code. Clearing `ACCESS_CODE` leaves the site open rather than
+locking everyone out.
+
 ## Submissions
 
 The order form posts to Netlify Forms under the name `clock-request`, with the
