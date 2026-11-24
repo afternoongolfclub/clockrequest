@@ -14,7 +14,10 @@ the same type as the print.
 
 ## Deploying
 
+Live at https://clockrequest.netlify.app
+
 No build step. Netlify serves the repo root; `netlify.toml` sets that.
+Pushes to `main` deploy automatically.
 
 ## Submissions
 
