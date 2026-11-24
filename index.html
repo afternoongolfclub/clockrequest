@@ -621,6 +621,9 @@ function buildLayouts(){
     });
   });
 }
+
+/* ---------- lettering fields ---------- */
+var LIMITS={topA:28,topB:28,bottom:18,year:14,dialA:18,dialB:18};
 function buildFields(){
   var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0], h="";
   L.fields.forEach(function(k){
