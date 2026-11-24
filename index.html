@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Order a custom branded golf-club clock: lettering, crest and Bambu Lab filament, with a live preview drawn from the real print geometry.">
+<style>:root{color-scheme:light}html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Clock Request Desk</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: two-pane workbench — clock on a stage at left, spec sheet at right; stacks to one column on a phone. */
+@font-face{
+  font-family:'Caladea Print';
+  font-style:normal; font-weight:700; font-display:swap;
+  src:url(data:font/woff2;base64,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) format('woff2');
+}
+:root{
+  --bg:#F1F2F4; --surface:#FFFFFF; --sunk:#F7F8F9;
+  --ink:#191C20; --ink-2:#434A52; --muted:#6B737C;
+  --rule:#DBDFE4; --rule-soft:#E9ECEF;
+  --brass:#7A7040; --brass-ink:#5E562F; --brass-wash:#F1EFE2;
+  --stage:#E5E8EA; --stage-edge:#D3D8DC;
+  --ok:#2F6F4F; --warn:#8A5A14; --bad:#9A3029;
+  --shadow:0 1px 2px rgba(17,20,24,.06),0 8px 24px rgba(17,20,24,.06);
+  --ui:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --display:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --print:'Caladea Print','Caladea','Cambria',Georgia,serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141619; --surface:#1C1F24; --sunk:#181B1F;
+  --ink:#E9EBEE; --ink-2:#B8BFC7; --muted:#8B939C;
+  --rule:#2C3138; --rule-soft:#24282E;
+  --brass:#BCAF6E; --brass-ink:#D6CA8C; --brass-wash:#24231A;
+  --stage:#1F2226; --stage-edge:#2B2F35;
+  --ok:#6FBF93; --warn:#D9A95C; --bad:#E08B81;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#141619; --surface:#1C1F24; --sunk:#181B1F;
+  --ink:#E9EBEE; --ink-2:#B8BFC7; --muted:#8B939C;
+  --rule:#2C3138; --rule-soft:#24282E;
+  --brass:#BCAF6E; --brass-ink:#D6CA8C; --brass-wash:#24231A;
+  --stage:#1F2226; --stage-edge:#2B2F35;
+  --ok:#6FBF93; --warn:#D9A95C; --bad:#E08B81;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--bg)}
+.wrap{max-width:1240px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 56px}
+
+/* masthead */
+header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;
+  padding-block:30px 20px;border-bottom:1px solid var(--rule)}
+.brandline{display:flex;align-items:center;gap:10px;color:var(--brass);font-size:11px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase}
+.brandline .pip{width:7px;height:7px;border-radius:50%;background:var(--brass)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(26px,4.4vw,38px);line-height:1.1;margin:6px 0 0;
+  text-wrap:balance;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:14px;margin:8px 0 0;max-width:56ch}
+.topnav{display:flex;gap:6px;background:var(--sunk);border:1px solid var(--rule);border-radius:10px;padding:4px}
+.topnav button{appearance:none;border:0;background:transparent;color:var(--ink-2);font:inherit;font-weight:500;
+  font-size:13px;padding:7px 14px;border-radius:7px;cursor:pointer}
+.topnav button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.topnav button:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+
+/* two-pane */
+.panes{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:28px;padding-block:26px}
+@media (max-width:900px){.panes{grid-template-columns:1fr;gap:22px}}
+
+/* stage */
+.stagecol{min-width:0}
+.stagewrap{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+@media (max-width:900px){.stagewrap{position:static}}
+.stage{background:var(--stage);border:1px solid var(--stage-edge);border-radius:14px;padding:18px;
+  display:flex;justify-content:center;align-items:center}
+.stage svg{width:100%;max-width:330px;height:auto;display:block}
+.stagefoot{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:space-between;
+  padding:12px 2px 0;font-size:12px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding-top:12px}
+.chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--rule);
+  border-radius:999px;padding:5px 11px 5px 6px;font-size:12px;color:var(--ink-2);min-width:0}
+.chip i{width:15px;height:15px;border-radius:50%;border:1px solid rgba(128,128,128,.45);flex:none}
+.chip b{font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* form */
+.sheet{min-width:0;display:flex;flex-direction:column;gap:18px}
+section.card{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:20px;
+  box-shadow:var(--shadow);min-width:0}
+.cardhead{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
+.cardhead h2{font-family:var(--display);font-size:18px;font-weight:600;margin:0;letter-spacing:-.005em}
+.step{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--brass);font-variant-numeric:tabular-nums}
+.cardnote{color:var(--muted);font-size:13px;margin:0 0 16px}
+
+.layouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.layouts{grid-template-columns:1fr}}
+.lay{display:block;position:relative;cursor:pointer;min-width:0;padding:0;border:0;background:none;
+  font:inherit;color:inherit;text-align:left;width:100%}
+.lay .box{display:block;border:1px solid var(--rule);border-radius:11px;padding:12px;background:var(--sunk);height:100%}
+.lay[aria-pressed="true"] .box{border-color:var(--brass);background:var(--brass-wash);box-shadow:inset 0 0 0 1px var(--brass)}
+.lay:focus-visible .box{outline:2px solid var(--brass);outline-offset:2px}
+.lay .glyph{display:block;width:100%;height:auto;margin-bottom:8px}
+.lay .nm{display:block;font-weight:600;font-size:13px}
+.lay .ds{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:3px}
+
+.fields{display:grid;gap:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:520px){.row2{grid-template-columns:1fr}}
+.f{display:grid;gap:6px;min-width:0}
+.f label{font-size:12px;font-weight:600;color:var(--ink-2);display:flex;justify-content:space-between;gap:10px}
+.f .cnt{font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+.f .cnt.over{color:var(--warn)}
+input[type=text],input[type=email],input[type=number],input[type=date],textarea,select{
+  width:100%;font:inherit;font-size:14px;color:var(--ink);background:var(--sunk);
+  border:1px solid var(--rule);border-radius:9px;padding:9px 11px}
+textarea{resize:vertical;min-height:76px}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--brass);outline-offset:-1px;border-color:var(--brass)}
+.hint{font-size:12px;color:var(--muted)}
+.hint.warn{color:var(--warn)}
+
+/* filament */
+.slots{display:grid;gap:12px}
+.slot{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+  border:1px solid var(--rule);border-radius:11px;padding:10px 12px;background:var(--sunk);min-width:0}
+.sw{width:34px;height:34px;border-radius:8px;border:1px solid rgba(128,128,128,.4);flex:none}
+.slot .meta{min-width:0}
+.slot .role{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.slot .val{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot .val span{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+.slot button{appearance:none;border:1px solid var(--rule);background:var(--surface);color:var(--ink);
+  font:inherit;font-size:13px;font-weight:500;padding:7px 12px;border-radius:8px;cursor:pointer}
+.slot button:hover{border-color:var(--brass);color:var(--brass-ink)}
+.slot button:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+
+dialog.picker{border:1px solid var(--rule);border-radius:14px;background:var(--surface);color:var(--ink);
+  padding:0;width:min(640px,calc(100vw - 32px));max-height:min(80vh,720px);box-shadow:var(--shadow)}
+dialog.picker::backdrop{background:rgba(10,12,15,.45)}
+.pk-head{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--rule);
+  padding:16px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between;border-radius:14px 14px 0 0}
+.pk-head h3{margin:0;font-family:var(--display);font-size:17px;font-weight:600}
+.pk-body{padding:14px 18px 20px;overflow:auto}
+.pk-series{font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--brass);
+  margin:16px 0 9px}
+.pk-series:first-child{margin-top:4px}
+.pk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px}
+.pk{display:flex;align-items:center;gap:9px;border:1px solid var(--rule);border-radius:9px;background:var(--sunk);
+  padding:7px 9px;cursor:pointer;text-align:left;font:inherit;min-width:0;color:var(--ink)}
+.pk:hover{border-color:var(--brass)}
+.pk[aria-pressed="true"]{border-color:var(--brass);box-shadow:inset 0 0 0 1px var(--brass);background:var(--brass-wash)}
+.pk:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+.pk i{width:22px;height:22px;border-radius:5px;border:1px solid rgba(128,128,128,.4);flex:none}
+.pk .t{min-width:0}
+.pk .t b{display:block;font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk .t span{display:block;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* logo drop */
+.drop{border:1.5px dashed var(--rule);border-radius:12px;background:var(--sunk);padding:18px;
+  display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.drop.on{border-color:var(--brass);background:var(--brass-wash)}
+.drop .prev{width:64px;height:64px;border-radius:50%;border:1px solid var(--rule);background:var(--surface);
+  display:grid;place-items:center;overflow:hidden;flex:none}
+.drop .prev img{width:100%;height:100%;object-fit:contain}
+.drop .prev span{font-size:10px;letter-spacing:.1em;color:var(--muted)}
+.drop .txt{min-width:0;flex:1 1 200px}
+.drop .txt p{margin:0;font-size:13px;color:var(--muted)}
+.drop .txt b{font-size:14px}
+.btn{appearance:none;border:1px solid var(--rule);background:var(--surface);color:var(--ink);font:inherit;
+  font-size:13px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer}
+.btn:hover{border-color:var(--brass);color:var(--brass-ink)}
+.btn:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+.btn.primary{background:var(--brass);border-color:var(--brass);color:#fff;padding:11px 22px;font-size:14.5px}
+.btn.primary:hover{filter:brightness(1.06);color:#fff}
+.btn.primary[disabled]{opacity:.55;cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent}
+
+.submitbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.submitmsg{font-size:13px;color:var(--muted);min-width:0}
+.submitmsg.ok{color:var(--ok)}
+.submitmsg.bad{color:var(--bad)}
+
+/* inbox */
+.inbox{display:grid;gap:12px}
+.req{border:1px solid var(--rule);border-radius:12px;padding:14px;background:var(--surface);
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px}
+.req .thumb{width:54px;height:54px;border-radius:50%;border:1px solid var(--rule);overflow:hidden;
+  display:grid;place-items:center;background:var(--sunk);flex:none}
+.req .thumb img{width:100%;height:100%;object-fit:contain}
+.req .thumb span{font-size:9px;letter-spacing:.08em;color:var(--muted)}
+.req h4{margin:0;font-size:15px;font-weight:600}
+.req .when{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.req dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:9px 0 0;font-size:13px}
+.req dt{color:var(--muted)}
+.req dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.empty{border:1px dashed var(--rule);border-radius:12px;padding:30px 22px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-family:var(--display);font-size:17px;font-weight:600;margin-bottom:5px}
+
+/* costing */
+.costcol{display:flex;flex-direction:column;gap:18px;max-width:720px;padding-block:26px}
+.costgrid{display:grid;gap:9px}
+.cg{display:grid;grid-template-columns:minmax(0,1fr) 88px 80px 76px;gap:10px;align-items:center}
+.cg2{display:grid;grid-template-columns:minmax(0,1fr) 104px;gap:10px;align-items:center}
+.cg .lab,.cg2 .lab{font-size:13.5px;min-width:0;overflow-wrap:anywhere}
+.cg input,.cg2 input{text-align:right;padding:7px 9px;font-size:13.5px}
+.cg .out{text-align:right;font-weight:600;font-size:13.5px;font-variant-numeric:tabular-nums}
+.cg .hd{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+@media (max-width:560px){
+  .cg{grid-template-columns:minmax(0,1fr) 68px 62px 62px;gap:6px}
+  .cg2{grid-template-columns:minmax(0,1fr) 84px}
+  .cg input,.cg2 input{padding:6px 7px;font-size:12.5px}
+}
+.tot{display:grid;gap:9px}
+.tot .r{display:flex;justify-content:space-between;align-items:baseline;gap:14px;font-size:14px;color:var(--ink-2)}
+.tot .r b{font-variant-numeric:tabular-nums;color:var(--ink)}
+.tot .big{border-top:1px solid var(--rule);padding-top:11px;margin-top:3px;font-size:16px;color:var(--ink)}
+.tot .big b{font-size:19px;font-weight:700}
+.tot b.price{color:var(--brass-ink);font-weight:700}
+footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--muted);font-size:12.5px}
+.vis-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="brandline"><span class="pip"></span> Bambu Lab A1 · 0.16 mm · four-colour</div>
+      <h1>Clock Request Desk</h1>
+      <p class="sub">Set the lettering, send a crest, and choose filament. The preview is drawn from the real printed geometry, so what you see is what the plate cuts.</p>
+    </div>
+    </div>
+  </header>
+
+  <div id="paneBuild" role="tabpanel" aria-labelledby="tabBuild">
+  <div class="panes">
+    <!-- STAGE -->
+    <div class="stagecol">
+      <div class="stagewrap">
+        <div class="stage">
+          <svg id="clock" viewBox="-62 -97 124 194" role="img" aria-labelledby="clockTitle">
+            <title id="clockTitle">Live preview of the clock</title>
+            <defs>
+              <clipPath id="cpWin"><circle cx="0" cy="5.58" r="47.31"/></clipPath>
+              <clipPath id="cpMed"><circle cx="0.25" cy="-73.5" r="9.3"/></clipPath>
+              <path id="arcT1" fill="none"/>
+              <path id="arcT2" fill="none"/>
+              <path id="arcB" fill="none"/>
+            </defs>
+            <path id="pBody" fill-rule="evenodd"/>
+            <g clip-path="url(#cpWin)">
+              <circle id="cDial" cx="0" cy="5.58" r="50.05"/>
+              <g transform="translate(0,5.58)">
+                <path id="pNum" fill-rule="evenodd"/>
+                <text id="tYear" x="0" y="-16" text-anchor="middle"></text>
+                <text id="tD1" x="0" y="17" text-anchor="middle"></text>
+                <text id="tD2" x="0" y="26" text-anchor="middle"></text>
+              </g>
+              <circle id="cBoss" cx="0" cy="5.58" r="2.7"/>
+            </g>
+            <path id="pAccent" fill-rule="evenodd"/>
+            <circle id="cWell" cx="0.25" cy="-73.5" r="9.3"/>
+            <image id="imgLogo" clip-path="url(#cpMed)" x="-6.4" y="-80.1" width="13.2" height="13.2"
+                   preserveAspectRatio="xMidYMid meet" display="none"></image>
+            <g id="gMedHint">
+              <circle cx="0.25" cy="-73.5" r="6.4" fill="none" stroke-width="0.5" stroke-dasharray="1.6 1.6"/>
+              <text x="0.25" y="-71.6" text-anchor="middle" font-size="3.4" letter-spacing="0.3">CREST</text>
+            </g>
+            <text id="tT1" text-anchor="middle"><textPath href="#arcT1" startOffset="50%"></textPath></text>
+            <text id="tT2" text-anchor="middle"><textPath href="#arcT2" startOffset="50%"></textPath></text>
+            <text id="tB" text-anchor="middle"><textPath href="#arcB" startOffset="50%"></textPath></text>
+          </svg>
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="stagefoot">
+          <span>Housing 117 × 183 mm · dial Ø100.1 mm</span>
+          <span id="capNote"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHEET -->
+    <div class="sheet">
+      <section class="card">
+        <div class="cardhead"><span class="step">01</span><h2>Layout</h2></div>
+        <p class="cardnote">Where the names sit. Each one prints from a different plate.</p>
+        <div class="layouts" id="layouts"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><span class="step">02</span><h2>Lettering</h2></div>
+        <p class="cardnote">Raised relief in the accent filament. Text is cut to fit the arc automatically — the counter warns before it gets too small to print cleanly.</p>
+        <div class="fields" id="fields"></div>
+      </section>
+
+      <form name="clock-request" method="POST" data-netlify="true"
+            data-netlify-honeypot="bot-field" enctype="multipart/form-data"
+            action="/thanks.html" id="orderForm">
+        <input type="hidden" name="form-name" value="clock-request">
+        <p hidden><label>Leave this empty: <input name="bot-field"></label></p>
+        <input type="hidden" name="layout" id="h_layout">
+        <input type="hidden" name="crown_line_1" id="h_crown_line_1">
+        <input type="hidden" name="crown_line_2" id="h_crown_line_2">
+        <input type="hidden" name="lower_arc" id="h_lower_arc">
+        <input type="hidden" name="dial_text" id="h_dial_text">
+        <input type="hidden" name="dial_line_1" id="h_dial_line_1">
+        <input type="hidden" name="dial_line_2" id="h_dial_line_2">
+        <input type="hidden" name="filament_housing" id="h_filament_housing">
+        <input type="hidden" name="filament_accents" id="h_filament_accents">
+        <input type="hidden" name="filament_dial" id="h_filament_dial">
+        <input type="hidden" name="filament_numerals" id="h_filament_numerals">
+        <input type="hidden" name="spec" id="h_spec">
+
+      <section class="card">
+        <div class="cardhead"><span class="step">03</span><h2>Crest</h2></div>
+        <p class="cardnote">Goes in the medallion at the top. It is reproduced as single-colour raised relief in the accent filament, so a bold silhouette carries far better than fine detail or gradients.</p>
+        <div class="drop" id="drop">
+          <div class="prev" id="logoPrev"><span>NONE</span></div>
+          <div class="txt">
+            <b id="logoName">No crest yet</b>
+            <p id="logoHelp">Drop a PNG, JPEG or SVG here, or choose a file. It is sent with the request.</p>
+          </div>
+          <input type="file" id="logoFile" name="crest" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="vis-hidden">
+          <button class="btn" type="button" id="logoBtn">Choose file</button>
+          <button class="btn ghost" type="button" id="logoClear" hidden>Remove</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><span class="step">04</span><h2>Filament</h2></div>
+        <p class="cardnote">Real Bambu Lab colours, one per AMS slot. Hex values are Bambu's own; screens still flatter metallics, so order a sample before a long run.</p>
+        <div class="slots" id="slots"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><span class="step">05</span><h2>Order</h2></div>
+        <p class="cardnote">Enough to quote the job and get back to you.</p>
+        <div>
+          <div class="fields">
+            <div class="row2">
+              <div class="f"><label for="fClub">Club or organisation</label>
+                <input type="text" id="fClub" name="club" autocomplete="organization" placeholder="Huntsville Country Club"></div>
+              <div class="f"><label for="fContact">Your name</label>
+                <input type="text" id="fContact" name="contact" autocomplete="name"></div>
+            </div>
+            <div class="row2">
+              <div class="f"><label for="fEmail">Email</label>
+                <input type="email" id="fEmail" name="email" autocomplete="email" placeholder="you@club.org"></div>
+              <div class="f"><label for="fPhone">Phone <span class="cnt">optional</span></label>
+                <input type="text" id="fPhone" name="phone" autocomplete="tel"></div>
+            </div>
+            <div class="row2">
+              <div class="f"><label for="fQty">How many</label>
+                <input type="number" id="fQty" name="quantity" min="1" max="200" step="1" value="1"></div>
+              <div class="f"><label for="fDue">Needed by <span class="cnt">optional</span></label>
+                <input type="date" id="fDue" name="needed_by"></div>
+            </div>
+            <div class="f"><label for="fNotes">Anything else <span class="cnt">optional</span></label>
+              <textarea id="fNotes" name="notes" placeholder="Presentation date, engraving on the back, packaging…"></textarea></div>
+          </div>
+          <div class="submitbar" style="margin-top:18px">
+            <button class="btn primary" type="submit" id="sendBtn">Send request</button>
+            <span class="submitmsg" id="sendMsg"></span>
+          </div>
+        </div>
+      </section>
+      </form>
+    </div>
+  </div>
+  </div>
+
+  <footer class="foot">
+    Filament names and hex values are Bambu Lab's published figures. The preview approximates printed appearance; it is not a colour proof.
+  </footer>
+</div>
+
+<dialog class="picker" id="picker">
+  <div class="pk-head">
+    <h3 id="pkTitle">Choose filament</h3>
+    <button class="btn" type="button" id="pkClose">Close</button>
+  </div>
+  <div class="pk-body" id="pkBody"></div>
+</dialog>
+
+<script type="application/json" id="geomData">{"body":"M-1.70,-91.55L-3.65,-91.10L-4.65,-90.75L-6.40,-89.85L-7.60,-89.00L-8.50,-88.20L-9.65,-86.95L-10.75,-85.30L-11.45,-83.80L-12.10,-81.45L-18.00,-81.45L-18.00,-74.45L-18.60,-73.35L-19.95,-71.45L-24.85,-66.60L-25.15,-66.45L-26.25,-66.45L-26.60,-66.65L-26.90,-67.05L-26.95,-67.65L-26.25,-68.95L-26.00,-69.65L-25.85,-70.55L-25.85,-71.75L-26.10,-73.05L-26.45,-74.00L-26.75,-74.35L-27.10,-74.55L-27.65,-74.55L-28.25,-74.10L-28.85,-72.45L-29.45,-71.25L-30.45,-69.70L-31.25,-68.85L-32.35,-68.10L-32.90,-67.50L-33.20,-66.95L-33.40,-66.20L-33.40,-65.35L-33.25,-64.70L-32.85,-63.95L-32.35,-63.40L-31.85,-63.10L-31.80,-62.90L-32.50,-61.65L-33.40,-60.40L-34.95,-58.75L-37.65,-56.65L-39.55,-55.50L-42.45,-54.05L-47.25,-52.10L-52.00,-50.45L-52.00,-49.35L-49.60,-47.55L-49.45,-47.25L-48.80,-42.25L-48.60,-38.75L-48.60,-35.10L-48.80,-32.80L-49.45,-29.10L-50.25,-26.15L-51.65,-22.35L-53.50,-18.55L-55.15,-14.55L-56.30,-11.10L-57.45,-6.60L-58.25,-1.85L-58.65,2.90L-58.70,6.70L-58.40,11.65L-57.60,17.00L-56.60,21.20L-55.95,23.40L-54.85,26.50L-52.95,30.90L-50.30,35.85L-48.15,39.15L-46.05,42.00L-43.85,45.70L-42.25,49.10L-40.85,53.05L-40.25,54.35L-38.90,56.45L-35.95,60.20L-34.40,62.50L-29.20,71.45L-28.15,72.55L-26.55,73.30L-25.90,73.40L-25.00,73.25L-23.95,72.85L-22.85,71.90L-22.60,71.35L-22.40,69.90L-22.15,69.15L-21.65,68.30L-21.15,67.85L-20.55,67.55L-20.05,67.45L-18.90,67.55L-17.85,68.20L-17.00,69.25L-14.95,73.40L-12.75,77.25L-12.50,78.35L-12.50,83.70L-12.60,84.15L-12.95,84.80L-13.50,85.30L-14.15,85.55L-15.00,85.55L-15.00,91.55L15.00,91.55L15.00,85.55L14.10,85.55L13.40,85.25L12.90,84.80L12.55,84.15L12.50,78.00L12.95,76.75L14.50,74.15L16.85,69.40L17.50,68.50L18.35,67.80L19.25,67.45L20.35,67.50L21.35,68.05L21.80,68.60L22.20,69.40L22.55,71.45L22.85,72.00L23.80,72.80L24.55,73.15L25.55,73.35L26.40,73.35L28.35,72.35L28.80,71.90L29.25,70.85L29.55,67.20L30.10,65.25L30.50,64.60L31.30,63.75L32.75,62.80L35.00,61.60L36.10,60.60L36.75,59.80L38.65,56.40L40.55,53.55L41.15,52.20L42.25,49.00L44.40,44.65L46.05,41.95L47.65,39.80L50.10,36.10L52.00,32.75L52.95,30.85L54.85,26.35L55.90,23.40L56.55,21.20L57.55,17.00L58.30,12.15L58.60,8.35L58.65,4.45L58.40,-0.05L57.60,-5.60L56.25,-11.10L55.10,-14.55L54.20,-16.80L51.60,-22.35L50.70,-24.65L49.45,-28.85L48.80,-32.40L48.55,-35.10L48.55,-38.75L48.75,-42.25L49.25,-46.25L49.50,-47.45L52.00,-49.35L52.00,-50.45L48.55,-51.60L42.40,-54.05L39.50,-55.50L37.60,-56.65L34.85,-58.80L33.35,-60.40L32.45,-61.65L31.75,-62.90L31.75,-63.05L32.25,-63.35L32.80,-63.95L33.20,-64.70L33.35,-65.35L33.35,-66.20L33.15,-66.95L32.70,-67.70L32.30,-68.10L31.15,-68.90L30.40,-69.70L29.40,-71.25L28.60,-72.90L28.30,-73.90L27.90,-74.40L27.60,-74.55L27.15,-74.55L26.75,-74.40L26.50,-74.15L26.05,-73.05L25.85,-72.15L25.85,-70.15L26.20,-68.95L26.90,-67.70L26.85,-67.05L26.65,-66.75L26.30,-66.50L25.15,-66.45L24.70,-66.70L19.90,-71.45L18.55,-73.35L18.00,-74.45L18.00,-81.45L12.05,-81.45L11.40,-83.80L10.45,-85.75L9.00,-87.65L7.00,-89.40L6.35,-89.85L4.60,-90.75L2.65,-91.35L1.00,-91.60Z","accent":"M26.25,62.40L26.05,62.40L25.90,62.55L25.85,62.85L26.05,63.10L26.00,63.60L26.10,64.30L26.60,65.65L26.75,66.35L26.70,66.85L26.40,67.45L26.00,67.85L25.35,68.10L24.80,68.10L24.30,67.95L23.75,67.30L23.65,66.90L23.70,66.70L24.45,67.10L25.15,67.10L25.85,66.55L26.00,66.10L26.00,65.55L25.75,65.10L25.40,64.75L24.70,64.60L23.95,64.90L23.40,65.50L23.10,66.00L23.00,66.75L23.15,67.55L23.40,67.95L23.85,68.40L24.25,68.60L24.90,68.75L25.85,68.60L26.45,68.25L27.05,67.60L27.35,66.75L27.35,66.15L27.00,65.05L27.05,64.85L27.25,64.95L27.95,66.05L28.25,66.15L28.50,65.90L28.50,65.70L26.40,62.50ZM-26.30,62.40L-26.45,62.50L-28.55,65.70L-28.55,65.90L-28.40,66.10L-28.05,66.10L-27.30,64.95L-27.10,64.85L-27.05,65.05L-27.40,66.15L-27.40,66.75L-27.30,67.20L-26.95,67.80L-26.30,68.40L-25.75,68.65L-24.95,68.75L-24.25,68.60L-23.90,68.40L-23.45,67.95L-23.20,67.55L-23.05,66.75L-23.15,66.00L-23.45,65.50L-24.05,64.85L-24.70,64.60L-25.30,64.70L-25.80,65.10L-26.05,65.55L-26.05,66.10L-25.90,66.55L-25.15,67.10L-24.45,67.10L-23.75,66.70L-23.70,66.90L-23.80,67.30L-24.35,67.95L-24.80,68.10L-25.75,68.00L-26.45,67.45L-26.75,66.85L-26.80,66.35L-26.65,65.65L-26.15,64.30L-26.05,63.60L-26.10,63.10L-25.90,62.85L-25.95,62.55L-26.10,62.40ZM26.65,61.65L26.50,61.80L26.50,62.05L28.55,65.20L28.70,65.35L29.05,65.30L29.15,64.95L27.05,61.75L26.90,61.65ZM-26.70,61.65L-26.95,61.65L-27.10,61.75L-29.20,64.95L-29.10,65.30L-28.75,65.35L-26.55,62.05L-26.55,61.80ZM27.30,60.90L27.15,61.05L27.15,61.30L29.25,64.50L29.60,64.60L29.80,64.40L29.80,64.15L27.75,61.05L27.55,60.90ZM-27.35,60.90L-27.65,60.90L-29.85,64.15L-29.80,64.50L-29.45,64.60L-29.20,64.40L-27.20,61.30L-27.20,61.05ZM27.90,60.15L27.75,60.50L29.80,63.65L30.05,63.85L30.30,63.80L30.45,63.45L28.40,60.30L28.15,60.10ZM-28.00,60.10L-28.20,60.10L-28.45,60.30L-30.40,63.25L-30.50,63.60L-30.35,63.80L-30.10,63.85L-29.85,63.65L-27.80,60.50L-27.85,60.25ZM28.60,59.35L28.40,59.55L28.40,59.70L30.15,62.45L30.65,63.05L31.00,63.00L31.05,62.60L28.90,59.40ZM-28.65,59.35L-28.95,59.40L-31.10,62.60L-31.05,63.00L-30.70,63.05L-30.20,62.45L-28.55,59.90L-28.45,59.55ZM34.00,55.25L33.50,55.10L32.75,55.10L32.00,55.40L31.15,56.30L30.95,56.85L31.05,57.45L31.55,58.05L32.10,58.25L32.50,58.25L33.00,58.00L33.45,57.35L33.45,56.60L33.20,56.15L32.95,56.00L32.85,55.80L32.95,55.70L33.30,55.70L33.85,55.90L34.25,56.25L34.50,56.85L34.50,57.35L34.35,57.90L33.95,58.45L33.55,58.70L32.95,58.85L32.15,58.80L31.20,58.60L30.25,58.60L29.75,58.75L29.50,58.60L29.25,58.60L29.05,58.80L29.05,59.00L31.15,62.20L31.30,62.30L31.55,62.30L31.70,62.15L31.70,61.85L30.05,59.30L30.25,59.20L31.05,59.20L32.45,59.45L33.20,59.45L33.90,59.20L34.50,58.75L34.75,58.45L35.05,57.80L35.10,56.80L34.85,56.05L34.50,55.60ZM-33.90,55.20L-34.65,55.70L-35.10,56.50L-35.15,57.60L-34.80,58.45L-34.55,58.75L-34.05,59.15L-33.20,59.45L-32.45,59.45L-31.05,59.20L-30.30,59.20L-30.10,59.30L-31.75,61.85L-31.75,62.15L-31.60,62.30L-31.35,62.30L-31.20,62.20L-29.10,59.00L-29.10,58.80L-29.30,58.60L-29.55,58.60L-29.65,58.70L-31.20,58.60L-32.95,58.85L-33.45,58.75L-34.00,58.45L-34.40,57.90L-34.55,57.35L-34.55,56.85L-34.30,56.25L-33.80,55.85L-33.30,55.70L-33.00,55.70L-32.90,55.80L-33.50,56.60L-33.50,57.35L-33.15,57.90L-32.65,58.20L-32.10,58.25L-31.65,58.10L-31.15,57.60L-31.00,57.05L-31.15,56.40L-31.80,55.55L-32.75,55.10L-33.55,55.10ZM43.75,-39.75L43.50,-39.55L43.55,-39.25L44.00,-39.05L44.45,-38.50L45.25,-37.90L46.35,-37.25L46.95,-36.45L47.05,-35.80L46.85,-35.10L46.25,-34.45L45.85,-34.25L45.20,-34.25L44.85,-34.40L44.45,-34.75L44.45,-34.85L45.15,-34.90L45.45,-35.05L45.85,-35.45L46.00,-35.75L46.00,-36.45L45.75,-36.95L45.45,-37.20L44.85,-37.40L44.45,-37.35L44.05,-37.15L43.60,-36.60L43.50,-35.80L43.60,-34.90L43.80,-34.55L44.70,-33.80L45.30,-33.60L46.30,-33.75L46.80,-34.05L47.35,-34.75L47.60,-35.35L47.65,-36.30L47.25,-37.20L46.65,-37.80L45.80,-38.30L45.75,-38.45L45.90,-38.50L47.25,-38.05L47.50,-38.05L47.70,-38.30L47.65,-38.55L47.10,-38.80ZM-43.80,-39.75L-47.15,-38.80L-47.70,-38.55L-47.75,-38.30L-47.50,-38.05L-45.95,-38.50L-45.80,-38.45L-45.85,-38.30L-46.70,-37.80L-47.30,-37.20L-47.60,-36.65L-47.70,-36.10L-47.65,-35.35L-47.40,-34.75L-46.85,-34.05L-46.30,-33.75L-45.35,-33.60L-44.60,-33.85L-43.85,-34.55L-43.65,-34.90L-43.55,-35.35L-43.60,-36.45L-43.80,-36.85L-44.45,-37.35L-44.85,-37.40L-45.50,-37.20L-45.80,-36.95L-46.05,-36.45L-46.05,-35.75L-45.90,-35.45L-45.55,-35.10L-45.15,-34.90L-44.50,-34.85L-44.80,-34.45L-45.30,-34.25L-45.80,-34.25L-46.10,-34.35L-46.70,-34.80L-46.90,-35.10L-47.05,-35.60L-47.05,-36.25L-46.85,-36.75L-46.20,-37.40L-45.30,-37.90L-44.55,-38.45L-44.05,-39.05L-43.70,-39.15L-43.55,-39.35L-43.55,-39.55ZM43.50,-40.55L43.50,-40.35L43.65,-40.15L46.90,-39.15L47.50,-39.05L47.70,-39.30L47.55,-39.65L44.30,-40.65L43.75,-40.75ZM-43.55,-40.55L-43.80,-40.75L-44.35,-40.65L-47.65,-39.60L-47.75,-39.30L-47.50,-39.05L-46.95,-39.15L-43.70,-40.15L-43.55,-40.35ZM43.50,-41.55L43.50,-41.35L43.65,-41.15L46.90,-40.15L47.50,-40.05L47.70,-40.30L47.55,-40.65L44.30,-41.65L43.75,-41.75ZM-43.55,-41.55L-43.80,-41.75L-44.35,-41.65L-47.65,-40.60L-47.75,-40.30L-47.50,-40.05L-46.95,-40.15L-43.70,-41.15L-43.55,-41.35ZM43.50,-42.55L43.50,-42.35L43.65,-42.15L46.90,-41.15L47.50,-41.05L47.70,-41.30L47.55,-41.65L44.30,-42.65L43.75,-42.75ZM-43.55,-42.55L-43.80,-42.75L-44.35,-42.65L-47.65,-41.60L-47.75,-41.30L-47.50,-41.05L-46.95,-41.15L-43.70,-42.15L-43.55,-42.35ZM43.50,-43.55L43.50,-43.35L43.65,-43.15L46.90,-42.15L47.50,-42.05L47.70,-42.30L47.55,-42.65L44.30,-43.65L43.75,-43.75ZM-43.55,-43.55L-43.80,-43.75L-44.35,-43.65L-47.65,-42.60L-47.75,-42.30L-47.50,-42.05L-46.95,-42.15L-43.70,-43.15L-43.55,-43.35ZM-3.10,-46.85L-5.10,-46.70L-8.25,-46.30L-11.15,-45.70L-11.50,-45.70L-13.85,-45.10L-17.55,-43.95L-21.55,-42.35L-26.90,-39.55L-30.85,-36.95L-34.50,-34.05L-36.40,-32.30L-38.65,-30.00L-41.70,-26.40L-44.15,-22.95L-46.35,-19.20L-47.95,-15.90L-49.20,-12.90L-50.30,-9.55L-51.05,-6.90L-52.15,-1.05L-52.50,3.05L-52.50,8.10L-52.15,12.20L-51.45,16.15L-50.90,18.65L-49.20,24.05L-47.50,28.05L-46.35,30.35L-44.95,32.75L-42.85,36.00L-40.50,39.05L-37.80,42.05L-34.45,45.25L-30.40,48.40L-27.55,50.30L-25.75,51.35L-21.55,53.50L-19.55,54.35L-15.85,55.65L-13.25,56.40L-9.25,57.30L-5.60,57.80L-1.90,58.05L2.25,58.05L4.05,57.95L7.20,57.60L10.00,57.15L13.95,56.20L18.60,54.70L22.45,53.05L24.75,51.90L27.60,50.25L29.95,48.70L33.20,46.25L35.50,44.25L38.30,41.50L41.00,38.40L43.65,34.75L45.50,31.75L47.45,28.05L48.55,25.60L49.70,22.45L51.20,17.25L52.00,12.90L52.45,8.00L52.40,2.10L51.95,-2.10L51.55,-4.40L50.70,-8.10L49.30,-12.50L47.65,-16.50L46.55,-18.70L44.95,-21.55L42.30,-25.55L41.00,-27.25L38.30,-30.35L34.80,-33.75L31.95,-36.10L29.95,-37.55L26.20,-39.95L22.15,-42.05L16.60,-44.25L12.45,-45.45L10.00,-46.00L7.65,-46.40L4.05,-46.80L2.10,-46.90ZM-2.90,-44.35L1.95,-44.40L6.25,-44.05L10.00,-43.45L16.10,-41.80L21.45,-39.60L25.55,-37.40L29.20,-35.00L32.75,-32.20L35.85,-29.25L38.45,-26.40L39.55,-25.00L42.05,-21.50L44.00,-18.15L45.35,-15.45L46.80,-12.00L47.50,-10.05L48.50,-6.55L49.35,-2.45L49.65,-0.30L49.90,2.50L49.95,7.65L49.55,12.25L49.10,15.10L48.70,16.90L47.55,21.00L46.80,23.15L45.30,26.70L43.25,30.65L40.85,34.40L38.15,37.85L34.75,41.50L31.50,44.40L27.75,47.15L23.70,49.60L19.40,51.65L16.85,52.65L14.25,53.50L11.65,54.20L7.95,54.95L3.75,55.45L1.90,55.55L-1.55,55.55L-4.35,55.40L-6.60,55.15L-11.50,54.25L-13.45,53.75L-16.95,52.65L-20.65,51.15L-23.45,49.75L-25.75,48.45L-29.75,45.80L-33.10,43.05L-34.55,41.75L-36.45,39.85L-40.25,35.30L-42.55,31.90L-43.80,29.75L-45.20,27.05L-46.35,24.40L-47.20,22.15L-48.40,18.30L-48.90,16.15L-49.55,12.60L-50.00,7.95L-50.00,3.20L-49.55,-1.45L-48.60,-6.35L-47.20,-11.05L-45.90,-14.35L-45.05,-16.20L-42.75,-20.40L-40.40,-23.95L-37.00,-28.10L-34.55,-30.60L-31.55,-33.25L-29.95,-34.50L-25.75,-37.30L-23.45,-38.60L-20.75,-39.95L-16.95,-41.50L-13.45,-42.60L-11.10,-43.20L-7.00,-43.95ZM44.80,-50.10L44.35,-49.85L43.90,-49.40L43.55,-48.80L43.55,-47.40L43.75,-47.00L44.30,-46.55L45.05,-46.50L45.45,-46.65L45.85,-47.10L46.00,-47.40L46.00,-48.10L45.75,-48.55L45.15,-48.95L44.45,-49.00L44.75,-49.40L45.20,-49.60L45.85,-49.60L46.15,-49.50L46.65,-49.05L46.85,-48.75L47.05,-48.05L47.00,-47.60L46.80,-47.10L46.35,-46.60L44.85,-45.70L44.10,-45.00L43.95,-44.75L43.65,-44.70L43.50,-44.55L43.50,-44.35L43.65,-44.15L47.25,-43.05L47.50,-43.05L47.70,-43.30L47.60,-43.60L44.65,-44.55L44.65,-44.70L45.05,-45.10L46.60,-46.00L47.10,-46.50L47.50,-47.10L47.65,-47.65L47.65,-48.30L47.50,-48.85L47.25,-49.30L46.70,-49.85L46.30,-50.10L45.80,-50.25L45.30,-50.25ZM-44.80,-50.10L-45.30,-50.25L-46.20,-50.15L-46.75,-49.85L-47.30,-49.30L-47.55,-48.85L-47.70,-48.30L-47.70,-47.65L-47.35,-46.75L-46.65,-46.00L-45.70,-45.50L-45.10,-45.10L-44.70,-44.70L-44.70,-44.55L-44.85,-44.45L-47.65,-43.60L-47.75,-43.30L-47.50,-43.05L-43.70,-44.15L-43.55,-44.35L-43.55,-44.55L-43.80,-44.75L-44.00,-44.75L-44.70,-45.55L-46.40,-46.60L-46.85,-47.10L-47.05,-47.60L-47.05,-48.25L-46.95,-48.65L-46.70,-49.05L-46.15,-49.50L-45.85,-49.60L-45.25,-49.60L-44.80,-49.40L-44.55,-49.05L-45.15,-48.95L-45.55,-48.75L-45.90,-48.40L-46.05,-48.10L-46.05,-47.40L-45.90,-47.10L-45.55,-46.70L-45.05,-46.50L-44.45,-46.50L-44.15,-46.65L-43.75,-47.05L-43.55,-47.60L-43.60,-48.80L-43.95,-49.40L-44.40,-49.85ZM-2.00,-72.00L-2.80,-71.95L-3.20,-71.45L-3.20,-70.85L-3.05,-70.60L-2.75,-70.40L-2.30,-70.35L-2.50,-69.95L-3.05,-69.55L-3.15,-69.40L-3.05,-69.25L-2.75,-69.25L-2.35,-69.45L-1.70,-70.15L-1.45,-70.90L-1.45,-71.20L-1.60,-71.65ZM4.80,-72.10L4.00,-72.00L3.60,-71.65L3.50,-71.00L3.65,-70.85L4.35,-70.65L4.45,-70.45L4.45,-70.00L4.35,-69.85L3.90,-69.60L3.60,-69.60L3.55,-69.40L3.70,-69.25L4.35,-69.35L5.00,-69.90L5.10,-70.50L4.90,-70.85L4.65,-71.10L4.10,-71.35L4.15,-71.50L4.55,-71.50L4.90,-71.70ZM2.20,-72.10L1.65,-71.70L1.60,-71.40L1.80,-71.35L2.10,-71.55L2.40,-71.55L2.55,-71.40L2.50,-70.85L1.65,-69.85L1.60,-69.60L1.70,-69.50L3.15,-69.50L3.35,-69.70L3.45,-70.00L3.35,-70.20L3.20,-70.20L2.85,-69.95L2.45,-69.95L2.40,-70.10L2.95,-70.75L3.20,-71.20L3.20,-71.50L2.60,-72.10ZM-3.95,-72.10L-4.25,-71.95L-4.55,-71.95L-4.70,-71.75L-4.70,-71.65L-4.40,-71.50L-4.40,-70.00L-4.45,-69.85L-4.80,-69.60L-4.65,-69.40L-3.55,-69.50L-3.55,-69.60L-3.85,-69.85L-3.85,-71.95ZM5.10,-80.80L4.40,-81.35L3.55,-81.80L3.00,-81.85L2.90,-81.95L1.95,-81.95L1.85,-81.85L1.25,-81.80L0.20,-81.20L-0.95,-81.35L-3.60,-81.30L-3.70,-81.20L-4.45,-81.05L-5.10,-80.70L-5.95,-80.00L-5.95,-79.85L-6.55,-78.85L-6.60,-78.35L-6.70,-78.25L-6.70,-77.65L-6.45,-77.35L-6.15,-77.30L-5.60,-77.35L-5.20,-77.65L-5.05,-77.65L-4.70,-77.30L-4.60,-76.95L-5.35,-76.65L-5.95,-76.15L-6.45,-75.05L-6.85,-75.00L-7.45,-74.75L-7.95,-74.40L-8.35,-73.90L-8.35,-73.35L-8.15,-72.95L-7.55,-72.35L-6.75,-71.90L-5.80,-71.65L-5.35,-71.75L-5.05,-72.00L-4.90,-72.00L-4.60,-72.30L-4.15,-73.15L-3.35,-73.15L-3.25,-73.05L-2.30,-73.00L-1.40,-72.65L-1.05,-72.35L-1.00,-69.20L-1.20,-69.05L-2.25,-69.05L-2.40,-68.95L-3.50,-68.90L-3.60,-68.80L-4.85,-68.65L-4.95,-68.55L-6.25,-68.30L-6.60,-68.10L-6.60,-67.75L-6.50,-67.55L-6.05,-67.50L-5.95,-67.60L-4.90,-67.75L-4.35,-67.95L-3.40,-68.00L-3.30,-68.10L-2.80,-68.10L-2.70,-68.20L-1.10,-68.25L-0.95,-68.35L2.10,-68.35L2.20,-68.25L3.55,-68.20L3.70,-68.10L4.80,-67.95L5.25,-67.75L5.75,-67.70L6.05,-67.50L6.50,-67.45L6.75,-67.25L7.05,-67.35L7.05,-67.50L6.75,-67.70L4.80,-68.55L3.90,-68.70L3.40,-68.90L1.10,-69.10L1.10,-72.65L2.40,-73.80L2.80,-74.05L2.95,-74.05L3.25,-74.30L3.40,-74.30L4.05,-74.65L4.70,-74.70L4.80,-74.80L5.65,-74.80L5.75,-74.70L6.10,-74.70L6.75,-74.45L6.80,-74.25L6.70,-74.15L6.55,-73.50L6.30,-73.15L6.00,-72.95L5.70,-72.50L5.70,-72.15L6.00,-71.85L6.50,-71.80L6.75,-71.90L7.45,-72.55L7.90,-72.50L8.00,-72.40L8.45,-72.40L8.80,-72.65L8.65,-74.30L8.55,-74.40L8.40,-75.45L8.30,-75.55L8.15,-76.20L7.65,-77.20L7.65,-77.40L6.65,-79.05ZM-0.40,-84.25L-2.05,-84.05L-4.05,-83.40L-5.80,-82.45L-6.60,-81.85L-7.65,-80.85L-8.85,-79.35L-9.55,-78.00L-9.95,-77.00L-10.35,-75.60L-10.50,-74.60L-10.50,-72.90L-10.30,-71.25L-9.65,-69.25L-8.70,-67.50L-8.10,-66.70L-7.15,-65.70L-5.60,-64.45L-3.80,-63.55L-1.55,-62.90L0.60,-62.75L2.50,-63.00L4.50,-63.65L6.25,-64.60L7.05,-65.20L8.10,-66.20L9.30,-67.70L10.20,-69.50L10.80,-71.45L10.95,-72.45L11.00,-73.90L10.75,-75.80L10.10,-77.80L9.15,-79.55L8.55,-80.35L7.55,-81.40L6.05,-82.60L4.70,-83.30L3.70,-83.70L2.30,-84.10L1.30,-84.25ZM-1.05,-82.90L1.10,-82.95L2.80,-82.65L3.70,-82.35L5.25,-81.55L6.00,-81.05L7.45,-79.65L8.40,-78.30L9.20,-76.55L9.60,-74.80L9.65,-72.65L9.35,-70.95L9.10,-70.20L8.25,-68.50L7.75,-67.75L6.35,-66.30L5.00,-65.35L3.25,-64.55L1.55,-64.15L-0.65,-64.10L-2.35,-64.40L-3.10,-64.65L-4.80,-65.50L-5.55,-66.00L-7.00,-67.40L-7.95,-68.75L-8.75,-70.50L-9.15,-72.25L-9.20,-74.40L-8.90,-76.10L-8.65,-76.85L-7.80,-78.55L-7.30,-79.30L-5.90,-80.75L-4.55,-81.70L-2.80,-82.50ZM-52.00,-50.45L-51.95,-49.35L-51.60,-49.55L-45.20,-51.75L-44.15,-52.25L-41.75,-53.15L-39.05,-54.50L-37.25,-55.55L-35.00,-57.25L-33.20,-59.10L-31.65,-61.15L-31.25,-61.50L-30.35,-61.90L-29.40,-61.95L-28.60,-61.60L-28.00,-61.05L-27.55,-60.25L-27.50,-59.70L-27.70,-58.95L-27.90,-58.55L-28.45,-58.05L-28.90,-57.90L-28.95,-58.05L-28.65,-58.55L-28.55,-59.05L-28.60,-59.55L-28.95,-60.20L-29.55,-60.70L-29.95,-60.85L-30.65,-60.85L-31.35,-60.55L-31.85,-60.00L-32.05,-59.35L-31.95,-58.40L-31.30,-57.60L-30.90,-57.30L-30.00,-56.90L-28.90,-56.85L-28.20,-57.05L-27.85,-57.25L-27.15,-57.90L-26.70,-58.65L-26.50,-60.05L-26.70,-60.85L-26.95,-61.35L-27.90,-62.35L-28.60,-62.70L-28.65,-62.85L-26.40,-63.65L-24.65,-64.55L-22.60,-65.85L-21.00,-67.10L-19.40,-68.65L-18.40,-69.85L-17.60,-71.00L-16.90,-72.25L-16.00,-74.40L-16.00,-79.40L-10.10,-79.45L-9.95,-81.35L-9.45,-83.10L-8.55,-84.85L-7.60,-86.10L-6.70,-87.00L-5.30,-88.05L-3.15,-89.05L-1.60,-89.40L0.45,-89.50L1.95,-89.35L3.65,-88.85L5.25,-88.05L6.05,-87.50L7.55,-86.10L8.60,-84.70L9.40,-83.10L9.90,-81.35L10.05,-79.45L15.95,-79.40L16.00,-74.30L16.70,-72.55L17.20,-71.60L18.60,-69.55L20.15,-67.85L22.75,-65.70L24.60,-64.55L26.25,-63.70L28.60,-62.85L28.55,-62.70L27.85,-62.35L27.05,-61.55L26.65,-60.85L26.50,-60.35L26.45,-59.70L26.65,-58.65L27.10,-57.90L27.60,-57.40L28.45,-56.95L28.90,-56.85L29.75,-56.85L30.85,-57.30L31.75,-58.15L32.00,-58.80L31.95,-59.70L31.70,-60.15L31.30,-60.55L30.60,-60.85L29.90,-60.85L29.40,-60.65L28.90,-60.20L28.60,-59.70L28.50,-59.05L28.60,-58.55L28.90,-58.05L28.85,-57.90L28.60,-57.95L27.85,-58.55L27.55,-59.20L27.45,-59.70L27.55,-60.35L27.80,-60.85L28.30,-61.40L29.35,-61.95L30.30,-61.90L31.45,-61.35L32.85,-59.45L34.90,-57.30L36.55,-56.00L37.90,-55.10L41.70,-53.15L44.10,-52.25L45.55,-51.60L52.00,-49.35L52.00,-50.45L50.05,-51.05L45.45,-52.75L42.60,-53.95L39.85,-55.30L37.10,-57.00L35.70,-58.05L34.10,-59.55L33.30,-60.45L32.30,-61.95L31.85,-62.30L31.15,-62.65L31.20,-62.85L31.60,-62.95L32.25,-63.35L32.80,-63.95L33.20,-64.70L33.35,-65.35L33.35,-66.20L33.15,-66.95L32.65,-67.75L32.30,-68.10L31.90,-68.30L31.15,-68.90L30.40,-69.70L29.20,-71.60L28.70,-72.65L28.20,-74.10L27.60,-74.55L26.95,-74.50L26.50,-74.15L26.05,-73.05L25.80,-71.75L25.80,-70.55L25.95,-69.65L26.20,-68.95L26.85,-67.85L26.85,-67.05L26.50,-66.60L26.15,-66.45L25.10,-66.45L24.75,-66.65L19.90,-71.45L18.45,-73.50L18.00,-74.40L18.00,-81.45L12.05,-81.45L11.40,-83.80L10.70,-85.30L9.60,-86.95L8.45,-88.20L6.35,-89.85L4.45,-90.80L2.40,-91.40L1.00,-91.60L-1.70,-91.55L-3.65,-91.10L-5.75,-90.20L-6.40,-89.85L-7.60,-89.00L-9.05,-87.65L-10.50,-85.75L-11.45,-83.80L-12.10,-81.45L-18.00,-81.45L-18.00,-74.45L-18.60,-73.35L-19.95,-71.45L-24.85,-66.60L-25.15,-66.45L-26.25,-66.45L-26.60,-66.65L-26.95,-67.15L-26.90,-67.85L-26.30,-68.85L-26.00,-69.65L-25.85,-70.55L-25.90,-72.15L-26.10,-73.05L-26.55,-74.15L-27.15,-74.55L-27.60,-74.55L-28.00,-74.35L-28.35,-73.90L-28.65,-72.90L-29.45,-71.25L-30.45,-69.70L-31.25,-68.85L-31.95,-68.30L-32.35,-68.10L-33.00,-67.35L-33.35,-66.50L-33.35,-65.05L-32.85,-63.95L-32.35,-63.40L-31.75,-63.00L-31.25,-62.85L-31.20,-62.65L-31.90,-62.30L-32.35,-61.95L-33.35,-60.45L-35.20,-58.50L-37.15,-57.00L-39.80,-55.35L-42.65,-53.95L-46.30,-52.45L-50.10,-51.05Z","numerals":"M0.50,39.25L0.25,40.00L-0.55,45.40L-1.00,46.65L-0.65,46.75L0.40,46.65L0.00,46.30L-0.20,45.90L0.15,43.25ZM1.10,32.85L0.90,33.45L0.65,35.45L0.60,38.35L0.90,38.80L1.25,40.25L2.00,44.95L1.95,46.15L1.65,46.65L2.15,46.70L3.85,46.40L4.00,46.05L3.70,45.40L3.15,43.05L1.40,33.60ZM-2.90,32.45L-3.15,33.10L-3.25,39.25L-3.60,44.75L-3.80,45.95L-4.10,46.05L-4.30,46.30L-4.15,46.45L-1.60,46.70L-2.00,46.05L-2.10,45.40L-2.10,41.65L-1.85,35.30L-1.55,32.80L-1.70,32.60ZM-13.25,29.70L-13.65,30.05L-15.95,33.50L-19.05,37.65L-21.55,40.60L-22.00,40.80L-21.10,41.35L-20.80,41.35L-20.75,40.85L-19.40,38.60L-16.85,35.00L-16.30,34.50L-16.45,35.40L-18.15,39.95L-19.05,41.80L-19.40,42.00L-19.10,42.30L-18.15,42.75L-17.30,42.95L-17.00,41.10L-13.40,30.60ZM17.40,27.20L17.50,27.80L19.45,32.70L21.30,37.90L21.75,39.65L21.70,40.45L21.90,40.50L23.30,39.75L23.45,39.50L22.65,39.60L22.30,39.30L19.60,32.10L19.65,31.95L20.45,32.70L24.25,37.35L24.85,38.35L24.85,38.60L24.55,38.90L25.10,38.85L26.25,38.15L27.05,37.30L26.45,36.95L24.65,35.15L18.45,28.20ZM-18.90,25.90L-19.15,26.00L-19.15,26.40L-19.85,27.75L-24.20,34.60L-26.15,37.30L-26.65,37.40L-26.55,37.70L-26.15,38.10L-22.60,40.55L-22.35,40.50L-22.40,40.10L-19.50,34.60L-16.55,29.65L-15.70,28.60L-15.75,28.30L-16.10,27.95L-17.80,26.85ZM-17.70,27.35L-17.35,27.75L-17.35,28.15L-18.20,29.90L-23.35,38.45L-23.90,39.20L-24.20,39.15L-24.75,38.60L-24.20,37.25L-18.85,28.55L-18.00,27.35ZM29.80,11.70L29.50,12.65L28.30,15.10L26.90,17.45L25.30,19.65L25.95,19.70L26.90,20.15L30.10,22.10L35.65,25.85L36.80,26.85L36.80,27.15L36.95,27.20L38.00,25.90L40.30,22.25L41.45,20.20L42.40,18.05L41.95,18.10L41.45,17.95L33.95,14.30L30.70,12.45L30.20,12.05L30.00,11.70ZM26.90,18.10L27.30,17.70L27.50,17.70L29.85,19.05L37.05,23.55L38.25,24.50L38.30,24.95L38.15,25.10L37.55,25.05L34.65,23.50L27.95,19.20L27.00,18.35ZM28.25,16.05L28.60,15.60L28.80,15.60L39.70,21.90L39.85,22.20L39.65,22.65L39.45,22.85L38.55,22.65L35.45,20.95L28.75,16.85L28.30,16.40ZM29.35,13.85L29.50,13.70L30.40,13.85L35.80,16.60L41.20,19.60L41.10,20.05L40.75,20.45L40.35,20.45L38.00,19.35L30.15,15.00L29.25,14.30ZM-30.85,10.30L-31.75,11.00L-37.10,13.75L-42.80,16.30L-43.35,16.25L-43.40,16.35L-43.05,17.65L-41.45,20.90L-39.50,24.15L-38.65,25.15L-38.60,24.60L-37.55,23.70L-31.70,20.70L-31.55,20.75L-32.40,21.70L-35.00,24.00L-37.05,25.65L-37.90,26.05L-37.80,26.45L-37.35,27.05L-36.50,27.75L-35.65,26.60L-27.10,18.30L-27.40,18.30L-29.60,19.30L-35.35,22.20L-38.80,23.75L-39.25,23.65L-39.65,23.20L-39.65,22.95L-39.35,22.55L-37.80,21.50L-31.60,17.80L-28.30,16.10L-28.30,15.70ZM-29.15,14.75L-29.20,15.00L-39.90,21.05L-40.75,21.25L-41.25,20.60L-41.10,20.35L-39.90,19.60L-31.05,14.75L-29.95,14.30L-29.45,14.35ZM-30.35,12.30L-30.30,12.70L-30.60,13.05L-37.90,17.05L-40.75,18.50L-41.60,18.80L-42.15,18.80L-42.30,18.60L-42.35,18.10L-38.30,15.75L-30.90,12.10L-30.60,12.10ZM-46.85,1.65L-46.85,3.10L-46.55,3.55L-45.85,3.15L-43.45,3.05L-32.55,3.15L-32.75,1.50L-45.20,1.60L-46.25,1.50L-46.70,1.25ZM46.20,-4.05L45.90,-4.00L45.65,-3.70L45.35,-3.60L41.45,-3.25L35.75,-3.05L33.15,-3.10L32.55,-3.25L32.35,-2.35L32.35,1.95L32.50,3.25L37.20,3.20L44.70,3.65L45.70,3.80L46.15,4.10L46.30,3.50L46.40,1.55L46.40,-2.85ZM32.80,1.10L33.20,0.70L34.40,0.55L46.05,0.90L46.10,2.15L40.75,2.10L33.85,1.80L32.95,1.65L32.80,1.45ZM46.10,-1.70L46.05,-0.55L34.65,-0.55L33.25,-0.70L32.80,-1.05L32.85,-1.45L33.10,-1.65L35.25,-1.85L43.25,-1.95L44.50,-2.15L45.70,-2.15L46.05,-1.95ZM-46.80,-3.85L-46.85,-2.70L-46.75,-2.55L-46.35,-2.75L-45.70,-2.75L-43.65,-2.25L-43.10,-1.95L-43.15,-1.80L-43.55,-1.65L-45.80,-1.25L-46.35,-1.25L-46.75,-1.45L-46.85,0.45L-46.70,0.70L-43.75,-0.15L-39.35,-1.00L-35.30,-0.10L-33.55,0.45L-33.15,0.80L-32.85,0.75L-32.75,0.50L-32.75,-0.15L-32.95,-0.50L-33.60,-0.20L-34.55,-0.25L-36.60,-0.65L-37.60,-1.00L-37.55,-1.20L-35.00,-1.70L-32.90,-1.70L-32.75,-1.85L-32.70,-3.15L-32.85,-3.65L-34.00,-3.30L-37.20,-2.70L-40.70,-2.20L-42.05,-2.15L-45.40,-3.10L-46.25,-3.55L-46.50,-4.05ZM40.85,-22.00L40.65,-22.20L40.45,-21.70L38.20,-20.10L33.75,-17.55L29.05,-15.25L28.70,-15.30L28.75,-14.85L29.35,-13.55L29.75,-13.20L29.85,-13.55L30.15,-13.85L35.00,-16.70L40.50,-19.50L41.50,-19.70L41.80,-19.50L41.45,-20.75ZM39.00,-24.85L38.60,-25.20L38.60,-24.70L38.20,-24.30L35.10,-22.15L28.95,-18.35L27.60,-17.70L27.20,-17.80L27.15,-17.60L28.10,-15.95L28.35,-15.80L29.05,-16.60L35.85,-20.90L39.45,-22.80L40.15,-22.85L40.10,-23.20ZM-38.25,-26.05L-39.20,-24.65L-39.40,-23.95L-38.80,-24.55L-38.45,-24.45L-36.85,-22.70L-36.05,-21.60L-36.30,-21.55L-37.45,-21.85L-40.15,-22.95L-40.50,-22.60L-41.05,-21.50L-41.30,-20.45L-40.70,-20.75L-39.65,-20.70L-35.30,-19.55L-33.80,-19.00L-32.75,-18.35L-30.50,-16.35L-29.20,-15.00L-29.05,-14.45L-28.85,-14.40L-28.45,-14.80L-28.10,-15.65L-28.85,-15.65L-29.70,-16.15L-32.15,-18.55L-31.95,-18.60L-29.65,-17.85L-27.50,-16.85L-26.85,-17.55L-26.30,-18.65L-30.10,-19.65L-34.70,-21.30L-35.50,-21.85L-37.70,-24.30L-38.20,-25.25L-38.10,-26.10ZM-23.50,-40.30L-24.55,-39.65L-23.95,-39.35L-23.45,-38.60L-22.85,-36.55L-22.90,-36.30L-23.45,-36.60L-24.90,-38.05L-25.30,-38.75L-25.25,-39.15L-25.75,-39.00L-26.95,-38.00L-27.15,-37.60L-26.30,-37.10L-25.35,-36.25L-22.00,-32.70L-21.25,-31.25L-20.25,-28.35L-19.85,-26.80L-19.90,-26.15L-19.65,-26.15L-19.00,-26.70L-18.95,-27.00L-19.35,-27.40L-19.80,-28.20L-20.80,-30.80L-20.80,-31.25L-20.55,-31.20L-19.80,-30.45L-18.60,-28.95L-18.00,-28.00L-18.00,-27.50L-16.55,-28.20L-16.15,-28.75L-16.45,-28.85L-20.30,-33.00L-22.10,-35.30L-23.00,-37.95L-23.30,-39.90L-22.90,-40.35ZM22.10,-40.80L21.85,-40.70L22.10,-40.20L21.85,-39.55L17.25,-31.25L15.50,-28.80L15.05,-28.85L15.65,-28.15L16.85,-27.45L17.15,-27.45L17.20,-27.90L18.00,-29.60L21.90,-36.25L23.80,-39.00L24.40,-39.30L24.10,-39.70ZM-21.40,-41.50L-22.15,-41.10L-22.45,-40.75L-22.05,-40.70L-21.75,-40.40L-20.30,-38.15L-17.10,-32.10L-15.90,-29.45L-15.85,-28.65L-14.35,-29.25L-14.10,-29.55L-15.55,-31.85L-19.15,-39.05L-20.10,-41.20L-20.10,-41.85ZM3.00,-46.55L2.85,-46.35L3.15,-46.15L3.25,-45.70L3.00,-39.40L2.40,-33.80L2.25,-33.15L1.90,-32.65L3.75,-32.40L3.85,-32.50L3.80,-33.45L4.05,-37.20L4.70,-43.40L5.10,-45.75L5.40,-46.10L4.65,-46.40ZM-1.90,-46.55L-3.30,-46.55L-2.85,-45.75L-2.85,-44.95L-3.35,-42.80L-3.55,-42.90L-4.25,-44.75L-4.40,-46.05L-4.20,-46.45L-5.10,-46.45L-6.55,-45.95L-6.10,-45.20L-5.25,-42.85L-4.30,-39.05L-4.30,-37.50L-4.55,-35.70L-5.15,-32.90L-5.45,-32.50L-5.35,-32.30L-4.60,-32.40L-4.25,-32.70L-4.45,-33.60L-4.40,-34.90L-4.10,-37.00L-3.90,-37.30L-3.75,-37.25L-3.45,-36.35L-3.00,-34.15L-2.95,-33.05L-3.20,-32.75L-1.55,-32.65L-0.95,-32.95L-1.25,-33.35L-1.85,-35.40L-3.15,-41.15L-3.05,-42.75L-2.40,-45.55L-1.95,-46.25L-1.55,-46.30L-1.60,-46.45ZM-0.35,-46.70L-0.90,-46.55L-0.60,-46.25L-0.45,-45.80L-0.20,-40.65L-0.30,-34.45L-0.50,-33.05L-0.75,-32.70L1.15,-32.60L1.25,-32.70L1.10,-33.40L1.15,-42.65L1.35,-45.65L1.65,-46.40L1.35,-46.55ZM-1.00,-48.30L-1.10,-47.85L-3.95,-47.70L-4.05,-48.15L-6.05,-47.95L-6.10,-47.50L-8.90,-47.05L-9.05,-47.45L-11.05,-47.05L-11.05,-46.55L-13.80,-45.90L-13.95,-46.25L-15.90,-45.65L-15.85,-45.15L-18.35,-44.20L-18.55,-44.20L-18.70,-44.55L-20.60,-43.75L-20.45,-43.45L-20.55,-43.20L-22.90,-42.00L-23.05,-42.00L-23.25,-42.35L-25.05,-41.35L-24.85,-41.05L-25.00,-40.80L-27.20,-39.35L-27.55,-39.70L-29.20,-38.50L-29.00,-38.20L-29.05,-38.00L-31.05,-36.40L-31.30,-36.30L-31.55,-36.60L-33.10,-35.25L-32.85,-34.85L-34.80,-32.85L-35.20,-33.10L-36.60,-31.60L-36.30,-31.20L-37.90,-29.20L-38.20,-29.05L-38.45,-29.25L-39.70,-27.60L-39.35,-27.35L-39.35,-27.20L-40.80,-25.00L-41.00,-24.90L-41.30,-25.05L-42.35,-23.30L-42.00,-22.95L-43.25,-20.50L-43.75,-20.55L-44.55,-18.80L-44.20,-18.55L-45.10,-16.00L-45.20,-15.85L-45.60,-15.95L-46.25,-14.00L-45.90,-13.90L-45.85,-13.65L-46.55,-11.10L-47.05,-11.10L-47.45,-9.10L-47.05,-8.95L-47.45,-6.10L-47.95,-6.10L-48.15,-4.10L-47.70,-3.95L-47.85,-1.10L-48.30,-1.05L-48.30,1.00L-47.85,1.05L-47.70,3.90L-48.15,4.00L-47.95,6.00L-47.50,6.05L-47.05,8.85L-47.45,9.00L-47.05,11.00L-46.55,11.00L-45.85,13.55L-45.90,13.80L-46.25,13.90L-45.65,15.85L-45.20,15.75L-44.20,18.30L-44.20,18.50L-44.55,18.70L-43.75,20.55L-43.25,20.45L-42.00,22.90L-42.35,23.25L-41.40,24.95L-41.05,24.80L-40.80,24.95L-39.35,27.15L-39.70,27.50L-38.50,29.15L-38.20,28.95L-37.90,29.15L-36.40,31.00L-36.30,31.25L-36.60,31.50L-35.25,33.05L-34.85,32.80L-32.85,34.75L-33.10,35.15L-31.60,36.55L-31.20,36.25L-29.05,37.95L-29.00,38.10L-29.25,38.45L-27.60,39.65L-27.20,39.30L-24.90,40.85L-25.05,41.25L-23.30,42.30L-22.95,41.95L-20.55,43.15L-20.45,43.35L-20.60,43.65L-18.75,44.50L-18.60,44.20L-18.40,44.15L-15.85,45.15L-15.95,45.55L-14.05,46.20L-13.90,45.85L-13.65,45.80L-11.10,46.50L-11.10,47.00L-9.10,47.40L-8.95,47.00L-6.10,47.45L-6.10,47.90L-4.05,48.10L-3.95,47.65L-1.10,47.80L-1.05,48.25L0.45,48.30L1.00,48.25L1.05,47.80L3.90,47.65L4.00,48.10L6.00,47.90L6.05,47.45L8.85,47.00L9.00,47.40L11.00,47.00L11.00,46.50L13.75,45.85L13.90,46.20L15.85,45.60L15.85,45.10L18.50,44.15L18.70,44.50L20.55,43.70L20.45,43.20L22.90,41.95L23.25,42.30L24.95,41.35L24.80,41.00L24.95,40.75L27.10,39.35L27.60,39.60L29.15,38.45L28.95,38.05L31.00,36.35L31.25,36.25L31.50,36.55L33.05,35.20L32.80,34.80L34.80,32.80L35.15,33.05L36.55,31.55L36.25,31.15L37.85,29.15L38.15,28.95L38.45,29.20L39.65,27.55L39.30,27.15L40.90,24.85L41.25,25.00L42.30,23.25L41.95,22.90L43.20,20.45L43.40,20.40L43.65,20.55L44.50,18.75L44.15,18.50L45.10,15.85L45.55,15.90L46.20,14.00L45.85,13.80L46.50,11.05L47.00,11.05L47.40,9.05L47.00,8.90L47.45,6.05L47.90,6.05L48.10,4.00L47.65,3.90L47.80,1.05L48.25,1.00L48.30,-0.50L48.25,-1.05L47.80,-1.10L47.65,-3.95L48.10,-4.05L47.90,-6.05L47.45,-6.10L47.00,-8.90L47.40,-9.05L47.00,-11.05L46.50,-11.05L45.85,-13.80L46.20,-13.95L45.60,-15.90L45.10,-15.85L44.15,-18.35L44.15,-18.55L44.50,-18.70L43.70,-20.60L43.20,-20.50L41.95,-22.95L42.30,-23.30L41.35,-25.00L41.00,-24.85L40.75,-25.00L39.35,-27.20L39.65,-27.55L38.45,-29.20L38.15,-29.00L37.85,-29.20L36.35,-31.05L36.25,-31.30L36.55,-31.55L35.20,-33.10L34.80,-32.85L32.80,-34.80L33.05,-35.20L31.55,-36.60L31.25,-36.30L31.00,-36.40L29.00,-38.05L29.20,-38.45L27.70,-39.60L27.55,-39.70L27.15,-39.35L24.95,-40.80L24.85,-41.00L25.05,-41.30L23.25,-42.35L22.90,-42.00L20.45,-43.30L20.50,-43.75L18.75,-44.55L18.50,-44.20L15.95,-45.10L15.80,-45.20L15.90,-45.60L13.95,-46.25L13.85,-45.90L13.60,-45.85L11.05,-46.55L11.05,-47.05L9.05,-47.45L8.95,-47.05L8.80,-47.00L6.00,-47.55L6.05,-47.95L4.05,-48.15L3.90,-47.70L1.05,-47.85L1.00,-48.30ZM-3.00,-47.30L2.55,-47.30L6.80,-46.90L10.35,-46.25L15.45,-44.80L19.50,-43.20L24.05,-40.80L27.95,-38.25L31.80,-35.10L36.20,-30.55L37.85,-28.45L40.35,-24.80L42.85,-20.15L44.55,-16.10L45.90,-11.60L46.85,-6.70L47.25,-2.85L47.30,2.00L46.85,6.65L46.05,10.95L44.80,15.30L43.30,19.10L41.75,22.30L39.55,26.00L36.60,30.05L32.60,34.30L29.40,37.10L25.45,39.90L22.65,41.55L18.35,43.65L13.55,45.35L10.60,46.15L7.70,46.70L3.65,47.20L-1.60,47.30L-4.30,47.15L-10.40,46.20L-14.55,45.05L-18.40,43.65L-22.70,41.55L-27.00,38.90L-30.65,36.10L-33.80,33.15L-37.25,29.25L-39.50,26.15L-41.80,22.30L-44.00,17.55L-45.70,12.45L-46.75,7.60L-47.30,2.80L-47.35,-2.05L-46.90,-6.70L-46.10,-11.00L-45.00,-14.85L-43.35,-19.15L-41.20,-23.40L-38.70,-27.35L-35.60,-31.25L-32.95,-34.05L-30.65,-36.15L-28.00,-38.25L-24.10,-40.80L-19.40,-43.25L-15.60,-44.75L-11.55,-45.95L-7.10,-46.85Z"}</script>
+<script>
+(function(){
+"use strict";
+var G = JSON.parse(document.getElementById('geomData').textContent);
+
+/* ---------- Bambu Lab filament palette (published hex values) ---------- */
+var PALETTE = [
+ ["PLA Basic", [
+  ["Jade White","#FFFFFF"],["Beige","#F7E6DE"],["Light Gray","#D1D3D5"],["Silver","#A6A9AA"],
+  ["Gray","#8E9089"],["Dark Gray","#545454"],["Black","#000000"],["Magenta","#EC008C"],
+  ["Pink","#F55A74"],["Hot Pink","#F5547C"],["Orange","#FF6A13"],["Pumpkin Orange","#FF9016"],
+  ["Gold","#E4BD68"],["Sunflower Yellow","#FEC600"],["Yellow","#F4EE2A"],["Bronze","#847D48"],
+  ["Bright Green","#BECF00"],["Bambu Green","#00AE42"],["Mistletoe Green","#3F8E43"],
+  ["Turquoise","#00B1B7"],["Cyan","#0086D6"],["Blue","#0A2989"],["Cobalt Blue","#0056B8"],
+  ["Blue Grey","#5B6579"],["Purple","#5E43B7"],["Indigo Purple","#482960"],
+  ["Cocoa Brown","#6F5034"],["Brown","#9D432C"],["Maroon Red","#9D2235"],["Red","#C12E1F"]
+ ]],
+ ["PLA Matte", [
+  ["Ivory White","#FFFFFF"],["Bone White","#CBC6B8"],["Desert Tan","#E8DBB7"],["Latte Brown","#D3B7A7"],
+  ["Caramel","#AE835B"],["Terracotta","#B15533"],["Dark Brown","#7D6556"],["Dark Chocolate","#4D3324"],
+  ["Lilac Purple","#AE96D4"],["Sakura Pink","#E8AFCF"],["Mandarin Orange","#F99963"],
+  ["Lemon Yellow","#F7D959"],["Plum","#950051"],["Scarlet Red","#DE4343"],["Dark Red","#BB3D43"],
+  ["Dark Green","#68724D"],["Grass Green","#61C680"],["Apple Green","#C2E189"],["Ice Blue","#A3D8E1"],
+  ["Sky Blue","#56B7E6"],["Marine Blue","#0078BF"],["Dark Blue","#042F56"],["Ash Gray","#9B9EA0"],
+  ["Nardo Gray","#757575"],["Charcoal","#000000"]
+ ]],
+ ["PLA Metal", [
+  ["Iridium Gold Metallic","#B39B84"],["Copper Brown Metallic","#AA6443"],
+  ["Oxide Green Metallic","#1D7C6A"],["Cobalt Blue Metallic","#39699E"],["Iron Gray Metallic","#43403D"]
+ ]]
+];
+function findFil(series,name){
+  for(var i=0;i<PALETTE.length;i++) if(PALETTE[i][0]===series)
+    for(var j=0;j<PALETTE[i][1].length;j++) if(PALETTE[i][1][j][0]===name)
+      return {series:series,name:name,hex:PALETTE[i][1][j][1]};
+  return {series:series,name:name,hex:"#888888"};
+}
+
+/* ---------- measured housing geometry (mm, model space) ---------- */
+var TOP_C=[0.0,-7.10], TOP_RBASE=61.14, TOP_CAP=7.16, TOP_T0=126.5, TOP_T1=53.5;
+var BOT_C=[0.06,-12.63], BOT_RBASE=57.97, BOT_CAP=5.89, BOT_T0=-114.0, BOT_T1=-66.0;
+var STACK_ROUT=65.55, STACK_RIN=60.55, STACK_CAP=4.0;
+var CAP_RATIO=0.667;          /* Caladea cap height / em */
+var TRACK=0.25;               /* letter tracking, mm */
+var CAP_FLOOR=3.1;            /* below this the relief gets fragile at 0.4 mm nozzle */
+var DIAL_CZ=5.58;             /* dial centre in SVG units */
+
+var SLOTS=[
+  {key:"dial",   role:"Dial",     def:["PLA Basic","Jade White"]},
+  {key:"body",   role:"Housing",  def:["PLA Matte","Dark Blue"]},
+  {key:"accent", role:"Accents",  def:["PLA Basic","Bronze"]},
+  {key:"numeral",role:"Numerals", def:["PLA Basic","Black"]}
+];
+
+var LAYOUTS=[
+  {id:"stacked", name:"Stacked arc",
+   desc:"Club name and event on two arcs at the crown.",
+   fields:["topA","topB","bottom","year"],
+   labels:{topA:"Crown, upper line",topB:"Crown, lower line",bottom:"Lower arc",year:"Dial text"}},
+  {id:"dial", name:"On the dial",
+   desc:"Event at the crown, club name across the dial face.",
+   fields:["topA","bottom","year","dialA","dialB"],
+   labels:{topA:"Crown arc",bottom:"Lower arc",year:"Dial text",dialA:"Dial line 1",dialB:"Dial line 2"}},
+  {id:"single", name:"Single arc",
+   desc:"Club name at the crown, award on the lower arc.",
+   fields:["topA","bottom","year"],
+   labels:{topA:"Crown arc",bottom:"Lower arc",year:"Dial text"}}
+];
+
+/* opens on a real spec rather than an empty shell */
+var S={
+  layout:"single",
+  topA:"HUNTSVILLE COUNTRY CLUB", topB:"CLUB CHAMPIONSHIP",
+  bottom:"CLUB CHAMPION", year:"2026", dialA:"HUNTSVILLE", dialB:"COUNTRY CLUB",
+  fil:{}, logoUrl:null, logoId:null, logoName:null
+};
+SLOTS.forEach(function(s){ S.fil[s.key]=findFil(s.def[0],s.def[1]); });
+
+/* ---------- svg helpers ---------- */
+var $=function(id){return document.getElementById(id);};
+function arcD(cx,cz,r,t0,t1){
+  var n=90,p=[],i,t;
+  for(i=0;i<=n;i++){ t=(t0+(t1-t0)*i/n)*Math.PI/180;
+    p.push((cx+r*Math.cos(t)).toFixed(3)+","+(-(cz+r*Math.sin(t))).toFixed(3)); }
+  return "M"+p[0]+"L"+p.slice(1).join("L");
+}
+var SPAN_TOP=(TOP_T0-TOP_T1)*Math.PI/180, SPAN_BOT=(BOT_T1-BOT_T0)*Math.PI/180;
+
+/* Fit text to an arc the way the plate builder does: shrink the cap height
+   until the string fits the band, never below the print floor. */
+function fitArc(textEl, pathEl, str, capMax, which){
+  var tp=textEl.firstChild, cap=capMax, r, arcLen, L, i;
+  if(!str){ textEl.setAttribute("visibility","hidden"); tp.textContent=""; return 0; }
+  textEl.removeAttribute("visibility");
+  tp.textContent=str;
+  for(i=0;i<3;i++){
+    if(which==="t1s"){ r=STACK_ROUT; }
+    else if(which==="t2s"){ r=STACK_RIN; }
+    else if(which==="top"){ r=TOP_RBASE+(TOP_CAP-cap)/2; }
+    else { r=BOT_RBASE-(BOT_CAP-cap)/2; }
+    if(which==="bot") pathEl.setAttribute("d",arcD(BOT_C[0],BOT_C[1],r,BOT_T0,BOT_T1));
+    else pathEl.setAttribute("d",arcD(TOP_C[0],TOP_C[1],r,TOP_T0,TOP_T1));
+    arcLen=(which==="bot"?SPAN_BOT:SPAN_TOP)*r;
+    textEl.style.fontSize=(cap/CAP_RATIO).toFixed(3)+"px";
+    L=textEl.getComputedTextLength();
+    if(L<=arcLen*0.985) break;
+    cap=Math.max(CAP_FLOOR, cap*arcLen*0.985/L);
+    if(cap<=CAP_FLOOR+1e-6){ textEl.style.fontSize=(cap/CAP_RATIO).toFixed(3)+"px"; break; }
+  }
+  return cap;
+}
+
+var PRINT_FONT="'Caladea Print','Caladea','Cambria',Georgia,serif";
+function styleText(el,fill){
+  el.setAttribute("font-family",PRINT_FONT);
+  el.setAttribute("font-weight","700");
+  el.setAttribute("letter-spacing",TRACK);
+  el.setAttribute("fill",fill);
+}
+
+var caps={};
+function render(){
+  var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0];
+  var body=S.fil.body.hex, acc=S.fil.accent.hex, dial=S.fil.dial.hex, num=S.fil.numeral.hex;
+
+  $("pBody").setAttribute("fill",body);
+  $("pAccent").setAttribute("fill",acc);
+  $("cDial").setAttribute("fill",dial);
+  $("pNum").setAttribute("fill",num);
+  $("cBoss").setAttribute("fill",body);
+  $("cWell").setAttribute("fill",body);
+
+  [["tT1",acc],["tT2",acc],["tB",acc],["tYear",num],["tD1",num],["tD2",num]]
+    .forEach(function(p){ styleText($(p[0]),p[1]); });
+
+  var stacked = S.layout==="stacked";
+  caps.t1 = fitArc($("tT1"),$("arcT1"), S.topA, stacked?STACK_CAP:TOP_CAP, stacked?"t1s":"top");
+  caps.t2 = stacked ? fitArc($("tT2"),$("arcT2"), S.topB, STACK_CAP, "t2s")
+                    : fitArc($("tT2"),$("arcT2"), "", STACK_CAP, "t2s");
+  caps.b  = fitArc($("tB"),$("arcB"), S.bottom, BOT_CAP, "bot");
+
+  /* dial face */
+  var showDial = S.layout==="dial";
+  setDialText($("tYear"), S.year, 9.6, -16);
+  setDialText($("tD1"), showDial?S.dialA:"", 6.6, 17);
+  setDialText($("tD2"), showDial?S.dialB:"", 6.6, 26);
+
+  /* crest */
+  if(S.logoUrl){
+    $("imgLogo").setAttributeNS("http://www.w3.org/1999/xlink","href",S.logoUrl);
+    $("imgLogo").setAttribute("href",S.logoUrl);
+    $("imgLogo").removeAttribute("hidden"); $("imgLogo").removeAttribute("display");
+    $("gMedHint").setAttribute("display","none");
+  }else{
+    $("imgLogo").setAttribute("display","none");
+    $("gMedHint").removeAttribute("display");
+    $("gMedHint").querySelector("circle").setAttribute("stroke",acc);
+    $("gMedHint").querySelector("text").setAttribute("fill",acc);
+    $("gMedHint").querySelector("text").setAttribute("font-family",PRINT_FONT);
+  }
+
+  renderChips();
+  try{ syncHidden(); }catch(e){}
+  var tight=[];
+  if(caps.t1&&caps.t1<=CAP_FLOOR+0.05) tight.push("crown");
+  if(caps.t2&&caps.t2<=CAP_FLOOR+0.05) tight.push("second line");
+  if(caps.b&&caps.b<=CAP_FLOOR+0.05) tight.push("lower arc");
+  $("capNote").textContent = tight.length
+    ? "Too long: " + tight.join(" and ") + " is at the print floor"
+    : "Lettering " + (caps.t1?caps.t1.toFixed(1):"–") + " mm / " + (caps.b?caps.b.toFixed(1):"–") + " mm cap";
+  $("capNote").style.color = tight.length ? "var(--warn)" : "";
+  void L;
+}
+/* Keep dial text clear of the chapter ring: the numerals start at r 32.5, so
+   the width available depends on how far the line sits from the centre. */
+function setDialText(el,str,capMax,y){
+  if(!str){ el.setAttribute("visibility","hidden"); el.textContent=""; return; }
+  el.removeAttribute("visibility");
+  el.textContent=str;
+  el.setAttribute("letter-spacing",0.2);
+  var R=32.5, cap=capMax, i, edge, maxW, L;
+  for(i=0;i<3;i++){
+    edge = Math.abs(y) + (y<0 ? cap : 0);
+    maxW = 2*Math.sqrt(Math.max(1, R*R - edge*edge))*0.97;
+    el.style.fontSize=(cap/CAP_RATIO).toFixed(3)+"px";
+    L=el.getComputedTextLength();
+    if(L<=maxW) break;
+    cap=Math.max(2.6, cap*maxW/L);
+  }
+}
+
+function renderChips(){
+  var h="";
+  SLOTS.forEach(function(s){
+    var f=S.fil[s.key];
+    h+='<span class="chip"><i style="background:'+esc(f.hex)+'"></i><b>'+esc(f.name)+'</b></span>';
+  });
+  $("chips").innerHTML=h;
+}
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+/* ---------- layout cards ---------- */
+function layoutGlyph(id){
+  var a='stroke="currentColor" fill="none" stroke-width="1.4" stroke-linecap="round"';
+  var base='<svg class="glyph" viewBox="0 0 64 40" aria-hidden="true" style="color:var(--muted)">'+
+    '<circle cx="32" cy="22" r="12" '+a+'/>';
+  if(id==="stacked") base+='<path d="M14 11 A22 22 0 0 1 50 11" '+a+'/><path d="M17 15.5 A19 19 0 0 1 47 15.5" '+a+'/><path d="M22 36 A16 16 0 0 0 42 36" '+a+'/>';
+  if(id==="dial")    base+='<path d="M14 11 A22 22 0 0 1 50 11" '+a+'/><path d="M22 36 A16 16 0 0 0 42 36" '+a+'/><path d="M25 24 h14 M27 28 h10" '+a+'/>';
+  if(id==="single")  base+='<path d="M14 11 A22 22 0 0 1 50 11" '+a+'/><path d="M22 36 A16 16 0 0 0 42 36" '+a+'/>';
+  return base+'</svg>';
+}
+function buildLayouts(){
+  var h="";
+  LAYOUTS.forEach(function(L){
+    h+='<button type="button" class="lay" data-lay="'+L.id+'" aria-pressed="'+(S.layout===L.id?"true":"false")+'">'+
+       '<span class="box">'+layoutGlyph(L.id)+
+       '<span class="nm">'+esc(L.name)+'</span><span class="ds">'+esc(L.desc)+'</span></span></button>';
+  });
+  $("layouts").innerHTML=h;
+  Array.prototype.forEach.call($("layouts").querySelectorAll(".lay"),function(b){
+    b.addEventListener("click",function(){
+      S.layout=b.getAttribute("data-lay");
+      Array.prototype.forEach.call($("layouts").querySelectorAll(".lay"),function(o){
+        o.setAttribute("aria-pressed", o===b ? "true":"false"); });
+      buildFields(); render();
+    });
+  });
+}
+function buildFields(){
+  var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0], h="";
+  L.fields.forEach(function(k){
+    h+='<div class="f"><label for="x_'+k+'">'+esc(L.labels[k])+
+       '<span class="cnt" id="c_'+k+'"></span></label>'+
+       '<input type="text" id="x_'+k+'" value="'+esc(S[k])+'" maxlength="'+(LIMITS[k]+10)+'" spellcheck="false"></div>';
+  });
+  $("fields").innerHTML=h;
+  L.fields.forEach(function(k){
+    var el=$("x_"+k);
+    el.addEventListener("input",function(){
+      S[k]= k==="year" ? el.value : el.value.toUpperCase();
+      if(k!=="year" && el.value!==S[k]){ var p=el.selectionStart; el.value=S[k]; el.setSelectionRange(p,p); }
+      count(k); render();
+    });
+    count(k);
+  });
+}
+function count(k){
+  var c=$("c_"+k); if(!c) return;
+  var n=String(S[k]||"").length;
+  c.textContent=n+" / "+LIMITS[k];
+  c.className="cnt"+(n>LIMITS[k]?" over":"");
+}
+
+/* ---------- filament slots + picker ---------- */
+var pickTarget=null;
+function buildSlots(){
+  var h="";
+  SLOTS.forEach(function(s){
+    var f=S.fil[s.key];
+    h+='<div class="slot"><span class="sw" id="sw_'+s.key+'" style="background:'+esc(f.hex)+'"></span>'+
+       '<span class="meta"><span class="role">'+esc(s.role)+'</span>'+
+       '<span class="val" id="vl_'+s.key+'">'+esc(f.name)+' <span>'+esc(f.series)+' · '+esc(f.hex)+'</span></span></span>'+
+       '<button type="button" data-slot="'+s.key+'">Change</button></div>';
+  });
+  $("slots").innerHTML=h;
+  Array.prototype.forEach.call($("slots").querySelectorAll("button"),function(b){
+    b.addEventListener("click",function(){ openPicker(b.getAttribute("data-slot")); });
+  });
+}
+function refreshSlot(k){
+  var f=S.fil[k];
+  $("sw_"+k).style.background=f.hex;
+  $("vl_"+k).innerHTML=esc(f.name)+' <span>'+esc(f.series)+' · '+esc(f.hex)+'</span>';
+}
+function openPicker(k){
+  pickTarget=k;
+  var slot=SLOTS.filter(function(s){return s.key===k;})[0];
+  $("pkTitle").textContent="Filament for "+slot.role.toLowerCase();
+  var cur=S.fil[k], h="";
+  PALETTE.forEach(function(grp){
+    h+='<div class="pk-series">'+esc(grp[0])+'</div><div class="pk-grid">';
+    grp[1].forEach(function(c){
+      var on = (cur.series===grp[0] && cur.name===c[0]);
+      h+='<button type="button" class="pk" aria-pressed="'+(on?"true":"false")+
+         '" data-s="'+esc(grp[0])+'" data-n="'+esc(c[0])+'">'+
+         '<i style="background:'+esc(c[1])+'"></i><span class="t"><b>'+esc(c[0])+'</b><span>'+esc(c[1])+'</span></span></button>';
+    });
+    h+='</div>';
+  });
+  $("pkBody").innerHTML=h;
+  Array.prototype.forEach.call($("pkBody").querySelectorAll(".pk"),function(b){
+    b.addEventListener("click",function(){
+      S.fil[pickTarget]=findFil(b.getAttribute("data-s"),b.getAttribute("data-n"));
+      refreshSlot(pickTarget); render(); closePicker();
+    });
+  });
+  if($("picker").showModal) $("picker").showModal(); else $("picker").setAttribute("open","");
+  $("pkBody").scrollTop=0;
+}
+function closePicker(){ var d=$("picker"); if(d.close) d.close(); else d.removeAttribute("open"); }
+$("pkClose").addEventListener("click",closePicker);
+
+/* ---------- crest upload ---------- */
+var pendingFile=null;
+function acceptFile(file){
+  if(!file) return;
+  if(!/^image\/(png|jpeg|svg\+xml|webp)$/.test(file.type)){
+    $("logoHelp").textContent="That file type won't work here — PNG, JPEG, WebP or SVG only.";
+    $("logoHelp").className="warn"; return;
+  }
+  if(file.size>20*1024*1024){
+    $("logoHelp").textContent="That file is over the 20 MB limit."; return;
+  }
+  if(S.logoUrl && S.logoUrl.indexOf("blob:")===0) URL.revokeObjectURL(S.logoUrl);
+  pendingFile=file;
+  S.logoUrl=URL.createObjectURL(file);
+  S.logoId=null; S.logoName=file.name;
+  $("logoName").textContent=file.name;
+  $("logoHelp").textContent=Math.round(file.size/1024)+" KB · shown in the medallion";
+  $("logoHelp").className="";
+  $("logoPrev").innerHTML='<img alt="" src="'+esc(S.logoUrl)+'">';
+  $("logoClear").hidden=false;
+  render();
+}
+$("logoBtn").addEventListener("click",function(){ $("logoFile").click(); });
+$("logoFile").addEventListener("change",function(e){ acceptFile(e.target.files[0]); });
+$("logoClear").addEventListener("click",function(){
+  if(S.logoUrl && S.logoUrl.indexOf("blob:")===0) URL.revokeObjectURL(S.logoUrl);
+  pendingFile=null; S.logoUrl=null; S.logoId=null; S.logoName=null;
+  $("logoPrev").innerHTML='<span>NONE</span>';
+  $("logoName").textContent="No crest yet";
+  $("logoHelp").textContent="Drop a PNG, JPEG or SVG here, or choose a file. It is sent with the request.";
+  $("logoClear").hidden=true; $("logoFile").value=""; render();
+});
+["dragenter","dragover"].forEach(function(ev){
+  $("drop").addEventListener(ev,function(e){ e.preventDefault(); $("drop").classList.add("on"); });
+});
+["dragleave","drop"].forEach(function(ev){
+  $("drop").addEventListener(ev,function(e){ e.preventDefault(); $("drop").classList.remove("on"); });
+});
+$("drop").addEventListener("drop",function(e){
+  if(e.dataTransfer && e.dataTransfer.files) acceptFile(e.dataTransfer.files[0]);
+});
+
+/* ---------- submit through Netlify Forms ---------- */
+function msg(t,cls){ var m=$("sendMsg"); m.textContent=t; m.className="submitmsg"+(cls?" "+cls:""); }
+function specText(){
+  var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0], out=[];
+  out.push("Layout: "+L.name);
+  L.fields.forEach(function(k){ if(S[k]) out.push(L.labels[k]+": "+S[k]); });
+  SLOTS.forEach(function(s){
+    var f=S.fil[s.key];
+    out.push(s.role+": "+f.name+" ("+f.series+" "+f.hex+")");
+  });
+  if(S.logoName) out.push("Crest file: "+S.logoName);
+  return out.join("\n");
+}
+function syncHidden(){
+  var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0];
+  var map={layout:L.name, crown_line_1:"", crown_line_2:"", lower_arc:"",
+           dial_text:"", dial_line_1:"", dial_line_2:""};
+  if(S.layout==="stacked"){ map.crown_line_1=S.topA; map.crown_line_2=S.topB; }
+  else { map.crown_line_1=S.topA; }
+  map.lower_arc=S.bottom; map.dial_text=S.year;
+  if(S.layout==="dial"){ map.dial_line_1=S.dialA; map.dial_line_2=S.dialB; }
+  map.filament_housing=S.fil.body.series+" "+S.fil.body.name+" "+S.fil.body.hex;
+  map.filament_accents=S.fil.accent.series+" "+S.fil.accent.name+" "+S.fil.accent.hex;
+  map.filament_dial=S.fil.dial.series+" "+S.fil.dial.name+" "+S.fil.dial.hex;
+  map.filament_numerals=S.fil.numeral.series+" "+S.fil.numeral.name+" "+S.fil.numeral.hex;
+  map.spec=specText();
+  Object.keys(map).forEach(function(k){ var el=$("h_"+k); if(el) el.value=map[k]; });
+}
+$("orderForm").addEventListener("submit",function(e){
+  var email=$("fEmail").value.trim(), club=$("fClub").value.trim();
+  if(!club){ e.preventDefault(); msg("Add the club or organisation so the request can be matched up.","bad"); $("fClub").focus(); return; }
+  if(!email || email.indexOf("@")<1){ e.preventDefault(); msg("Add an email so there's a way to reply.","bad"); $("fEmail").focus(); return; }
+  syncHidden();
+  msg("Sending\u2026");
+  $("sendBtn").disabled=true;
+  /* let the browser post it: Netlify takes the multipart body, crest included */
+});
+
+/* ---------- go ---------- */
+$("pBody").setAttribute("d",G.body);
+$("pAccent").setAttribute("d",G.accent);
+$("pNum").setAttribute("d",G.numerals);
+buildLayouts(); buildFields(); buildSlots(); render();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Request received</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{--bg:#F1F2F4;--surface:#FFFFFF;--ink:#191C20;--muted:#6B737C;--rule:#DBDFE4;--brass:#7A7040;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141619;--surface:#1C1F24;--ink:#E9EBEE;--muted:#8B939C;--rule:#2C3138;--brass:#BCAF6E;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141619;--surface:#1C1F24;--ink:#E9EBEE;--muted:#8B939C;--rule:#2C3138;--brass:#BCAF6E;color-scheme:dark}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
+  display:grid;place-items:center;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:38px 34px;
+  max-width:460px;box-shadow:0 1px 2px rgba(17,20,24,.06),0 8px 24px rgba(17,20,24,.06)}
+.eyebrow{color:var(--brass);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin:0 0 10px}
+h1{font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:28px;margin:0 0 12px;line-height:1.15}
+p{color:var(--muted);font-size:15px;line-height:1.55;margin:0 0 10px}
+a{color:var(--brass);font-weight:600}
+</style>
+</head>
+<body>
+  <div class="card">
+    <p class="eyebrow">Clock Request Desk</p>
+    <h1>Request received</h1>
+    <p>Your spec and crest are with the shop. You'll get a reply at the address you gave, usually within a couple of days.</p>
+    <p><a href="/">Build another clock</a></p>
+  </div>
+</body>
+</html>
