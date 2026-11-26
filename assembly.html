@@ -18,6 +18,8 @@
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip}
 header{padding:20px max(4vw,16px) 8px}
+.backlink{display:inline-flex;align-items:center;min-height:44px;margin:0 0 4px;color:var(--green);font-weight:600;text-decoration:none}
+.embed .backlink{display:none}
 h1{font-size:clamp(26px,3.4vw,40px);line-height:1.05;margin:0 0 4px;font-weight:800;text-wrap:balance}
 header p{margin:0;color:var(--muted);max-width:70ch}
 main{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:20px;padding:12px max(4vw,16px) 28px}
@@ -48,10 +50,15 @@ li small{display:block;color:var(--muted);font-size:13.5px;line-height:1.4}
 </head>
 <body>
 <header>
+  <a class="backlink" id="backLink" href="./">← Back to the order form</a>
   <h1>How a Club Clocks post clock goes together</h1>
   <div class="ver" role="group" aria-label="Clock size"><button id="v516" class="on" aria-pressed="true">Original · 516 mm (20.3 in)</button><button id="v363" aria-pressed="false">Small · 363 mm (14.3 in)</button></div>
   <p>Two sizes, same steps: pick a size, then follow it bottom to top and through a battery change. Drag to turn the clock, scroll or pinch to zoom, or pick any step on the right.</p>
 </header>
+<script>
+/* inside the order page's viewer the page supplies its own Back button */
+if (/[?&]embed=1/.test(location.search) || window.self !== window.top) document.documentElement.classList.add('embed');
+</script>
 <main>
   <section>
     <div class="viewer" id="viewer">
