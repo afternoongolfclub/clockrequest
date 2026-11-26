@@ -345,7 +345,7 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
 
       <section class="card">
         <div class="cardhead"><span class="step">04</span><h2>Crest</h2></div>
-        <p class="cardnote">Goes in the medallion at the top, as single-colour raised relief in the accent filament. The preview shows exactly what prints: dark parts of your image stand up in gold, light or transparent parts stay flat. A bold silhouette carries far better than fine detail or gradients.</p>
+        <p class="cardnote">Goes in the medallion at the top, as single-color raised relief in the accent filament. The preview shows exactly what prints: dark parts of your image stand up in gold, light or transparent parts stay flat. A bold silhouette carries far better than fine detail or gradients.</p>
         <div class="drop" id="drop">
           <div class="prev" id="logoPrev"><span>NONE</span></div>
           <div class="txt">
@@ -358,7 +358,7 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
         </div>
         <div class="crestopts" id="crestOpts" hidden>
           <button class="btn ghost" type="button" id="crestInvert">Swap raised and flat</button>
-          <label class="crestcut">Raise lighter colours
+          <label class="crestcut">Raise lighter colors
             <input type="range" id="crestCut" min="0.15" max="0.85" step="0.05" value="0.5" aria-describedby="crestNote"></label>
           <span class="crestnote" id="crestNote"></span>
         </div>
@@ -366,7 +366,7 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
 
       <section class="card">
         <div class="cardhead"><span class="step">05</span><h2>Filament</h2></div>
-        <p class="cardnote">Real Bambu Lab colours, one per AMS slot. Hex values are Bambu's own; screens still flatter metallics, so order a sample before a long run.</p>
+        <p class="cardnote">Real Bambu Lab colors, one per AMS slot. Hex values are Bambu's own; screens still flatter metallics, so order a sample before a long run.</p>
         <div class="slots" id="slots"></div>
       </section>
 
@@ -426,8 +426,8 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
       <section class="card">
         <div class="cardhead"><span class="step">01</span><h2>Filament</h2></div>
         <div class="zoomsw costsize" id="costSize" role="group" aria-label="Clock size for these weights">
-          <button type="button" data-k="516" aria-pressed="true">516 mm</button>
-          <button type="button" data-k="363" aria-pressed="false">363 mm</button>
+          <button type="button" data-k="516" aria-pressed="true">516 mm (20.3 in)</button>
+          <button type="button" data-k="363" aria-pressed="false">363 mm (14.3 in)</button>
         </div>
         <p class="cardnote">Weights are per clock for the size picked above, worked out from the P1S plate files as a 1 mm skin plus 15% infill. When you slice a plate, replace them with what Bambu Studio reports. Prices per kilo are shared by both sizes.</p>
         <div class="costgrid" id="costFil"></div>
@@ -445,7 +445,7 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
         <div class="row2">
           <div class="f"><label for="cBatch">Clocks per plate run</label>
             <input type="number" id="cBatch" min="1" max="12" step="1">
-            <span class="hint">Printing two clocks' parts on the same plates shares the colour-change purge between them.</span></div>
+            <span class="hint">Printing two clocks' parts on the same plates shares the color-change purge between them.</span></div>
           <div class="f"><label for="cScrap">Scrap allowance %</label>
             <input type="number" id="cScrap" min="0" max="60" step="1"></div>
         </div>
@@ -463,7 +463,7 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
   </div>
 
   <footer class="foot">
-    Filament names and hex values are Bambu Lab's published figures. The preview approximates printed appearance; it is not a colour proof.
+    Filament names and hex values are Bambu Lab's published figures. The preview approximates printed appearance; it is not a color proof.
   </footer>
 </div>
 
@@ -519,6 +519,9 @@ var TOP_C=[0.0,-7.10], TOP_RBASE=61.14, TOP_CAP=7.16, TOP_T0=126.5, TOP_T1=53.5;
 var BOT_C=[0.06,-12.63], BOT_RBASE=57.97, BOT_CAP=5.89, BOT_T0=-114.0, BOT_T1=-66.0;
 var STACK_ROUT=65.55, STACK_RIN=60.55, STACK_CAP=4.0;
 var CAP_RATIO=0.667;          /* Caladea cap height / em */
+/* every size a customer sees is shown in mm and inches */
+function inch(mm){ var v=mm/25.4; return v>=10 ? v.toFixed(1) : v>=1 ? v.toFixed(1) : v.toFixed(2); }
+function mmIn(mm,dp){ return (dp!=null?(+mm).toFixed(dp):String(mm))+" mm ("+inch(+mm)+" in)"; }
 var TRACK=0.25;               /* letter tracking, mm */
 var CAP_FLOOR=3.1;            /* below this the relief gets fragile at 0.4 mm nozzle */
 var DIAL_CZ=5.58;             /* dial centre in SVG units */
@@ -531,8 +534,8 @@ var SLOTS=[
 ];
 
 var STYLES=[
-  {id:"post516", name:"Post clock · 516 mm", desc:"Free-standing, 516 mm tall, 103 mm dial."},
-  {id:"post363", name:"Post clock · 363 mm", desc:"Free-standing, 363 mm tall, 83 mm dial."}
+  {id:"post516", name:"Post clock · 516 mm (20.3 in)", desc:"Free-standing, 516 mm (20.3 in) tall, 103 mm (4.1 in) dial."},
+  {id:"post363", name:"Post clock · 363 mm (14.3 in)", desc:"Free-standing, 363 mm (14.3 in) tall, 83 mm (3.3 in) dial."}
 ];
 var POST_LAYOUT={id:"post", fields:["topA","dial","bottom"], labels:{topA:"Club name (arched over the dial)", dial:"Line on the dial, under the XII (optional)", bottom:"Line under the dial"}};
 var PG=null;   /* post clock front-view geometry, loaded from post_geom.json */
@@ -693,10 +696,10 @@ function renderPost(){
   }
   $("postPic").style.setProperty("--zs",zs.toFixed(3));
   $("zoomWrap").classList.toggle("zoomed",!!S.zoom);
-  $("dimNote").textContent="Post clock "+g.height+" mm tall · head "+g.head_w+" mm wide · dial Ø"+g.dial_d+" mm";
+  $("dimNote").textContent="Post clock "+mmIn(g.height)+" tall · head "+mmIn(g.head_w)+" wide · dial Ø"+mmIn(g.dial_d);
   $("howTo").href="assembly.html?size="+sizeKey();
 }
-/* ---------- rendered picture, recoloured live ----------
+/* ---------- rendered picture, recolored live ----------
    shade_*.png: the clock rendered in white under studio light (alpha = silhouette).
    mask_*.png:  which filament each pixel is (red housing, green accents, blue dial, black numerals/hands). */
 var PIC={}, picWant=null;
@@ -712,7 +715,7 @@ function picData(key){
 }
 function hexRGB(h){ h=h.replace("#",""); return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
 function shadeHex(h,k){ var c=hexRGB(h); return "#"+c.map(function(v){ v=Math.max(0,Math.min(255,Math.round(v*k))); return (v<16?"0":"")+v.toString(16); }).join(""); }
-function recolour(d,cols,x){
+function recolor(d,cols,x){
     var out=x.createImageData(d.w,d.h), o=out.data, sh=d.sh, mk=d.mk;
     var C=cols.map(hexRGB), GAIN=1.04/255, i, a, r, g, b, k, t, f;
     for(i=0;i<o.length;i+=4){
@@ -742,7 +745,7 @@ function paintPic(key,cols){
     if(want!==picWant) return;
     var cv=$("postCanvas"); if(cv.width!==d.w||cv.height!==d.h){ cv.width=d.w; cv.height=d.h; }
     var x=cv.getContext("2d");
-    x.putImageData(recolour(d,cols,x),0,0);
+    x.putImageData(recolor(d,cols,x),0,0);
     var ld=$("picLoad"); if(ld) ld.remove();
     paintCards(cols);
   }).catch(function(){ var ld=$("picLoad"); if(ld) ld.textContent="Preview unavailable"; });
@@ -757,7 +760,7 @@ function render(){
     if(caps.b&&caps.b<=CAP_FLOOR+0.05) tight.push("lower line");
     if(caps.dTooLong) tight.push("dial line");
     $("capNote").textContent = tight.length ? "Too long: " + tight.join(" and ") + (tight.length>1?" are":" is") + " at the print floor"
-      : "Lettering " + (caps.t1?caps.t1.toFixed(1):"–") + " mm / " + (caps.b?caps.b.toFixed(1):"–") + " mm cap"+(caps.d?" · dial "+caps.d.toFixed(1)+" mm":"");
+      : "Lettering " + (caps.t1?mmIn(caps.t1,1):"–") + " / " + (caps.b?mmIn(caps.b,1):"–") + " cap"+(caps.d?" · dial "+mmIn(caps.d,1):"");
     $("capNote").style.color = tight.length ? "var(--warn)" : "";
   }
 }
@@ -826,7 +829,7 @@ var CARD_H=(window.innerWidth<=520?136:168), cardKey="";
 function clockFig(id){
   var key=id==="post363"?"363":"516";
   return '<span class="clockfig" aria-hidden="true"><canvas data-k="'+key+'"></canvas>'+
-         '<span class="hline" data-k="'+key+'"><b>'+key+' mm</b></span></span>';
+         '<span class="hline" data-k="'+key+'"><b>'+key+' mm<br>'+inch(+key)+' in</b></span></span>';
 }
 function paintCards(cols){
   var ck=cols.join(); if(ck===cardKey) return; cardKey=ck;
@@ -835,7 +838,7 @@ function paintCards(cols){
     Array.prototype.forEach.call(document.querySelectorAll(".clockfig canvas"),function(cv){
       var k=cv.getAttribute("data-k"), d=R[k], rw=picRows(d);
       cv.width=d.w; cv.height=d.h;
-      var x=cv.getContext("2d"); x.putImageData(recolour(d,cols,x),0,0);
+      var x=cv.getContext("2d"); x.putImageData(recolor(d,cols,x),0,0);
       /* crop to the clock's own rows, keep the shared scale */
       cv.style.height=(d.h*sc).toFixed(1)+"px"; cv.style.width=(d.w*sc).toFixed(1)+"px";
       cv.style.marginTop=(-rw.top*sc).toFixed(1)+"px"; cv.style.marginBottom=(-(d.h-1-rw.bot)*sc).toFixed(1)+"px";
@@ -1066,11 +1069,11 @@ function crestNote(){
   var n=$("crestNote");
   if(!CREST.mask){ n.textContent="Nothing in this image would stand up in gold. Try Swap raised and flat."; n.className="crestnote warn"; return; }
   var size=(S.style==="post363"?"363":"516"), q=crestSurvive(size), pct=Math.round(q.pct*100), bad=[];
-  if(q.stroke>0.6) bad.push("parts of it are thinner than a 0.5 mm line and may print thin or drop out");
-  else if(pct<93) bad.push("only "+pct+"% of the detail holds at a 0.5 mm line, so fine parts will soften or drop out");
-  if(q.gaps>1.5) bad.push("some gaps are narrower than 0.4 mm and may fill in");
-  n.textContent = bad.length ? "At "+CREST_MM[size]+" mm wide, "+bad.join("; ")+". A bolder version will print better."
-    : "Prints cleanly at "+CREST_MM[size]+" mm wide: "+pct+"% of the detail holds at a 0.5 mm line.";
+  if(q.stroke>0.6) bad.push("parts of it are thinner than a 0.5 mm (0.02 in) line and may print thin or drop out");
+  else if(pct<93) bad.push("only "+pct+"% of the detail holds at a 0.5 mm (0.02 in) line, so fine parts will soften or drop out");
+  if(q.gaps>1.5) bad.push("some gaps are narrower than 0.4 mm (0.02 in) and may fill in");
+  n.textContent = bad.length ? "At "+mmIn(CREST_MM[size])+" wide, "+bad.join("; ")+". A bolder version will print better."
+    : "Prints cleanly at "+mmIn(CREST_MM[size])+" wide: "+pct+"% of the detail holds at a 0.5 mm (0.02 in) line.";
   n.className="crestnote"+(bad.length?" warn":"");
   n.setAttribute("data-q", JSON.stringify(q));
   var pv=$("logoPrev"); var u=crestTinted("#1B1F24"); if(u) pv.innerHTML='<img class="mask" alt="" src="'+u+'">';
@@ -1288,7 +1291,7 @@ async function loadInbox(){
         '<h4>'+esc(r.club||"Untitled")+' · '+esc(String(r.qty||1))+
           (web?' <span class="src">Website</span>':'')+'</h4>'+
         '<div class="when">'+esc(when)+(web&&r.requestId?' · '+esc(r.requestId):'')+'</div><dl>'+
-        '<dt>Clock</dt><dd>'+esc(({wall:"Club clock",post516:"Post clock 516 mm",post363:"Post clock 363 mm"})[r.style||"wall"]||r.style)+'</dd>'+
+        '<dt>Clock</dt><dd>'+esc(({wall:"Club clock",post516:"Post clock 516 mm (20.3 in)",post363:"Post clock 363 mm (14.3 in)"})[r.style||"wall"]||r.style)+'</dd>'+
         '<dt>Layout</dt><dd>'+esc(r.layout||"")+'</dd>'+
         '<dt>Crown</dt><dd>'+esc(l.topA||"")+(l.topB?" / "+esc(l.topB):"")+'</dd>'+
         '<dt>Lower</dt><dd>'+esc(l.bottom||"")+'</dd>'+
@@ -1320,16 +1323,16 @@ async function loadInbox(){
 /* ---------- costing (admin only) ---------- */
 /* Grams per finished post clock, worked out from the P1S plate files (standard set: 5-piece column
    and gold trim, one of each part, no spare hands): a 1 mm skin plus 15% infill at 1.24 g/cm3.
-   Purge counts the colour changes on the head, dial, pedestal and base with the project's flush
+   Purge counts the color changes on the head, dial, pedestal and base with the project's flush
    volumes. Replace any figure with what Bambu Studio reports once you slice. */
 var COST={
-  sizes:{"516":{label:"516 mm", g:{body:381.0, accent:19.8, dial:24.5, black:1.9, purge:42.3}},
-         "363":{label:"363 mm", g:{body:189.4, accent:8.4,  dial:16.4, black:1.5, purge:31.9}}},
+  sizes:{"516":{label:"516 mm (20.3 in)", g:{body:381.0, accent:19.8, dial:24.5, black:1.9, purge:42.3}},
+         "363":{label:"363 mm (14.3 in)", g:{body:189.4, accent:8.4,  dial:16.4, black:1.5, purge:31.9}}},
   fil:[{k:"body",  label:"Housing, post and base", rate:20},
        {k:"accent",label:"Gold trim and lettering", rate:20},
        {k:"dial",  label:"Dial", rate:20},
        {k:"black", label:"Numerals and hands", rate:20},
-       {k:"purge", label:"Colour-change purge", rate:20}],
+       {k:"purge", label:"Color-change purge", rate:20}],
   other:[{k:"mech", label:"Clock movement (MH011)", v:3.00},
          {k:"batt", label:"Battery",                v:0.35},
          {k:"ballast",label:"Ballast (steel BBs or sand)", v:0.00},
@@ -1364,13 +1367,13 @@ function costRender(){
     if(el) el.textContent=money((G[r.k]||0)*r.rate/1000/d);
   });
   $("batchNote").textContent = COST.batch>1
-    ? "Purge is spent per colour-change layer, not per part, so "+COST.batch+" clocks a run split it "+COST.batch+" ways: "
+    ? "Purge is spent per color-change layer, not per part, so "+COST.batch+" clocks a run split it "+COST.batch+" ways: "
       +((G.purge||0)/COST.batch).toFixed(0)+" g each."
     : "One clock a run carries the whole purge by itself.";
   var cols=["516","363"].map(function(k){ return {k:k, c:costCalc(k)}; });
   function row(lbl,fn,cls){ return '<div class="r'+(cls?" "+cls:"")+'"><span>'+lbl+'</span>'+cols.map(function(x){ return '<b>'+fn(x.c)+'</b>'; }).join("")+'</div>'; }
   $("costOut").innerHTML=
-    '<div class="r hdr"><span></span><b>516 mm</b><b>363 mm</b></div>'+
+    '<div class="r hdr"><span></span><b>516 mm<br>20.3 in</b><b>363 mm<br>14.3 in</b></div>'+
     row("Filament",function(c){ return money(c.fil)+'<small>'+c.grams.toFixed(0)+' g</small>'; })+
     row("Everything else",function(c){ return money(c.other); })+
     row("Scrap allowance",function(c){ return money(c.scrap); })+

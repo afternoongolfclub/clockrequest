@@ -10,7 +10,7 @@
 /* VOICE: a calm, exact assembly sheet from a clock maker - one step at a time.
    IDEA: the printed exploded-view instruction card that ships in the box.
    PICTURE: the real clock meshes in 3D, parts flying into place, large.
-   COLOUR and TYPE: paper white / night ink, club green #1f5a43 lead, gold #c9a24f accent; Archivo.
+   COLOR and TYPE: paper white / night ink, club green #1f5a43 lead, gold #c9a24f accent; Archivo.
    LAYOUT: viewer left (dominant), numbered steps right; stacked on phones. */
 :root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f1714);--ink:light-dark(#14211b,#e8efe9);--muted:light-dark(#5a6b62,#9fb2a6);
 --green:light-dark(#1f5a43,#7fc6a2);--gold:#c9a24f;--line:light-dark(#dfe6e1,#22312a);--panel:light-dark(#f4f7f5,#152019)}
@@ -49,7 +49,7 @@ li small{display:block;color:var(--muted);font-size:13.5px;line-height:1.4}
 <body>
 <header>
   <h1>How a Club Clocks post clock goes together</h1>
-  <div class="ver" role="group" aria-label="Clock size"><button id="v516" class="on" aria-pressed="true">Original · 516 mm</button><button id="v363" aria-pressed="false">Small · 363 mm</button></div>
+  <div class="ver" role="group" aria-label="Clock size"><button id="v516" class="on" aria-pressed="true">Original · 516 mm (20.3 in)</button><button id="v363" aria-pressed="false">Small · 363 mm (14.3 in)</button></div>
   <p>Two sizes, same steps: pick a size, then follow it bottom to top and through a battery change. Drag to turn the clock, scroll or pinch to zoom, or pick any step on the right.</p>
 </header>
 <main>
@@ -108,7 +108,7 @@ const STEPS = [
  {t:"Back together", d:"Dial back in, tab at 12. Then push and twist the bezel clockwise until it clicks.", focus:["head","front"],
   m:[{p:["dial","dial_ink","movement","hour_hand","minute_hand"], from:[0,0,120], to:[0,0,0], t1:.45},
      {p:["bezel","bezel_gold"], from:[0,0,70], to:[0,0,0], t0:.45, t1:.75, rotFrom:25, rotTo:0, r0:.75, r1:1}]},
- {t:"Done", d:"About {H} mm tall. Turn it around and admire the work.", focus:["base","column","head","front"], m:[]}
+ {t:"Done", d:"About {H} tall. Turn it around and admire the work.", focus:["base","column","head","front"], m:[]}
 ];
 const ROT = new Set(["bezel","bezel_gold"]);
 const SPIN = new Set(['head','head_gold']);   // turn about the vertical axis of the neck twist-lock
@@ -142,7 +142,7 @@ let version = '516'; const cache = {};
 async function load(v){
   if (!cache[v]) cache[v] = { man: await (await fetch(`manifest_${v}.json`)).json(), b64: (await (await fetch(`meshes_${v}.b64.txt`)).text()).trim() };
   for (const n in parts){ parts[n].grp.traverse(o => { if (o.geometry) o.geometry.dispose(); }); scene.remove(parts[n].grp); delete parts[n]; }
-  manifest = cache[v].man; window.__H = manifest.height_mm; const b64 = cache[v].b64;
+  manifest = cache[v].man; window.__H = manifest.height_mm + ' mm (' + (manifest.height_mm/25.4).toFixed(1) + ' in)'; const b64 = cache[v].b64;
   const raw = atob(b64), bytes = new Uint8Array(raw.length);
   for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
   const bin = bytes.buffer;

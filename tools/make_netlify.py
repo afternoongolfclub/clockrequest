@@ -108,15 +108,15 @@ function briefText(){
   if(val("fNotes")) o.push("- Notes: "+val("fNotes"));
   o.push("");
   o.push("CLOCK");
-  o.push("- "+styleName()+" (the Huntsville CC post clock model at this size)");
+  o.push("- "+styleName()+" (the standard Club Clocks post clock at this size)");
   o.push("");
   o.push("LETTERING (raised gold relief in the accent filament)");
-  o.push("- Arched over the dial: "+(S.topA||"(blank)")+(caps.t1?"  [preview cap height "+caps.t1.toFixed(1)+" mm]":""));
-  o.push("- On the dial, under the XII: "+(S.dial||"(none)")+(caps.d?"  [preview cap height "+caps.d.toFixed(1)+" mm]":""));
-  o.push("- Under the dial: "+(S.bottom||"(blank)")+(caps.b?"  [preview cap height "+caps.b.toFixed(1)+" mm]":""));
+  o.push("- Arched over the dial: "+(S.topA||"(blank)")+(caps.t1?"  [preview cap height "+mmIn(caps.t1,1)+"]":""));
+  o.push("- On the dial, under the XII: "+(S.dial||"(none)")+(caps.d?"  [preview cap height "+mmIn(caps.d,1)+"]":""));
+  o.push("- Under the dial: "+(S.bottom||"(blank)")+(caps.b?"  [preview cap height "+mmIn(caps.b,1)+"]":""));
   o.push("");
   o.push("CREST");
-  o.push(S.logoName ? "- Filed as requests/"+ORDER_ID+"/crest.png: the one-colour version the customer approved in the preview"+(CREST.invert?" (raised and flat swapped)":"")+". Their original ("+S.logoName+") is beside it as crest_original.*."
+  o.push(S.logoName ? "- Filed as requests/"+ORDER_ID+"/crest.png: the one-color version the customer approved in the preview"+(CREST.invert?" (raised and flat swapped)":"")+". Their original ("+S.logoName+") is beside it as crest_original.*."
                     : "- No crest was sent. Ask me before printing; do not reuse another club's crest.");
   o.push("");
   o.push("FILAMENT (one per AMS slot)");
@@ -127,9 +127,9 @@ function briefText(){
     crest:S.logoName||"", ams:[f.body.hex,f.accent.hex,f.dial.hex,f.numeral.hex], printer:"p1s"}));
   o.push("");
   o.push("DELIVER");
-  o.push("- Use the post clock pipeline (private repo afternoongolfclub/clock-pipeline, order_build.py): it writes Bambu Studio 3MF plates for the P1S with AMS, colours in slots 1-4.");
+  o.push("- Use the post clock pipeline (private repo afternoongolfclub/clock-pipeline, order_build.py): it writes Bambu Studio 3MF plates for the P1S with AMS, colors in slots 1-4.");
   o.push("- If it stops on a lettering warning, tell me the cap heights rather than shortening the club's wording yourself.");
-  o.push("- Flag anything that will not print cleanly at a 0.4 mm nozzle before I slice it.");
+  o.push("- Flag anything that will not print cleanly at a 0.4 mm (0.016 in) nozzle before I slice it.");
   o.push("- If requests/"+ORDER_ID+"/ is missing, the crest is the file linked in the request email; attach it to the chat.");
   return o.join("\n");
 }
@@ -153,7 +153,7 @@ $("orderForm").addEventListener("submit",function(e){
   syncHidden();
   msg("Sending…");
   $("sendBtn").disabled=true;
-  /* attach the one-colour print version of the crest (what the preview shows) next to the original */
+  /* attach the one-color print version of the crest (what the preview shows) next to the original */
   if(S.logoName && CREST.mask && !printReady){
     e.preventDefault();
     crestPrintBlob(function(b){

@@ -6,7 +6,7 @@
  * temporary upload link before that link expires, and writes
  *
  *   requests/<order_id>/order.json   settings order_build.py reads (crest path filled in)
- *   requests/<order_id>/crest.png    the one-colour crest the customer approved in the preview
+ *   requests/<order_id>/crest.png    the one-color crest the customer approved in the preview
  *   requests/<order_id>/crest_original.<ext>  their upload, byte for byte
  *   requests/<order_id>/brief.txt    the build brief from the email
  *
@@ -64,7 +64,7 @@ export async function fileRequest(payload, token, fetchImpl = fetch) {
   const club = order.club_name || data.club || 'unknown club';
   const files = [];
 
-  // crest_print: the one-colour image the customer saw in the preview (what prints).
+  // crest_print: the one-color image the customer saw in the preview (what prints).
   // crest: their original upload, kept beside it for reference.
   async function grab(field) {
     const info = crestInfo(field);

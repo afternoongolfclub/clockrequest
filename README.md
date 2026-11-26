@@ -5,7 +5,7 @@ The order site for Club Clocks (formerly the Clock Request Desk).
 Static order page for custom branded golf-club clocks, printed on a Bambu Lab P1S.
 
 Visitors choose a layout, set the lettering, upload a crest and pick Bambu Lab
-filament colours. The preview is drawn from the real print geometry — the
+filament colors. The preview is drawn from the real print geometry — the
 silhouette, accents and dial numerals are traced from the production meshes,
 and the arc text sits on the measured radii (61.14 mm at the crown, 57.97 mm
 below), shrinking to fit the way the plate builder does. It stops at a 3.1 mm
