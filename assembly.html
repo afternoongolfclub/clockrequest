@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Post Clock Assembly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a calm, exact assembly sheet from a clock maker - one step at a time.
+   IDEA: the printed exploded-view instruction card that ships in the box.
+   PICTURE: the real clock meshes in 3D, parts flying into place, large.
+   COLOUR and TYPE: paper white / night ink, club green #1f5a43 lead, gold #c9a24f accent; Archivo.
+   LAYOUT: viewer left (dominant), numbered steps right; stacked on phones. */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0f1714);--ink:light-dark(#14211b,#e8efe9);--muted:light-dark(#5a6b62,#9fb2a6);
+--green:light-dark(#1f5a43,#7fc6a2);--gold:#c9a24f;--line:light-dark(#dfe6e1,#22312a);--panel:light-dark(#f4f7f5,#152019)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip}
+header{padding:20px max(4vw,16px) 8px}
+h1{font-size:clamp(26px,3.4vw,40px);line-height:1.05;margin:0 0 4px;font-weight:800;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:70ch}
+main{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:20px;padding:12px max(4vw,16px) 28px}
+.viewer{position:relative;min-height:560px;height:72vh;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%,light-dark(#ffffff,#1b2a23),light-dark(#e9efeb,#0b120f))}
+.viewer canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block}
+.cap{position:absolute;left:14px;right:14px;bottom:14px;background:color-mix(in srgb,var(--bg) 88%,transparent);border:1px solid var(--line);border-radius:12px;padding:12px 14px;backdrop-filter:blur(6px)}
+.cap b{color:var(--green)}
+.cap .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--green);color:var(--bg);font-weight:800;margin-right:8px;font-size:14px}
+.load{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+button{font:600 15px Archivo,sans-serif;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+button.primary{background:var(--green);color:var(--bg);border-color:var(--green)}
+button:focus-visible,label:focus-within{outline:3px solid var(--gold);outline-offset:2px}
+label{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:var(--muted);font-size:15px}
+ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+li{border-bottom:1px solid var(--line)}
+li button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;width:100%;padding:10px 6px;cursor:pointer;border-radius:8px}
+li button:focus-visible{outline:3px solid var(--gold)}
+li .k{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--green);color:var(--green);font-weight:800;font-size:13px}
+li.done .k{background:var(--green);color:var(--bg)}
+li.now{background:var(--panel)}li.now .k{background:var(--gold);border-color:var(--gold);color:#1a1405}
+li small{display:block;color:var(--muted);font-size:13.5px;line-height:1.4}
+.ver{display:flex;gap:8px;margin:10px 0 8px}.ver button.on{background:var(--green);color:var(--bg);border-color:var(--green)}
+.note{color:var(--muted);font-size:13.5px;margin-top:10px}
+@media(max-width:860px){main{grid-template-columns:minmax(0,1fr)}.viewer{height:62vh;min-height:420px}}
+@media (prefers-reduced-motion:reduce){.cap{backdrop-filter:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>How the Huntsville CC post clock goes together</h1>
+  <div class="ver" role="group" aria-label="Clock size"><button id="v516" class="on" aria-pressed="true">Original · 516 mm</button><button id="v363" aria-pressed="false">Small · 363 mm</button></div>
+  <p>Two sizes, same steps: pick a size, then follow it bottom to top and through a battery change. Drag to turn the clock, scroll or pinch to zoom, or pick any step on the right.</p>
+</header>
+<main>
+  <section>
+    <div class="viewer" id="viewer">
+      <div class="load" id="load">Loading the clock parts…</div>
+      <div class="cap" id="cap" aria-live="polite"></div>
+    </div>
+    <div class="ctrl">
+      <button id="prev" aria-label="Previous step">◀ Back</button>
+      <button id="play" class="primary">Play all</button>
+      <button id="next" aria-label="Next step">Next ▶</button>
+      <button id="reset">Start over</button>
+      <label><input type="checkbox" id="auto" checked> Camera follows</label>
+    </div>
+  </section>
+  <aside>
+    <ol id="steps"></ol>
+    <p class="note">Parts are the real print meshes from the package, shown in their assembled positions.</p>
+  </aside>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+{
+const STEPS = [
+ {t:"Round base", d:"Set the stepped round base on the table, gold ring up.", focus:["base"],
+  m:[{p:["round_base","round_base_gold"], from:[0,70,0]}]},
+ {t:"Ballast", d:"Pour steel shot, BBs or dry sand into the hole in the round boss on top of the base. It fills the hollow inside the base. A small sealed bag of shot works too and won't rattle.", focus:["base"],
+  m:[{p:["round_base","round_base_gold"], from:[0,0,0], to:[0,0,0]}]},
+ {t:"Pedestal onto the base", d:"Hold the pedestal turned a little to the left, lower it over the boss so the two tabs drop into their slots, then twist it right until it clicks and faces front.", focus:["base"],
+  m:[{p:["pedestal","pedestal_band"], from:[0,95,0], t1:.55, spinFrom:40, spinTo:0, r0:.62, r1:1}]},
+ {t:"Gold eave plate", d:"Slide the gold eave plate over the spigot on top of the pedestal.", focus:["base"],
+  m:[{p:["eave"], from:[0,60,0]}]},
+ {t:"Peaked roof", d:"The hipped roof goes on next, over the same spigot.", focus:["base"],
+  m:[{p:["roof"], from:[0,60,0]}]},
+ {t:"Fluted shaft", d:"Hold the shaft turned a little to the left, lower it over the peg so the two tabs drop into their slots, then twist it right until it clicks.", focus:["base","column"],
+  m:[{p:["shaft"], from:[0,130,0], t1:.55, spinFrom:40, spinTo:0, r0:.62, r1:1}]},
+ {t:"Gold band", d:"Drop the gold band over the top of the shaft. It slides down and rests on the shoulder above the lower flutes.", focus:["column"],
+  m:[{p:["band"], from:[0,190,0]}]},
+ {t:"Leaf cup and neck block", d:"Slide the gold leaf cup down over the peg on top of the shaft. Then lower the neck block onto the peg turned a little to the left and twist it right until it clicks and faces front.", focus:["column"],
+  m:[{p:["crown"], from:[0,95,0], t1:.45},{p:["capital"], from:[0,95,0], t0:.2, t1:.68, spinFrom:40, spinTo:0, r0:.72, r1:1}]},
+ {t:"Head onto the neck block", d:"Hold the head turned about a third of a turn to the left, lower it so the two lugs drop into their slots, then twist it to the right until it clicks and faces front. The lugs are different sizes, so it only goes on one way.", focus:["column","head"],
+  m:[{p:["head","head_gold"], from:[0,140,0], t1:.55, spinFrom:35, spinTo:0, r0:.62, r1:1}]},
+ {t:"Movement onto the dial", d:"Seat the Bambu movement in the square pocket on the back of the dial, then fit the washer and nut on the front.", focus:["head","front"],
+  m:[{p:["dial","dial_ink"], appear:true, from:[0,0,120], to:[0,0,120]},{p:["movement"], from:[0,70,120], to:[0,0,120]}]},
+ {t:"Dial into the head", d:"Drop the dial, with the movement on it, into the head. The tab at 12 o'clock only fits one way, so it always sits upright.", focus:["head","front"],
+  m:[{p:["dial","dial_ink","movement"], from:[0,0,120], to:[0,0,0]}]},
+ {t:"Hands", d:"Press on the hour hand, then the minute hand with its cap.", focus:["head","front"],
+  m:[{p:["hour_hand"], from:[0,0,60], t1:.6},{p:["minute_hand"], from:[0,0,85], t0:.35}]},
+ {t:"Bezel: push and twist", d:"Set the bezel on about 25° counter-clockwise, push it in, then twist clockwise until it clicks. All the locking slots hide under it.", focus:["head","front"],
+  m:[{p:["bezel","bezel_gold"], from:[0,0,70], to:[0,0,0], t1:.55, rotFrom:25, rotTo:0, r0:.6, r1:1}]},
+ {t:"Battery change", d:"Twist the bezel counter-clockwise and lift it off, then lift the dial out with the movement. The hands stay on.", focus:["head","front"],
+  m:[{p:["bezel","bezel_gold"], from:[0,0,0], to:[0,0,70], t0:.3, t1:.6, rotFrom:0, rotTo:25, r0:0, r1:.3},
+     {p:["dial","dial_ink","movement","hour_hand","minute_hand"], from:[0,0,0], to:[0,0,120], t0:.6, t1:1}]},
+ {t:"Back together", d:"Dial back in, tab at 12. Then push and twist the bezel clockwise until it clicks.", focus:["head","front"],
+  m:[{p:["dial","dial_ink","movement","hour_hand","minute_hand"], from:[0,0,120], to:[0,0,0], t1:.45},
+     {p:["bezel","bezel_gold"], from:[0,0,70], to:[0,0,0], t0:.45, t1:.75, rotFrom:25, rotTo:0, r0:.75, r1:1}]},
+ {t:"Done", d:"About {H} mm tall. Turn it around and admire the work.", focus:["base","column","head","front"], m:[]}
+];
+const ROT = new Set(["bezel","bezel_gold"]);
+const SPIN = new Set(['head','head_gold']);   // turn about the vertical axis of the neck twist-lock
+const viewer = document.getElementById('viewer'), cap = document.getElementById('cap'), list = document.getElementById('steps');
+function drawList(){ list.innerHTML = STEPS.map((s,i)=>`<li id="s${i}"><button data-i="${i}"><span class="k">${i+1}</span><span>${s.t}<small>${s.d.replace('{H}', window.__H || '…')}</small></span></button></li>`).join(''); }
+drawList();
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+viewer.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(32, 1, 1, 8000);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.target.set(0, 250, 0); camera.position.set(420, 420, 900);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x445544, 0.75));
+const sun = new THREE.DirectionalLight(0xffffff, 0.85); sun.position.set(300, 700, 600); scene.add(sun);
+const rim = new THREE.DirectionalLight(0xfff2d6, 0.35); rim.position.set(-500, 300, -400); scene.add(rim);
+const floor = new THREE.Mesh(new THREE.CircleGeometry(260, 64), new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.06}));
+floor.rotation.x = -Math.PI/2; floor.position.y = -0.5; scene.add(floor);
+
+const parts = {}; let manifest = null, pivot = new THREE.Vector3(), pivot2 = new THREE.Vector3();
+function resize(){ const w = viewer.clientWidth, h = viewer.clientHeight; renderer.setSize(w, h, false); camera.aspect = w/h; camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(viewer);
+
+function material(hex){
+  const gold = hex.toLowerCase() === '#d6b25e';
+  return new THREE.MeshStandardMaterial({color:new THREE.Color(hex), flatShading:true, metalness:gold?0.55:0.05, roughness:gold?0.35:0.62});
+}
+let version = '516'; const cache = {};
+async function load(v){
+  if (!cache[v]) cache[v] = { man: await (await fetch(`manifest_${v}.json`)).json(), b64: (await (await fetch(`meshes_${v}.b64.txt`)).text()).trim() };
+  for (const n in parts){ parts[n].grp.traverse(o => { if (o.geometry) o.geometry.dispose(); }); scene.remove(parts[n].grp); delete parts[n]; }
+  manifest = cache[v].man; window.__H = manifest.height_mm; const b64 = cache[v].b64;
+  const raw = atob(b64), bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  const bin = bytes.buffer;
+  pivot.set(...manifest.pivot_dial); pivot.z = 0;
+  if (manifest.pivot_neck) { pivot2.set(...manifest.pivot_neck); pivot2.y = 0; } else pivot2.set(0,0,0);
+  for (const p of manifest.parts){
+    const pos = new Float32Array(bin, p.v_off, p.v_n*3), idx = new Uint32Array(bin, p.f_off, p.f_n*3);
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setIndex(new THREE.BufferAttribute(idx, 1));
+    const mesh = new THREE.Mesh(g, material(p.color)); const grp = new THREE.Group();
+    if (ROT.has(p.name)) { mesh.position.copy(pivot).multiplyScalar(-1); }
+    if (SPIN.has(p.name)) { mesh.position.copy(pivot2).multiplyScalar(-1); }
+    grp.add(mesh); scene.add(grp);
+    parts[p.name] = {grp, base: ROT.has(p.name) ? pivot.clone() : SPIN.has(p.name) ? pivot2.clone() : new THREE.Vector3(), vis:false, off:[0,0,0], rot:0, spin:0};
+  }
+  const ld = document.getElementById('load'); if (ld) ld.remove();
+  drawList(); caption(cur);
+}
+let started = false;
+async function switchTo(v){
+  version = v; playAll = false; playBtn.textContent = 'Play all';
+  for (const id of ['516','363']){ const b = document.getElementById('v'+id); b.classList.toggle('on', id===v); b.setAttribute('aria-pressed', id===v); }
+  await load(v); go(cur, true); if (!started){ started = true; loop(); }
+}
+function apply(name){ const s = parts[name]; s.grp.visible = s.vis;
+  s.grp.position.set(s.base.x + s.off[0], s.base.y + s.off[1], s.base.z + s.off[2]); s.grp.rotation.z = s.rot * Math.PI/180; s.grp.rotation.y = (s.spin||0) * Math.PI/180; }
+const ease = t => t<.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+const clamp01 = x => Math.max(0, Math.min(1, x));
+function setMove(m, u){            // u = 0..1 progress within the step
+  const tp = ease(clamp01((u - (m.t0??0)) / ((m.t1??1) - (m.t0??0)))), to = m.to || [0,0,0];
+  const tr = ease(clamp01((u - (m.r0??0)) / ((m.r1??1) - (m.r0??0))));
+  for (const n of m.p){ const s = parts[n]; s.vis = true;
+    s.off = m.from.map((f,i)=> f + (to[i]-f)*tp);
+    s.rot = m.rotFrom !== undefined ? m.rotFrom + (m.rotTo - m.rotFrom)*tr : 0;
+    s.spin = m.spinFrom !== undefined ? m.spinFrom + (m.spinTo - m.spinFrom)*tr : 0; apply(n); }
+}
+function stateAt(i){               // all steps before i finished, step i at its start
+  for (const n in parts){ parts[n].vis = false; parts[n].off = [0,0,0]; parts[n].rot = 0; parts[n].spin = 0; }
+  for (let k=0; k<i; k++) for (const m of STEPS[k].m) setMove(m, 1);
+  for (const m of STEPS[i].m) setMove(m, 0);
+  for (const n in parts) apply(n);
+}
+let cur = 0, t0 = 0, playing = false, animating = false, playAll = false;
+const DUR = reduce ? 1 : 2200;
+function focusBox(i){ const b = new THREE.Box3();
+  for (const g of STEPS[i].focus){ const [lo,hi] = manifest.bounds[g]; b.expandByPoint(new THREE.Vector3(...lo)); b.expandByPoint(new THREE.Vector3(...hi)); }
+  if (STEPS[i].m.some(m => (m.to||[0,0,0])[2] > 0 || m.from[2] > 0)) b.expandByPoint(b.getCenter(new THREE.Vector3()).setZ(140));
+  return b; }
+let camGoal = null;
+function aimCamera(i){
+  if (!document.getElementById('auto').checked) return;
+  const b = focusBox(i), c = b.getCenter(new THREE.Vector3()), r = b.getSize(new THREE.Vector3()).length() * 0.5;
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  if (dir.z < 0.35) { dir.z = 0.35; dir.normalize(); }
+  const dist = Math.max(170, r / Math.sin(camera.fov * Math.PI/360) * 1.05);
+  camGoal = {t: c, p: c.clone().add(dir.multiplyScalar(dist))};
+}
+function caption(i){ const s = STEPS[i];
+  cap.innerHTML = `<span class="n">${i+1}</span><b>${s.t}</b> - ${s.d.replace('{H}', window.__H || '')}`;
+  STEPS.forEach((_,k)=>{ const li = document.getElementById('s'+k); li.className = k<i ? 'done' : k===i ? 'now' : ''; }); }
+function go(i, instant){
+  cur = Math.max(0, Math.min(STEPS.length-1, i)); stateAt(cur); caption(cur); aimCamera(cur);
+  if (instant){ for (const m of STEPS[cur].m) setMove(m, 1); animating = false; }
+  else { t0 = performance.now(); animating = true; }
+}
+function loop(now){
+  requestAnimationFrame(loop);
+  if (animating){ const u = clamp01((performance.now() - t0) / DUR);
+    for (const m of STEPS[cur].m) setMove(m, u);
+    if (u >= 1){ animating = false;
+      if (playAll && cur < STEPS.length-1) setTimeout(()=>{ if (playAll) go(cur+1); }, reduce ? 300 : 650);
+      else if (playAll){ playAll = false; playBtn.textContent = 'Play all'; } } }
+  if (camGoal){ controls.target.lerp(camGoal.t, 0.06); camera.position.lerp(camGoal.p, 0.06);
+    if (camera.position.distanceTo(camGoal.p) < 1) camGoal = null; }
+  if (cur === STEPS.length-1 && !animating && !reduce) { scene.rotation.y += 0.004; } else scene.rotation.y *= 0.9;
+  controls.update(); renderer.render(scene, camera);
+}
+const playBtn = document.getElementById('play');
+playBtn.onclick = () => { playAll = !playAll; playBtn.textContent = playAll ? 'Pause' : 'Play all';
+  if (playAll){ if (cur >= STEPS.length-1) go(0); else if (!animating) go(cur+1); } };
+document.getElementById('next').onclick = () => { playAll = false; playBtn.textContent = 'Play all'; go(cur+1); };
+document.getElementById('prev').onclick = () => { playAll = false; playBtn.textContent = 'Play all'; go(cur-1, true); };
+document.getElementById('reset').onclick = () => { playAll = false; playBtn.textContent = 'Play all'; scene.rotation.y = 0; go(0); };
+list.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; playAll = false; playBtn.textContent = 'Play all'; go(+b.dataset.i); });
+document.addEventListener('keydown', e => { if (e.key === 'ArrowRight') go(cur+1); if (e.key === 'ArrowLeft') go(cur-1, true); });
+controls.addEventListener('start', () => { camGoal = null; });
+document.getElementById('v516').onclick = () => switchTo('516');
+document.getElementById('v363').onclick = () => switchTo('363');
+resize(); switchTo(new URLSearchParams(location.search).get('size') === '363' ? '363' : '516').catch(err => { document.getElementById('load').textContent = 'Could not load the parts: ' + err.message; });
+}
+</script>
+</body>
+</html>

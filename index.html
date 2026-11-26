@@ -3,12 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Order a custom branded golf-club clock: lettering, crest and Bambu Lab filament, with a live preview drawn from the real print geometry.">
+<title>Clock Request Desk</title>
+<meta name="description" content="Order a custom branded golf post clock: lettering, crest and Bambu Lab filament, with a live preview rendered from the real print files.">
 <style>:root{color-scheme:light}html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-<title>Clock Request Desk</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
@@ -106,11 +105,11 @@ section.card{background:var(--surface);border:1px solid var(--rule);border-radiu
 
 .layouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 @media (max-width:520px){.layouts{grid-template-columns:1fr}}
-.lay{display:block;position:relative;cursor:pointer;min-width:0;padding:0;border:0;background:none;
-  font:inherit;color:inherit;text-align:left;width:100%}
-.lay .box{display:block;border:1px solid var(--rule);border-radius:11px;padding:12px;background:var(--sunk);height:100%}
-.lay[aria-pressed="true"] .box{border-color:var(--brass);background:var(--brass-wash);box-shadow:inset 0 0 0 1px var(--brass)}
-.lay:focus-visible .box{outline:2px solid var(--brass);outline-offset:2px}
+.lay{display:block;position:relative;cursor:pointer;min-width:0}
+.lay input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer}
+.lay .box{display:block;border:1px solid var(--rule);border-radius:11px;padding:12px;background:var(--sunk);height:100%;pointer-events:none}
+.lay input:checked+.box{border-color:var(--brass);background:var(--brass-wash);box-shadow:inset 0 0 0 1px var(--brass)}
+.lay input:focus-visible+.box{outline:2px solid var(--brass);outline-offset:2px}
 .lay .glyph{display:block;width:100%;height:auto;margin-bottom:8px}
 .lay .nm{display:block;font-weight:600;font-size:13px}
 .lay .ds{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:3px}
@@ -227,6 +226,16 @@ dialog.picker::backdrop{background:rgba(10,12,15,.45)}
 .tot .big b{font-size:19px;font-weight:700}
 .tot b.price{color:var(--brass-ink);font-weight:700}
 footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--muted);font-size:12.5px}
+.styles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.styles{grid-template-columns:1fr}}
+.howto{display:none;margin-top:12px;width:100%;text-align:center;text-decoration:none}
+.howto.on{display:block}
+#post text{font-family:var(--print)}
+.postpic{position:relative;height:min(68vh,620px);max-width:100%;margin:0 auto}
+@media (max-width:900px){.postpic{height:min(60vh,520px)}}
+.postpic canvas{display:block;width:100%;height:100%;filter:drop-shadow(0 10px 14px rgba(0,0,0,.22))}
+.postpic svg#post{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none!important;pointer-events:none}
+.picload{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted)}
 .vis-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -236,8 +245,7 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
     <div>
       <div class="brandline"><span class="pip"></span> Bambu Lab A1 · 0.16 mm · four-colour</div>
       <h1>Clock Request Desk</h1>
-      <p class="sub">Set the lettering, send a crest, and choose filament. The preview is drawn from the real printed geometry, so what you see is what the plate cuts.</p>
-    </div>
+      <p class="sub">Set the lettering, send a crest, and choose filament. The preview is rendered from the real print files, so what you see is what the plates make.</p>
     </div>
   </header>
 
@@ -247,42 +255,30 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
     <div class="stagecol">
       <div class="stagewrap">
         <div class="stage">
-          <svg id="clock" viewBox="-62 -97 124 194" role="img" aria-labelledby="clockTitle">
-            <title id="clockTitle">Live preview of the clock</title>
-            <defs>
-              <clipPath id="cpWin"><circle cx="0" cy="5.58" r="47.31"/></clipPath>
-              <clipPath id="cpMed"><circle cx="0.25" cy="-73.5" r="9.3"/></clipPath>
-              <path id="arcT1" fill="none"/>
-              <path id="arcT2" fill="none"/>
-              <path id="arcB" fill="none"/>
-            </defs>
-            <path id="pBody" fill-rule="evenodd"/>
-            <g clip-path="url(#cpWin)">
-              <circle id="cDial" cx="0" cy="5.58" r="50.05"/>
-              <g transform="translate(0,5.58)">
-                <path id="pNum" fill-rule="evenodd"/>
-                <text id="tYear" x="0" y="-16" text-anchor="middle"></text>
-                <text id="tD1" x="0" y="17" text-anchor="middle"></text>
-                <text id="tD2" x="0" y="26" text-anchor="middle"></text>
+          
+          <div class="postpic" id="postPic">
+            <canvas id="postCanvas" role="img" aria-label="Rendered preview of the post clock"></canvas>
+            <svg id="post" viewBox="0 0 100 300" aria-hidden="true">
+              <defs>
+                <filter id="relief" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0.22" dy="0.28" stdDeviation="0.12" flood-color="#000" flood-opacity="0.45"/></filter>
+                <clipPath id="cpPostMed"><circle id="cpPostMedC" cx="0" cy="0" r="1"/></clipPath>
+                <path id="arcPost" fill="none"/>
+              </defs>
+              <g id="pOver" filter="url(#relief)">
+                <image id="pLogo" clip-path="url(#cpPostMed)" preserveAspectRatio="xMidYMid meet" display="none"></image>
+                <g id="pMedHint"><circle fill="none" stroke-width="0.5" stroke-dasharray="1.6 1.6"/><text text-anchor="middle" font-size="3.2" letter-spacing="0.3">CREST</text></g>
+                <text id="pName" text-anchor="middle"><textPath href="#arcPost" startOffset="50%"></textPath></text>
+                <text id="pMeasure" x="0" y="0" visibility="hidden"></text>
+                <text id="pBottom" text-anchor="middle"></text>
               </g>
-              <circle id="cBoss" cx="0" cy="5.58" r="2.7"/>
-            </g>
-            <path id="pAccent" fill-rule="evenodd"/>
-            <circle id="cWell" cx="0.25" cy="-73.5" r="9.3"/>
-            <image id="imgLogo" clip-path="url(#cpMed)" x="-6.4" y="-80.1" width="13.2" height="13.2"
-                   preserveAspectRatio="xMidYMid meet" display="none"></image>
-            <g id="gMedHint">
-              <circle cx="0.25" cy="-73.5" r="6.4" fill="none" stroke-width="0.5" stroke-dasharray="1.6 1.6"/>
-              <text x="0.25" y="-71.6" text-anchor="middle" font-size="3.4" letter-spacing="0.3">CREST</text>
-            </g>
-            <text id="tT1" text-anchor="middle"><textPath href="#arcT1" startOffset="50%"></textPath></text>
-            <text id="tT2" text-anchor="middle"><textPath href="#arcT2" startOffset="50%"></textPath></text>
-            <text id="tB" text-anchor="middle"><textPath href="#arcB" startOffset="50%"></textPath></text>
-          </svg>
+            </svg>
+            <div class="picload" id="picLoad">Loading preview…</div>
+          </div>
         </div>
+        <a class="btn howto" id="howTo" href="assembly.html" target="_blank" rel="noopener">See how it goes together ↗</a>
         <div class="chips" id="chips"></div>
         <div class="stagefoot">
-          <span>Housing 117 × 183 mm · dial Ø100.1 mm</span>
+          <span id="dimNote"></span>
           <span id="capNote"></span>
         </div>
       </div>
@@ -291,13 +287,19 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
     <!-- SHEET -->
     <div class="sheet">
       <section class="card">
-        <div class="cardhead"><span class="step">01</span><h2>Layout</h2></div>
+        <div class="cardhead"><span class="step">01</span><h2>Clock</h2></div>
+        <p class="cardnote">A free-standing post clock that twist-locks together with no glue. Two heights.</p>
+        <div class="styles" id="styles"></div>
+      </section>
+
+      <section class="card" id="layoutCard" hidden>
+        <div class="cardhead"><span class="step">02</span><h2>Layout</h2></div>
         <p class="cardnote">Where the names sit. Each one prints from a different plate.</p>
         <div class="layouts" id="layouts"></div>
       </section>
 
       <section class="card">
-        <div class="cardhead"><span class="step">02</span><h2>Lettering</h2></div>
+        <div class="cardhead"><span class="step">03</span><h2>Lettering</h2></div>
         <p class="cardnote">Raised relief in the accent filament. Text is cut to fit the arc automatically — the counter warns before it gets too small to print cleanly.</p>
         <div class="fields" id="fields"></div>
       </section>
@@ -307,13 +309,9 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
             action="/thanks.html" id="orderForm">
         <input type="hidden" name="form-name" value="clock-request">
         <p hidden><label>Leave this empty: <input name="bot-field"></label></p>
-        <input type="hidden" name="layout" id="h_layout">
-        <input type="hidden" name="crown_line_1" id="h_crown_line_1">
-        <input type="hidden" name="crown_line_2" id="h_crown_line_2">
-        <input type="hidden" name="lower_arc" id="h_lower_arc">
-        <input type="hidden" name="dial_text" id="h_dial_text">
-        <input type="hidden" name="dial_line_1" id="h_dial_line_1">
-        <input type="hidden" name="dial_line_2" id="h_dial_line_2">
+        <input type="hidden" name="clock" id="h_clock">
+        <input type="hidden" name="club_name" id="h_club_name">
+        <input type="hidden" name="lower_line" id="h_lower_line">
         <input type="hidden" name="filament_housing" id="h_filament_housing">
         <input type="hidden" name="filament_accents" id="h_filament_accents">
         <input type="hidden" name="filament_dial" id="h_filament_dial">
@@ -321,13 +319,13 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
         <input type="hidden" name="spec" id="h_spec">
 
       <section class="card">
-        <div class="cardhead"><span class="step">03</span><h2>Crest</h2></div>
+        <div class="cardhead"><span class="step">04</span><h2>Crest</h2></div>
         <p class="cardnote">Goes in the medallion at the top. It is reproduced as single-colour raised relief in the accent filament, so a bold silhouette carries far better than fine detail or gradients.</p>
         <div class="drop" id="drop">
           <div class="prev" id="logoPrev"><span>NONE</span></div>
           <div class="txt">
             <b id="logoName">No crest yet</b>
-            <p id="logoHelp">Drop a PNG, JPEG or SVG here, or choose a file. It is sent with the request.</p>
+            <p id="logoHelp">Drop a PNG, JPEG or SVG here, or choose a file. 8 MB limit; it is sent with the request.</p>
           </div>
           <input type="file" id="logoFile" name="crest" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="vis-hidden">
           <button class="btn" type="button" id="logoBtn">Choose file</button>
@@ -336,13 +334,13 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
       </section>
 
       <section class="card">
-        <div class="cardhead"><span class="step">04</span><h2>Filament</h2></div>
+        <div class="cardhead"><span class="step">05</span><h2>Filament</h2></div>
         <p class="cardnote">Real Bambu Lab colours, one per AMS slot. Hex values are Bambu's own; screens still flatter metallics, so order a sample before a long run.</p>
         <div class="slots" id="slots"></div>
       </section>
 
       <section class="card">
-        <div class="cardhead"><span class="step">05</span><h2>Order</h2></div>
+        <div class="cardhead"><span class="step">06</span><h2>Order</h2></div>
         <p class="cardnote">Enough to quote the job and get back to you.</p>
         <div>
           <div class="fields">
@@ -446,6 +444,13 @@ var SLOTS=[
   {key:"numeral",role:"Numerals", def:["PLA Basic","Black"]}
 ];
 
+var STYLES=[
+  {id:"post516", name:"Post clock · 516 mm", desc:"Free-standing, 516 mm tall, 103 mm dial."},
+  {id:"post363", name:"Post clock · 363 mm", desc:"Free-standing, 363 mm tall, 83 mm dial."}
+];
+var POST_LAYOUT={id:"post", fields:["topA","bottom"], labels:{topA:"Club name (arched over the dial)", bottom:"Line under the dial"}};
+var PG=null;   /* post clock front-view geometry, loaded from post_geom.json */
+var CAL={}, REF_NAME="HUNTSVILLE COUNTRY CLUB";
 var LAYOUTS=[
   {id:"stacked", name:"Stacked arc",
    desc:"Club name and event on two arcs at the crown.",
@@ -463,6 +468,7 @@ var LAYOUTS=[
 
 /* opens on a real spec rather than an empty shell */
 var S={
+  style:"post516",
   layout:"single",
   topA:"HUNTSVILLE COUNTRY CLUB", topB:"CLUB CHAMPIONSHIP",
   bottom:"CLUB CHAMPION", year:"2026", dialA:"HUNTSVILLE", dialB:"COUNTRY CLUB",
@@ -513,57 +519,106 @@ function styleText(el,fill){
 }
 
 var caps={};
-function render(){
-  var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0];
+function isPost(){ return true; }
+function sizeKey(){ return S.style==="post363" ? "363" : "516"; }
+function renderPost(){
+  var g=PG && PG[sizeKey()]; if(!g) return;
   var body=S.fil.body.hex, acc=S.fil.accent.hex, dial=S.fil.dial.hex, num=S.fil.numeral.hex;
-
-  $("pBody").setAttribute("fill",body);
-  $("pAccent").setAttribute("fill",acc);
-  $("cDial").setAttribute("fill",dial);
-  $("pNum").setAttribute("fill",num);
-  $("cBoss").setAttribute("fill",body);
-  $("cWell").setAttribute("fill",body);
-
-  [["tT1",acc],["tT2",acc],["tB",acc],["tYear",num],["tD1",num],["tD2",num]]
-    .forEach(function(p){ styleText($(p[0]),p[1]); });
-
-  var stacked = S.layout==="stacked";
-  caps.t1 = fitArc($("tT1"),$("arcT1"), S.topA, stacked?STACK_CAP:TOP_CAP, stacked?"t1s":"top");
-  caps.t2 = stacked ? fitArc($("tT2"),$("arcT2"), S.topB, STACK_CAP, "t2s")
-                    : fitArc($("tT2"),$("arcT2"), "", STACK_CAP, "t2s");
-  caps.b  = fitArc($("tB"),$("arcB"), S.bottom, BOT_CAP, "bot");
-
-  /* dial face */
-  var showDial = S.layout==="dial";
-  setDialText($("tYear"), S.year, 9.6, -16);
-  setDialText($("tD1"), showDial?S.dialA:"", 6.6, 17);
-  setDialText($("tD2"), showDial?S.dialB:"", 6.6, 26);
-
-  /* crest */
+  var v=g.view; $("post").setAttribute("viewBox",v.join(" "));
+  $("postPic").style.aspectRatio=g.px[0]+" / "+g.px[1];
+  $("pOver").setAttribute("transform","matrix("+g.overlay.join(" ")+")");
+  paintPic(sizeKey(),[body,acc,dial,num]);
+  acc=shadeHex(acc,g.gold_k);
+  /* club name: arched over the drum, shrunk until it fits the arc (as the plate builder does) */
+  var n=g.name, cy=g.dial_cy, r=n.r, a0=(90+n.span/2)*Math.PI/180, a1=(90-n.span/2)*Math.PI/180, pts=[], i, t;
+  for(i=0;i<=90;i++){ t=a0+(a1-a0)*i/90; pts.push((r*Math.cos(t)).toFixed(2)+","+(cy-r*Math.sin(t)).toFixed(2)); }
+  $("arcPost").setAttribute("d","M"+pts[0]+"L"+pts.slice(1).join("L"));
+  var nm=$("pName"), tp=nm.firstChild, arcLen=r*n.span*Math.PI/180*0.985, cap=9.4, L;
+  var ms=$("pMeasure");
+  styleText(nm,acc); styleText(ms,acc); tp.textContent=S.topA||""; ms.textContent=S.topA||"";
+  tp.removeAttribute("textLength"); ms.style.fontSize=(cap/CAP_RATIO).toFixed(3)+"px";
+  L=ms.getComputedTextLength()*n.condense;
+  if(L>arcLen){ cap=cap*arcLen/L; }
+  /* calibrate to the plate builder's own fit for the reference name, since the print font is a stand-in */
+  var key=sizeKey(); if(!CAL[key]){ ms.textContent=REF_NAME; ms.style.fontSize=(9.4/CAP_RATIO).toFixed(3)+"px";
+    var Lr=ms.getComputedTextLength()*n.condense; CAL[key]=n.cap/Math.min(9.4, 9.4*arcLen/Lr); ms.textContent=S.topA||""; }
+  cap=Math.max(CAP_FLOOR, Math.min(9.4, cap*CAL[key]));
+  nm.style.fontSize=(cap/CAP_RATIO).toFixed(3)+"px"; ms.style.fontSize=nm.style.fontSize;
+  L=ms.getComputedTextLength();
+  if(L>0){ tp.setAttribute("textLength",Math.min(L*n.condense,arcLen).toFixed(2)); tp.setAttribute("lengthAdjust","spacingAndGlyphs"); }
+  caps.t1=S.topA?cap:0; caps.t2=0;
+  /* lower line */
+  var bt=$("pBottom"), bc=g.bottom.cap; styleText(bt,acc); bt.textContent=S.bottom||"";
+  bt.style.fontSize=(bc/CAP_RATIO).toFixed(3)+"px"; L=bt.getComputedTextLength();
+  if(L>g.bottom.maxw){ bc=Math.max(CAP_FLOOR,bc*g.bottom.maxw/L); bt.style.fontSize=(bc/CAP_RATIO).toFixed(3)+"px"; }
+  bt.setAttribute("x",0); bt.setAttribute("y",(g.bottom.y+bc/2).toFixed(2));
+  caps.b=S.bottom?bc:0;
+  /* crest in the gold ring */
+  var cr=g.crest; $("cpPostMedC").setAttribute("cx",cr.cx); $("cpPostMedC").setAttribute("cy",cr.cy); $("cpPostMedC").setAttribute("r",cr.r);
+  var hint=$("pMedHint"), hc=hint.querySelector("circle"), ht=hint.querySelector("text");
   if(S.logoUrl){
-    $("imgLogo").setAttributeNS("http://www.w3.org/1999/xlink","href",S.logoUrl);
-    $("imgLogo").setAttribute("href",S.logoUrl);
-    $("imgLogo").removeAttribute("hidden"); $("imgLogo").removeAttribute("display");
-    $("gMedHint").setAttribute("display","none");
+    var im=$("pLogo"); im.setAttribute("x",cr.cx-cr.r); im.setAttribute("y",cr.cy-cr.r); im.setAttribute("width",2*cr.r); im.setAttribute("height",2*cr.r);
+    im.setAttributeNS("http://www.w3.org/1999/xlink","href",S.logoUrl); im.setAttribute("href",S.logoUrl); im.removeAttribute("display");
+    hint.setAttribute("display","none");
   }else{
-    $("imgLogo").setAttribute("display","none");
-    $("gMedHint").removeAttribute("display");
-    $("gMedHint").querySelector("circle").setAttribute("stroke",acc);
-    $("gMedHint").querySelector("text").setAttribute("fill",acc);
-    $("gMedHint").querySelector("text").setAttribute("font-family",PRINT_FONT);
+    $("pLogo").setAttribute("display","none"); hint.removeAttribute("display");
+    hc.setAttribute("cx",cr.cx); hc.setAttribute("cy",cr.cy); hc.setAttribute("r",cr.r*0.7); hc.setAttribute("stroke",acc);
+    ht.setAttribute("x",cr.cx); ht.setAttribute("y",cr.cy+1.1); ht.setAttribute("fill",acc); ht.setAttribute("font-family",PRINT_FONT);
   }
-
-  renderChips();
-  try{ syncHidden(); }catch(e){}
-  var tight=[];
-  if(caps.t1&&caps.t1<=CAP_FLOOR+0.05) tight.push("crown");
-  if(caps.t2&&caps.t2<=CAP_FLOOR+0.05) tight.push("second line");
-  if(caps.b&&caps.b<=CAP_FLOOR+0.05) tight.push("lower arc");
-  $("capNote").textContent = tight.length
-    ? "Too long: " + tight.join(" and ") + " is at the print floor"
-    : "Lettering " + (caps.t1?caps.t1.toFixed(1):"–") + " mm / " + (caps.b?caps.b.toFixed(1):"–") + " mm cap";
-  $("capNote").style.color = tight.length ? "var(--warn)" : "";
-  void L;
+  $("dimNote").textContent="Post clock "+g.height+" mm tall · head "+g.head_w+" mm wide · dial Ø"+g.dial_d+" mm";
+  $("howTo").href="assembly.html?size="+sizeKey();
+}
+/* ---------- rendered picture, recoloured live ----------
+   shade_*.png: the clock rendered in white under studio light (alpha = silhouette).
+   mask_*.png:  which filament each pixel is (red housing, green accents, blue dial, black numerals/hands). */
+var PIC={}, picWant=null;
+function loadImg(src){ return new Promise(function(ok,no){ var i=new Image(); i.onload=function(){ok(i);}; i.onerror=no; i.src=src; }); }
+function picData(key){
+  if(!PIC[key]) PIC[key]=Promise.all([loadImg("shade_"+key+".png"),loadImg("mask_"+key+".png")]).then(function(im){
+    var w=im[0].naturalWidth, h=im[0].naturalHeight, c=document.createElement("canvas"); c.width=w; c.height=h;
+    var x=c.getContext("2d"); x.drawImage(im[0],0,0); var sh=x.getImageData(0,0,w,h).data;
+    x.clearRect(0,0,w,h); x.drawImage(im[1],0,0); var mk=x.getImageData(0,0,w,h).data;
+    return {w:w,h:h,sh:sh,mk:mk};
+  });
+  return PIC[key];
+}
+function hexRGB(h){ h=h.replace("#",""); return [parseInt(h.substr(0,2),16),parseInt(h.substr(2,2),16),parseInt(h.substr(4,2),16)]; }
+function shadeHex(h,k){ var c=hexRGB(h); return "#"+c.map(function(v){ v=Math.max(0,Math.min(255,Math.round(v*k))); return (v<16?"0":"")+v.toString(16); }).join(""); }
+function paintPic(key,cols){
+  picWant=key+cols.join();
+  var want=picWant;
+  picData(key).then(function(d){
+    if(want!==picWant) return;
+    var cv=$("postCanvas"); if(cv.width!==d.w||cv.height!==d.h){ cv.width=d.w; cv.height=d.h; }
+    var x=cv.getContext("2d"), out=x.createImageData(d.w,d.h), o=out.data, sh=d.sh, mk=d.mk;
+    var C=cols.map(hexRGB), GAIN=1.04/255, i, a, r, g, b, k, t, f;
+    for(i=0;i<o.length;i+=4){
+      a=sh[i+3]; if(!a) continue;
+      r=mk[i]/255; g=mk[i+1]/255; b=mk[i+2]/255; k=a/255-r-g-b; if(k<0) k=0;
+      t=r+g+b+k; if(t<1e-3){ t=1; k=1; }
+      f=GAIN;   /* lift the studio light so white filament reads white */
+      o[i]  =Math.min(255,(r*C[0][0]+g*C[1][0]+b*C[2][0]+k*C[3][0])/t*Math.min(1,sh[i]*f));
+      o[i+1]=Math.min(255,(r*C[0][1]+g*C[1][1]+b*C[2][1]+k*C[3][1])/t*Math.min(1,sh[i+1]*f));
+      o[i+2]=Math.min(255,(r*C[0][2]+g*C[1][2]+b*C[2][2]+k*C[3][2])/t*Math.min(1,sh[i+2]*f));
+      o[i+3]=a;
+    }
+    x.putImageData(out,0,0);
+    var ld=$("picLoad"); if(ld) ld.remove();
+  }).catch(function(){ var ld=$("picLoad"); if(ld) ld.textContent="Preview unavailable"; });
+}
+function render(){
+  var post=true;
+  $("howTo").classList.toggle("on",post);
+  {
+    renderPost(); renderChips();
+    try{ syncHidden(); }catch(e){}
+    var tight=[];
+    if(caps.t1&&caps.t1<=CAP_FLOOR+0.05) tight.push("club name");
+    if(caps.b&&caps.b<=CAP_FLOOR+0.05) tight.push("lower line");
+    $("capNote").textContent = tight.length ? "Too long: " + tight.join(" and ") + " is at the print floor"
+      : "Lettering " + (caps.t1?caps.t1.toFixed(1):"–") + " mm / " + (caps.b?caps.b.toFixed(1):"–") + " mm cap";
+    $("capNote").style.color = tight.length ? "var(--warn)" : "";
+  }
 }
 /* Keep dial text clear of the chapter ring: the numerals start at r 32.5, so
    the width available depends on how far the line sits from the centre. */
@@ -607,25 +662,52 @@ function layoutGlyph(id){
 function buildLayouts(){
   var h="";
   LAYOUTS.forEach(function(L){
-    h+='<button type="button" class="lay" data-lay="'+L.id+'" aria-pressed="'+(S.layout===L.id?"true":"false")+'">'+
+    h+='<label class="lay"><input type="radio" name="layout" value="'+L.id+'"'+(S.layout===L.id?" checked":"")+'>'+
        '<span class="box">'+layoutGlyph(L.id)+
-       '<span class="nm">'+esc(L.name)+'</span><span class="ds">'+esc(L.desc)+'</span></span></button>';
+       '<span class="nm">'+esc(L.name)+'</span><span class="ds">'+esc(L.desc)+'</span></span></label>';
   });
   $("layouts").innerHTML=h;
-  Array.prototype.forEach.call($("layouts").querySelectorAll(".lay"),function(b){
-    b.addEventListener("click",function(){
-      S.layout=b.getAttribute("data-lay");
-      Array.prototype.forEach.call($("layouts").querySelectorAll(".lay"),function(o){
-        o.setAttribute("aria-pressed", o===b ? "true":"false"); });
+  Array.prototype.forEach.call($("layouts").querySelectorAll("input"),function(r){
+    r.addEventListener("change",function(){ S.layout=r.value; buildFields(); render(); });
+  });
+}
+
+/* ---------- clock style ---------- */
+function styleGlyph(id){
+  var a='stroke="currentColor" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"';
+  var tall=id==="post516";
+  return '<svg class="glyph" viewBox="0 0 64 40" aria-hidden="true" style="color:var(--muted)">'+
+    '<path d="M26 '+(tall?6:9)+' A6 6 0 0 1 38 '+(tall?6:9)+' L39 '+(tall?15:17)+' L25 '+(tall?15:17)+' Z" '+a+'/><circle cx="32" cy="'+(tall?11:13)+'" r="3.2" '+a+'/>'+
+    '<path d="M32 '+(tall?15:17)+' V'+(tall?30:30)+' M28 30 h8 v5 h-8 z M24 37 h16" '+a+'/></svg>';
+}
+function renumber(){
+  var n=0; Array.prototype.forEach.call(document.querySelectorAll(".sheet section.card"),function(c){
+    if(c.hidden) return; n++; var st=c.querySelector(".step"); if(st) st.textContent=(n<10?"0":"")+n; });
+}
+function buildStyles(){
+  var h="";
+  STYLES.forEach(function(st){
+    var off = !PG;
+    h+='<label class="lay"><input type="radio" name="style" value="'+st.id+'"'+(S.style===st.id?" checked":"")+(off?" disabled":"")+'>'+
+       '<span class="box">'+styleGlyph(st.id)+'<span class="nm">'+esc(st.name)+'</span><span class="ds">'+esc(off?"Preview loading…":st.desc)+'</span></span></label>';
+  });
+  $("styles").innerHTML=h;
+  Array.prototype.forEach.call($("styles").querySelectorAll("input"),function(r){
+    r.addEventListener("change",function(){
+      S.style=r.value; $("layoutCard").hidden=isPost(); renumber();
+      if(isPost() && S.topA===S.dialA) S.topA="HUNTSVILLE COUNTRY CLUB";
       buildFields(); render();
     });
   });
 }
+fetch("post_geom.json").then(function(r){ if(!r.ok) throw 0; return r.json(); })
+  .then(function(j){ PG=j; buildStyles(); if(isPost()) render(); })
+  .catch(function(){ buildStyles(); });
 
 /* ---------- lettering fields ---------- */
 var LIMITS={topA:28,topB:28,bottom:18,year:14,dialA:18,dialB:18};
 function buildFields(){
-  var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0], h="";
+  var L=isPost()?POST_LAYOUT:LAYOUTS.filter(function(x){return x.id===S.layout;})[0], h="";
   L.fields.forEach(function(k){
     h+='<div class="f"><label for="x_'+k+'">'+esc(L.labels[k])+
        '<span class="cnt" id="c_'+k+'"></span></label>'+
@@ -706,8 +788,8 @@ function acceptFile(file){
     $("logoHelp").textContent="That file type won't work here — PNG, JPEG, WebP or SVG only.";
     $("logoHelp").className="warn"; return;
   }
-  if(file.size>20*1024*1024){
-    $("logoHelp").textContent="That file is over the 20 MB limit."; return;
+  if(file.size>8*1024*1024){
+    $("logoHelp").textContent="That file is over the 8 MB limit."; return;
   }
   if(S.logoUrl && S.logoUrl.indexOf("blob:")===0) URL.revokeObjectURL(S.logoUrl);
   pendingFile=file;
@@ -727,7 +809,7 @@ $("logoClear").addEventListener("click",function(){
   pendingFile=null; S.logoUrl=null; S.logoId=null; S.logoName=null;
   $("logoPrev").innerHTML='<span>NONE</span>';
   $("logoName").textContent="No crest yet";
-  $("logoHelp").textContent="Drop a PNG, JPEG or SVG here, or choose a file. It is sent with the request.";
+  $("logoHelp").textContent="Drop a PNG, JPEG or SVG here, or choose a file. 8 MB limit; it is sent with the request.";
   $("logoClear").hidden=true; $("logoFile").value=""; render();
 });
 ["dragenter","dragover"].forEach(function(ev){
@@ -742,10 +824,11 @@ $("drop").addEventListener("drop",function(e){
 
 /* ---------- submit through Netlify Forms ---------- */
 function msg(t,cls){ var m=$("sendMsg"); m.textContent=t; m.className="submitmsg"+(cls?" "+cls:""); }
+function styleName(){ var s=STYLES.filter(function(x){return x.id===S.style;})[0]; return s?s.name:S.style; }
+function filTxt(f){ return f.series+" "+f.name+" "+f.hex; }
 function specText(){
-  var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0], out=[];
-  out.push("Layout: "+L.name);
-  L.fields.forEach(function(k){ if(S[k]) out.push(L.labels[k]+": "+S[k]); });
+  var out=["Clock: "+styleName()];
+  POST_LAYOUT.fields.forEach(function(k){ if(S[k]) out.push(POST_LAYOUT.labels[k]+": "+S[k]); });
   SLOTS.forEach(function(s){
     var f=S.fil[s.key];
     out.push(s.role+": "+f.name+" ("+f.series+" "+f.hex+")");
@@ -754,38 +837,32 @@ function specText(){
   return out.join("\n");
 }
 function syncHidden(){
-  var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0];
-  var map={layout:L.name, crown_line_1:"", crown_line_2:"", lower_arc:"",
-           dial_text:"", dial_line_1:"", dial_line_2:""};
-  if(S.layout==="stacked"){ map.crown_line_1=S.topA; map.crown_line_2=S.topB; }
-  else { map.crown_line_1=S.topA; }
-  map.lower_arc=S.bottom; map.dial_text=S.year;
-  if(S.layout==="dial"){ map.dial_line_1=S.dialA; map.dial_line_2=S.dialB; }
-  map.filament_housing=S.fil.body.series+" "+S.fil.body.name+" "+S.fil.body.hex;
-  map.filament_accents=S.fil.accent.series+" "+S.fil.accent.name+" "+S.fil.accent.hex;
-  map.filament_dial=S.fil.dial.series+" "+S.fil.dial.name+" "+S.fil.dial.hex;
-  map.filament_numerals=S.fil.numeral.series+" "+S.fil.numeral.name+" "+S.fil.numeral.hex;
-  map.spec=specText();
+  var map={clock:styleName(), club_name:S.topA||"", lower_line:S.bottom||"",
+    filament_housing:filTxt(S.fil.body), filament_accents:filTxt(S.fil.accent),
+    filament_dial:filTxt(S.fil.dial), filament_numerals:filTxt(S.fil.numeral),
+    spec:specText()};
   Object.keys(map).forEach(function(k){ var el=$("h_"+k); if(el) el.value=map[k]; });
 }
+/* a dropped crest has to land in the file input, or it never posts */
+$("drop").addEventListener("drop",function(e){
+  try{ if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length && pendingFile===e.dataTransfer.files[0])
+         $("logoFile").files=e.dataTransfer.files; }catch(err){}
+});
 $("orderForm").addEventListener("submit",function(e){
   var email=$("fEmail").value.trim(), club=$("fClub").value.trim();
   if(!club){ e.preventDefault(); msg("Add the club or organisation so the request can be matched up.","bad"); $("fClub").focus(); return; }
   if(!email || email.indexOf("@")<1){ e.preventDefault(); msg("Add an email so there's a way to reply.","bad"); $("fEmail").focus(); return; }
   syncHidden();
-  msg("Sending\u2026");
+  msg("Sending…");
   $("sendBtn").disabled=true;
   /* let the browser post it: Netlify takes the multipart body, crest included */
 });
 
 /* ---------- go ---------- */
-$("pBody").setAttribute("d",G.body);
-$("pAccent").setAttribute("d",G.accent);
-$("pNum").setAttribute("d",G.numerals);
-buildLayouts(); buildFields(); buildSlots(); render();
+buildStyles(); buildLayouts(); buildFields(); buildSlots(); renumber(); render();
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+syncHidden();
 })();
 </script>
-
 </body>
 </html>

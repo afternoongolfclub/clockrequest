@@ -6,19 +6,24 @@ reproducible rather than being folklore.
 
 | File | What it is |
 |---|---|
-| `app_template.html` | The artifact edition's source: the same page, but with `claude.use()` capabilities, the admin Requests inbox and the Costing tab. `__GEOM__` and `__FONT__` are placeholders. |
-| `geom.json` | SVG path data for the live preview — body silhouette, accents and dial numerals, traced from the production meshes at 0.05 mm and simplified. |
-| `cal.b64` | Caladea Bold, subset to Latin-1 plus punctuation, woff2, base64. The lettering face the clocks actually print in. |
-| `make_netlify.py` | Derives the public `index.html` from `app_template.html`: strips the capabilities and the admin tabs, swaps the layout radios for buttons, and wraps the order fields in a Netlify form. |
+| `app_template.html` | The artifact edition's source: the same page, but with `claude.use()` capabilities, the admin Requests inbox and the Costing tab. Font and lettering geometry are inlined. |
+| `make_netlify.py` | Derives the public `index.html` from `app_template.html`: strips the capabilities and the admin tabs, and wraps crest, filament and order in a Netlify form. |
+
+The preview's assets sit in the repo root next to `index.html`:
+`post_geom.json` (view, overlay matrix, lettering positions per size),
+`shade_*.png` / `mask_*.png` (the render and its filament mask, recoloured
+live), and the assembly animation (`assembly.html?size=516|363`,
+`manifest_*.json`, `meshes_*.b64.txt`).
 
 ## Regenerating
 
 ```
-python3 make_netlify.py        # writes ../netlify-site/index.html
+python3 tools/make_netlify.py        # rewrites ./index.html
 ```
 
 It asserts on its own output — no `claude.use`, no `window.claude`, no admin
-tab remnants — so a failed transform stops rather than shipping a broken page.
+tab remnants, one form — so a failed transform stops rather than shipping a
+broken page.
 
 ## Where the geometry came from
 
