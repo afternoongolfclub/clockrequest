@@ -29,7 +29,7 @@ def must_replace(s, old, new):
 
 
 HIDDEN = ['clock', 'club_name', 'lower_line', 'filament_housing',
-          'filament_accents', 'filament_dial', 'filament_numerals', 'spec']
+          'filament_accents', 'filament_dial', 'filament_numerals', 'spec', 'build_brief']
 
 
 def build(t):
@@ -82,11 +82,45 @@ function specText(){
   if(S.logoName) out.push("Crest file: "+S.logoName);
   return out.join("\n");
 }
+function val(id){ var el=$(id); return el ? el.value.trim() : ""; }
+/* a self-contained prompt: paste it into a Claude chat in the 3D Prints project */
+function briefText(){
+  var o=[], f=S.fil;
+  o.push("Build the print files for this custom post clock order.");
+  o.push("");
+  o.push("ORDER");
+  o.push("- Club: "+(val("fClub")||"(not given)"));
+  if(val("fContact")) o.push("- Contact: "+val("fContact"));
+  if(val("fEmail")) o.push("- Email: "+val("fEmail"));
+  o.push("- Quantity: "+(val("fQty")||"1"));
+  if(val("fDue")) o.push("- Needed by: "+val("fDue"));
+  if(val("fNotes")) o.push("- Notes: "+val("fNotes"));
+  o.push("");
+  o.push("CLOCK");
+  o.push("- "+styleName()+" (the Huntsville CC post clock model at this size)");
+  o.push("");
+  o.push("LETTERING (Caladea Bold, raised relief in the accent filament)");
+  o.push("- Arched over the dial: "+(S.topA||"(blank)")+(caps.t1?"  [preview cap height "+caps.t1.toFixed(1)+" mm]":""));
+  o.push("- Under the dial: "+(S.bottom||"(blank)")+(caps.b?"  [preview cap height "+caps.b.toFixed(1)+" mm]":""));
+  o.push("- Keep the 3.1 mm cap-height floor; if a line will not fit above it, stop and tell me rather than shrinking further.");
+  o.push("");
+  o.push("CREST");
+  o.push(S.logoName ? "- Use the attached file ("+S.logoName+") in the medallion as single-colour raised relief in the accent filament."
+                    : "- No crest was sent. Ask me before printing; do not reuse another club's crest.");
+  o.push("");
+  o.push("FILAMENT (one per AMS slot)");
+  SLOTS.forEach(function(s){ o.push("- "+s.role+": "+f[s.key].series+" "+f[s.key].name+" "+f[s.key].hex); });
+  o.push("");
+  o.push("DELIVER");
+  o.push("- Bambu Studio 3MF plates for the A1, same plate split as the reference build, with these colours assigned per part.");
+  o.push("- Flag anything that will not print cleanly at a 0.4 mm nozzle before I slice it.");
+  return o.join("\n");
+}
 function syncHidden(){
   var map={clock:styleName(), club_name:S.topA||"", lower_line:S.bottom||"",
     filament_housing:filTxt(S.fil.body), filament_accents:filTxt(S.fil.accent),
     filament_dial:filTxt(S.fil.dial), filament_numerals:filTxt(S.fil.numeral),
-    spec:specText()};
+    spec:specText(), build_brief:briefText()};
   Object.keys(map).forEach(function(k){ var el=$("h_"+k); if(el) el.value=map[k]; });
 }
 /* a dropped crest has to land in the file input, or it never posts */
