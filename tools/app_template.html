@@ -229,11 +229,15 @@ dialog.picker::backdrop{background:rgba(10,12,15,.45)}
   .cg input,.cg2 input{padding:6px 7px;font-size:12.5px}
 }
 .tot{display:grid;gap:9px}
-.tot .r{display:flex;justify-content:space-between;align-items:baseline;gap:14px;font-size:14px;color:var(--ink-2)}
+.tot .r{display:grid;grid-template-columns:minmax(0,1fr) 92px 92px;align-items:baseline;gap:10px;font-size:14px;color:var(--ink-2)}
+.tot .r>b{text-align:right;white-space:nowrap}
+.tot .r small{display:block;font-size:11px;font-weight:400;color:var(--muted)}
+.tot .r.hdr b{font-size:12px;color:var(--muted);font-weight:600}
+.costsize{margin:0 0 12px}
 .tot .r b{font-variant-numeric:tabular-nums;color:var(--ink)}
 .tot .big{border-top:1px solid var(--rule);padding-top:11px;margin-top:3px;font-size:16px;color:var(--ink)}
 .tot .big b{font-size:19px;font-weight:700}
-.tot b.price{color:var(--brass-ink);font-weight:700}
+.tot b.price,.tot .price{color:var(--brass-ink);font-weight:700}
 footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--muted);font-size:12.5px}
 .styles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (max-width:520px){.styles .clockfig{height:150px}}
@@ -408,13 +412,17 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
     <div class="costcol">
       <section class="card">
         <div class="cardhead"><h2>Per clock</h2></div>
-        <p class="cardnote">One finished clock: housing, post, dial, numerals, hands and mechanism. Your own time is not counted.</p>
+        <p class="cardnote">One finished post clock of each size: every printed part, the movement and packing. Your own time is not counted.</p>
         <div class="tot" id="costOut"></div>
       </section>
 
       <section class="card">
         <div class="cardhead"><span class="step">01</span><h2>Filament</h2></div>
-        <p class="cardnote">Grams are worked out from the meshes as a 1 mm shell plus 15% infill. Slice a plate and replace them with the weights Bambu Studio reports. Purge is entered for a whole plate run.</p>
+        <div class="zoomsw costsize" id="costSize" role="group" aria-label="Clock size for these weights">
+          <button type="button" data-k="516" aria-pressed="true">516 mm</button>
+          <button type="button" data-k="363" aria-pressed="false">363 mm</button>
+        </div>
+        <p class="cardnote">Weights are per clock for the size picked above, worked out from the P1S plate files as a 1 mm skin plus 15% infill. When you slice a plate, replace them with what Bambu Studio reports. Prices per kilo are shared by both sizes.</p>
         <div class="costgrid" id="costFil"></div>
         <p class="cardnote" id="batchNote" style="margin:14px 0 0"></p>
       </section>
@@ -430,7 +438,7 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
         <div class="row2">
           <div class="f"><label for="cBatch">Clocks per plate run</label>
             <input type="number" id="cBatch" min="1" max="12" step="1">
-            <span class="hint">Two housings fit the bed; posts go four up. Flush is spent per layer, not per part, so a full plate splits it.</span></div>
+            <span class="hint">Printing two clocks' parts on the same plates shares the colour-change purge between them.</span></div>
           <div class="f"><label for="cScrap">Scrap allowance %</label>
             <input type="number" id="cScrap" min="0" max="60" step="1"></div>
         </div>
@@ -1119,7 +1127,7 @@ function msg(t,cls){ var m=$("sendMsg"); m.textContent=t; m.className="submitmsg
   if(canEdit){
     $("tabInbox").hidden=false; $("tabCost").hidden=false; $("topnav").hidden=false;
     await loadCostConfig();
-    buildCost();
+    wireCost(); buildCost();
   }
   if(!ASSETS){
     $("logoHelp").textContent="Drop a file to see it in the preview. Uploading isn't available for your account, so email the artwork to the shop after you submit.";
@@ -1248,7 +1256,7 @@ async function loadInbox(){
         '<dt>Filament</dt><dd>'+[f.body,f.accent,f.dial,f.numeral].map(function(x){
             return x?esc(x.name):"—"; }).join(" · ")+'</dd>'+
         '<dt>Contact</dt><dd>'+esc(r.contact||"")+' — '+esc(r.email||"")+(r.phone?" · "+esc(r.phone):"")+'</dd>'+
-        '<dt>Est. cost</dt><dd>'+esc(costLine(r.qty))+'</dd>'+
+        '<dt>Est. cost</dt><dd>'+esc(costLine(r.qty,r.style))+'</dd>'+
         (r.due?'<dt>Needed</dt><dd>'+esc(r.due)+'</dd>':'')+
         (r.notes?'<dt>Notes</dt><dd>'+esc(r.notes)+'</dd>':'')+
         (r.crestOriginal&&r.crestOriginal.assetId?'<dt>Original</dt><dd><a href="'+esc("/_blob/"+r.crestOriginal.assetId)+'">'+esc(r.crestOriginal.filename||"crest")+'</a></dd>':'')+
@@ -1270,66 +1278,80 @@ async function loadInbox(){
 }
 
 /* ---------- costing (admin only) ---------- */
+/* Grams per finished post clock, worked out from the P1S plate files (standard set: 5-piece column
+   and gold trim, one of each part, no spare hands): a 1 mm skin plus 15% infill at 1.24 g/cm3.
+   Purge counts the colour changes on the head, dial, pedestal and base with the project's flush
+   volumes. Replace any figure with what Bambu Studio reports once you slice. */
 var COST={
-  fil:[{k:"dial",  label:"Dial",                     g:22.9, rate:20},
-       {k:"body",  label:"Housing",                  g:133.6,rate:20},
-       {k:"accent",label:"Accents, rings and hands", g:12.9, rate:20},
-       {k:"black", label:"Post and numerals",        g:83.1, rate:20},
-       {k:"purge", label:"Purge and flush waste",    g:145,  rate:20}],
-  other:[{k:"mech", label:"Clock mechanism", v:3.00},
-         {k:"batt", label:"Battery",          v:0.35},
-         {k:"box",  label:"Box and packing",  v:1.50},
-         {k:"power",label:"Electricity",      v:0.18}],
-  scrap:5, margin:60, batch:2
+  sizes:{"516":{label:"516 mm", g:{body:381.0, accent:19.8, dial:24.5, black:1.9, purge:42.3}},
+         "363":{label:"363 mm", g:{body:189.4, accent:8.4,  dial:16.4, black:1.5, purge:31.9}}},
+  fil:[{k:"body",  label:"Housing, post and base", rate:20},
+       {k:"accent",label:"Gold trim and lettering", rate:20},
+       {k:"dial",  label:"Dial", rate:20},
+       {k:"black", label:"Numerals and hands", rate:20},
+       {k:"purge", label:"Colour-change purge", rate:20}],
+  other:[{k:"mech", label:"Clock movement (MH011)", v:3.00},
+         {k:"batt", label:"Battery",                v:0.35},
+         {k:"ballast",label:"Ballast (steel BBs or sand)", v:0.00},
+         {k:"glue", label:"CA glue",                v:0.05},
+         {k:"box",  label:"Box and packing",        v:1.50},
+         {k:"power",label:"Electricity",            v:0.18}],
+  scrap:5, margin:60, batch:1, size:"516"
 };
 function num(v){ var n=parseFloat(v); return (isFinite(n)&&n>=0)?n:0; }
 function money(n){ return "$"+(Math.round(n*100)/100).toFixed(2); }
 function batchDiv(k){ return k==="purge" ? Math.max(1,COST.batch||1) : 1; }
-function costCalc(){
-  var f=0,o=0,g=0,i,r,d;
+function sizeOf(style){ return style==="post363" ? "363" : "516"; }
+function costCalc(size){
+  var G=COST.sizes[size||COST.size].g, f=0,o=0,g=0,i,r,d;
   for(i=0;i<COST.fil.length;i++){
     r=COST.fil[i]; d=batchDiv(r.k);
-    f+=r.g*r.rate/1000/d; g+=r.g/d;
+    f+=(G[r.k]||0)*r.rate/1000/d; g+=(G[r.k]||0)/d;
   }
   for(i=0;i<COST.other.length;i++) o+=COST.other[i].v;
   var scrap=(f+o)*(COST.scrap/100), total=f+o+scrap, m=COST.margin/100;
   return {fil:f,other:o,grams:g,scrap:scrap,total:total,price:(m<1?total/(1-m):null)};
 }
-function costLine(qty){
-  var c=costCalc(), q=Math.max(1,qty||1);
-  return money(c.total)+" each"+(q>1?"  ·  "+money(c.total*q)+" for "+q:"");
+function costLine(qty,style){
+  var c=costCalc(sizeOf(style)), q=Math.max(1,qty||1);
+  return money(c.total)+" each"+(c.price!=null?" (price "+money(c.price)+")":"")+(q>1?"  ·  "+money(c.total*q)+" for "+q:"");
 }
 function costMsg(t,cls){ var m=$("costMsg"); m.textContent=t; m.className="submitmsg"+(cls?" "+cls:""); }
 function costRender(){
-  var c=costCalc();
+  var G=COST.sizes[COST.size].g;
   COST.fil.forEach(function(r){
     var el=$("co_"+r.k), d=batchDiv(r.k);
-    if(el) el.textContent=money(r.g*r.rate/1000/d);
+    if(el) el.textContent=money((G[r.k]||0)*r.rate/1000/d);
   });
   $("batchNote").textContent = COST.batch>1
-    ? "Flush is charged once per plate, so "+COST.batch+" clocks a run splits it "+COST.batch+" ways — "
-      +(COST.fil[4].g/COST.batch).toFixed(0)+" g each."
-    : "One clock a run carries the whole flush by itself.";
+    ? "Purge is spent per colour-change layer, not per part, so "+COST.batch+" clocks a run split it "+COST.batch+" ways: "
+      +((G.purge||0)/COST.batch).toFixed(0)+" g each."
+    : "One clock a run carries the whole purge by itself.";
+  var cols=["516","363"].map(function(k){ return {k:k, c:costCalc(k)}; });
+  function row(lbl,fn,cls){ return '<div class="r'+(cls?" "+cls:"")+'"><span>'+lbl+'</span>'+cols.map(function(x){ return '<b>'+fn(x.c)+'</b>'; }).join("")+'</div>'; }
   $("costOut").innerHTML=
-    '<div class="r"><span>Filament ('+c.grams.toFixed(0)+' g)</span><b>'+money(c.fil)+'</b></div>'+
-    '<div class="r"><span>Everything else</span><b>'+money(c.other)+'</b></div>'+
-    '<div class="r"><span>Scrap allowance</span><b>'+money(c.scrap)+'</b></div>'+
-    '<div class="r big"><span>Cost per clock</span><b>'+money(c.total)+'</b></div>'+
-    '<div class="r"><span>Suggested price at '+COST.margin.toFixed(0)+'%</span><b class="price">'+
-      (c.price==null?"—":money(c.price))+'</b></div>';
+    '<div class="r hdr"><span></span><b>516 mm</b><b>363 mm</b></div>'+
+    row("Filament",function(c){ return money(c.fil)+'<small>'+c.grams.toFixed(0)+' g</small>'; })+
+    row("Everything else",function(c){ return money(c.other); })+
+    row("Scrap allowance",function(c){ return money(c.scrap); })+
+    row("Cost per clock",function(c){ return money(c.total); },"big")+
+    row("Price at "+COST.margin.toFixed(0)+"% margin",function(c){ return '<span class="price">'+(c.price==null?"—":money(c.price))+'</span>'; });
 }
 function buildCost(){
+  var G=COST.sizes[COST.size].g;
   var h='<div class="cg"><span class="hd">Filament</span>'+
         '<span class="hd" style="text-align:right">Grams</span>'+
         '<span class="hd" style="text-align:right">$ / kg</span>'+
         '<span class="hd" style="text-align:right">Cost</span></div>';
   COST.fil.forEach(function(r){
     h+='<div class="cg"><span class="lab">'+esc(r.label)+'</span>'+
-       '<input type="number" step="0.1" min="0" id="cg_'+r.k+'" value="'+r.g+'" aria-label="'+esc(r.label)+' grams">'+
+       '<input type="number" step="0.1" min="0" id="cg_'+r.k+'" value="'+(G[r.k]||0)+'" aria-label="'+esc(r.label)+' grams, '+esc(COST.sizes[COST.size].label)+'">'+
        '<input type="number" step="0.5" min="0" id="cr_'+r.k+'" value="'+r.rate+'" aria-label="'+esc(r.label)+' price per kilo">'+
        '<span class="out" id="co_'+r.k+'"></span></div>';
   });
   $("costFil").innerHTML=h;
+  Array.prototype.forEach.call(document.querySelectorAll("#costSize button"),function(b){
+    b.setAttribute("aria-pressed", b.getAttribute("data-k")===COST.size ? "true":"false"); });
   var h2="";
   COST.other.forEach(function(r){
     h2+='<div class="cg2"><span class="lab">'+esc(r.label)+'</span>'+
@@ -1338,16 +1360,23 @@ function buildCost(){
   $("costOther").innerHTML=h2;
   $("cScrap").value=COST.scrap; $("cMargin").value=COST.margin; $("cBatch").value=COST.batch;
   COST.fil.forEach(function(r){
-    $("cg_"+r.k).addEventListener("input",function(e){ r.g=num(e.target.value); costRender(); });
+    $("cg_"+r.k).addEventListener("input",function(e){ COST.sizes[COST.size].g[r.k]=num(e.target.value); costRender(); });
     $("cr_"+r.k).addEventListener("input",function(e){ r.rate=num(e.target.value); costRender(); });
   });
   COST.other.forEach(function(r){
     $("cv_"+r.k).addEventListener("input",function(e){ r.v=num(e.target.value); costRender(); });
   });
+  costRender();
+}
+var costWired=false;
+function wireCost(){
+  if(costWired) return; costWired=true;
   $("cScrap").addEventListener("input",function(e){ COST.scrap=num(e.target.value); costRender(); });
   $("cMargin").addEventListener("input",function(e){ COST.margin=num(e.target.value); costRender(); });
   $("cBatch").addEventListener("input",function(e){ COST.batch=Math.max(1,Math.round(num(e.target.value))||1); costRender(); });
-  costRender();
+  Array.prototype.forEach.call(document.querySelectorAll("#costSize button"),function(b){
+    b.addEventListener("click",function(){ COST.size=b.getAttribute("data-k"); buildCost(); });
+  });
 }
 async function loadCostConfig(){
   if(!DB) return;
@@ -1356,7 +1385,11 @@ async function loadCostConfig(){
     if(!s.exists) return;
     var d=s.data()||{};
     if(Array.isArray(d.fil)) d.fil.forEach(function(x){
-      COST.fil.forEach(function(r){ if(x&&r.k===x.k){ r.g=num(x.g); r.rate=num(x.rate); } });
+      COST.fil.forEach(function(r){ if(x&&r.k===x.k) r.rate=num(x.rate); });
+    });
+    if(d.grams && typeof d.grams==="object") ["516","363"].forEach(function(k){
+      var src=d.grams[k]; if(!src) return;
+      Object.keys(COST.sizes[k].g).forEach(function(f){ if(typeof src[f]==="number") COST.sizes[k].g[f]=num(src[f]); });
     });
     if(Array.isArray(d.other)) d.other.forEach(function(x){
       COST.other.forEach(function(r){ if(x&&r.k===x.k) r.v=num(x.v); });
@@ -1372,7 +1405,8 @@ $("costSave").addEventListener("click",async function(){
   try{
     await DB.doc("config/costing").set({
       updatedAt:new Date().toISOString(),
-      fil:COST.fil.map(function(r){ return {k:r.k,g:r.g,rate:r.rate}; }),
+      fil:COST.fil.map(function(r){ return {k:r.k,rate:r.rate}; }),
+      grams:{"516":COST.sizes["516"].g, "363":COST.sizes["363"].g},
       other:COST.other.map(function(r){ return {k:r.k,v:r.v}; }),
       scrap:COST.scrap, margin:COST.margin, batch:COST.batch
     });
