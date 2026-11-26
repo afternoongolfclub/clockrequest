@@ -306,12 +306,12 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
               <g id="pOver" filter="url(#relief)">
                 <image id="pLogo" clip-path="url(#cpPostMed)" preserveAspectRatio="xMidYMid meet" display="none"></image>
                 <g id="pMedHint"><circle fill="none" stroke-width="0.5" stroke-dasharray="1.6 1.6"/><text text-anchor="middle" font-size="3.2" letter-spacing="0.3">CREST</text></g>
-                <text id="pName" text-anchor="middle"><textPath href="#arcPost" startOffset="50%"></textPath></text>
+                <text id="pName" text-anchor="start"><textPath href="#arcPost" startOffset="0"></textPath></text>
                 <text id="pMeasure" x="0" y="0" visibility="hidden"></text>
                 <text id="pBottom" text-anchor="middle"></text>
               </g>
               <g id="pDialG">
-                <text id="pDial" text-anchor="middle" lengthAdjust="spacingAndGlyphs"></text>
+                <text id="pDial" text-anchor="start" lengthAdjust="spacingAndGlyphs"></text>
               </g>
             </svg>
             <div class="picload" id="picLoad">Loading preview…</div>
@@ -602,7 +602,13 @@ function renderPost(){
   cap=Math.max(CAP_FLOOR, Math.min(9.4, cap*CAL[key]));
   nm.style.fontSize=(cap/CAP_RATIO).toFixed(3)+"px"; ms.style.fontSize=nm.style.fontSize;
   L=ms.getComputedTextLength();
-  if(L>0){ tp.setAttribute("textLength",Math.min(L*n.condense,arcLen).toFixed(2)); tp.setAttribute("lengthAdjust","spacingAndGlyphs"); }
+  /* centre by measurement, not text-anchor: Safari mis-centres squeezed (textLength) text on a path */
+  var pathLen=r*n.span*Math.PI/180;
+  if(L>0){
+    var tl=Math.min(L*n.condense,arcLen);
+    tp.setAttribute("textLength",tl.toFixed(2)); tp.setAttribute("lengthAdjust","spacingAndGlyphs");
+    tp.setAttribute("startOffset",((pathLen-tl)/2).toFixed(2));
+  }
   caps.t1=S.topA?cap:0; caps.t2=0;
   /* lower line */
   var bt=$("pBottom"), bc=g.bottom.cap; styleText(bt,acc); bt.textContent=S.bottom||"";
@@ -634,7 +640,7 @@ function renderPost(){
     caps.d=dcap; caps.dTooLong=(w>maxw+0.05);
     dt.textContent=str; dt.style.fontSize=(dcap/CAP_RATIO).toFixed(3)+"px";
     dt.setAttribute("textLength",w.toFixed(2));
-    dt.setAttribute("x",0); dt.setAttribute("y",(g.dial_cy-dy+dcap/2).toFixed(2));
+    dt.setAttribute("x",(-w/2).toFixed(2)); dt.setAttribute("y",(g.dial_cy-dy+dcap/2).toFixed(2));
   }
   /* crest in the gold ring */
   var cr=g.crest; $("cpPostMedC").setAttribute("cx",cr.cx); $("cpPostMedC").setAttribute("cy",cr.cy); $("cpPostMedC").setAttribute("r",cr.r);
