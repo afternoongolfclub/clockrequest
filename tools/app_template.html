@@ -1,0 +1,1043 @@
+<title>Clock Request Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: two-pane workbench — clock on a stage at left, spec sheet at right; stacks to one column on a phone. */
+@font-face{
+  font-family:'Caladea Print';
+  font-style:normal; font-weight:700; font-display:swap;
+  src:url(data:font/woff2;base64,__FONT__) format('woff2');
+}
+:root{
+  --bg:#F1F2F4; --surface:#FFFFFF; --sunk:#F7F8F9;
+  --ink:#191C20; --ink-2:#434A52; --muted:#6B737C;
+  --rule:#DBDFE4; --rule-soft:#E9ECEF;
+  --brass:#7A7040; --brass-ink:#5E562F; --brass-wash:#F1EFE2;
+  --stage:#E5E8EA; --stage-edge:#D3D8DC;
+  --ok:#2F6F4F; --warn:#8A5A14; --bad:#9A3029;
+  --shadow:0 1px 2px rgba(17,20,24,.06),0 8px 24px rgba(17,20,24,.06);
+  --ui:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --display:'Source Serif 4',Georgia,'Times New Roman',serif;
+  --print:'Caladea Print','Caladea','Cambria',Georgia,serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141619; --surface:#1C1F24; --sunk:#181B1F;
+  --ink:#E9EBEE; --ink-2:#B8BFC7; --muted:#8B939C;
+  --rule:#2C3138; --rule-soft:#24282E;
+  --brass:#BCAF6E; --brass-ink:#D6CA8C; --brass-wash:#24231A;
+  --stage:#1F2226; --stage-edge:#2B2F35;
+  --ok:#6FBF93; --warn:#D9A95C; --bad:#E08B81;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#141619; --surface:#1C1F24; --sunk:#181B1F;
+  --ink:#E9EBEE; --ink-2:#B8BFC7; --muted:#8B939C;
+  --rule:#2C3138; --rule-soft:#24282E;
+  --brass:#BCAF6E; --brass-ink:#D6CA8C; --brass-wash:#24231A;
+  --stage:#1F2226; --stage-edge:#2B2F35;
+  --ok:#6FBF93; --warn:#D9A95C; --bad:#E08B81;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--bg)}
+.wrap{max-width:1240px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 56px}
+
+/* masthead */
+header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;
+  padding-block:30px 20px;border-bottom:1px solid var(--rule)}
+.brandline{display:flex;align-items:center;gap:10px;color:var(--brass);font-size:11px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase}
+.brandline .pip{width:7px;height:7px;border-radius:50%;background:var(--brass)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(26px,4.4vw,38px);line-height:1.1;margin:6px 0 0;
+  text-wrap:balance;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:14px;margin:8px 0 0;max-width:56ch}
+.topnav{display:flex;gap:6px;background:var(--sunk);border:1px solid var(--rule);border-radius:10px;padding:4px}
+.topnav button{appearance:none;border:0;background:transparent;color:var(--ink-2);font:inherit;font-weight:500;
+  font-size:13px;padding:7px 14px;border-radius:7px;cursor:pointer}
+.topnav button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.topnav button:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+
+/* two-pane */
+.panes{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:28px;padding-block:26px}
+@media (max-width:900px){.panes{grid-template-columns:1fr;gap:22px}}
+
+/* stage */
+.stagecol{min-width:0}
+.stagewrap{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+@media (max-width:900px){.stagewrap{position:static}}
+.stage{background:var(--stage);border:1px solid var(--stage-edge);border-radius:14px;padding:18px;
+  display:flex;justify-content:center;align-items:center}
+.stage svg{width:100%;max-width:330px;height:auto;display:block}
+.stagefoot{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:space-between;
+  padding:12px 2px 0;font-size:12px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding-top:12px}
+.chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--rule);
+  border-radius:999px;padding:5px 11px 5px 6px;font-size:12px;color:var(--ink-2);min-width:0}
+.chip i{width:15px;height:15px;border-radius:50%;border:1px solid rgba(128,128,128,.45);flex:none}
+.chip b{font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* form */
+.sheet{min-width:0;display:flex;flex-direction:column;gap:18px}
+section.card{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:20px;
+  box-shadow:var(--shadow);min-width:0}
+.cardhead{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
+.cardhead h2{font-family:var(--display);font-size:18px;font-weight:600;margin:0;letter-spacing:-.005em}
+.step{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--brass);font-variant-numeric:tabular-nums}
+.cardnote{color:var(--muted);font-size:13px;margin:0 0 16px}
+
+.layouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.layouts{grid-template-columns:1fr}}
+.lay{display:block;position:relative;cursor:pointer;min-width:0}
+.lay input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer}
+.lay .box{display:block;border:1px solid var(--rule);border-radius:11px;padding:12px;background:var(--sunk);height:100%;pointer-events:none}
+.lay input:checked+.box{border-color:var(--brass);background:var(--brass-wash);box-shadow:inset 0 0 0 1px var(--brass)}
+.lay input:focus-visible+.box{outline:2px solid var(--brass);outline-offset:2px}
+.lay .glyph{display:block;width:100%;height:auto;margin-bottom:8px}
+.lay .nm{display:block;font-weight:600;font-size:13px}
+.lay .ds{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:3px}
+
+.fields{display:grid;gap:14px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:520px){.row2{grid-template-columns:1fr}}
+.f{display:grid;gap:6px;min-width:0}
+.f label{font-size:12px;font-weight:600;color:var(--ink-2);display:flex;justify-content:space-between;gap:10px}
+.f .cnt{font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+.f .cnt.over{color:var(--warn)}
+input[type=text],input[type=email],input[type=number],input[type=date],textarea,select{
+  width:100%;font:inherit;font-size:14px;color:var(--ink);background:var(--sunk);
+  border:1px solid var(--rule);border-radius:9px;padding:9px 11px}
+textarea{resize:vertical;min-height:76px}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--brass);outline-offset:-1px;border-color:var(--brass)}
+.hint{font-size:12px;color:var(--muted)}
+.hint.warn{color:var(--warn)}
+
+/* filament */
+.slots{display:grid;gap:12px}
+.slot{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+  border:1px solid var(--rule);border-radius:11px;padding:10px 12px;background:var(--sunk);min-width:0}
+.sw{width:34px;height:34px;border-radius:8px;border:1px solid rgba(128,128,128,.4);flex:none}
+.slot .meta{min-width:0}
+.slot .role{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.slot .val{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot .val span{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
+.slot button{appearance:none;border:1px solid var(--rule);background:var(--surface);color:var(--ink);
+  font:inherit;font-size:13px;font-weight:500;padding:7px 12px;border-radius:8px;cursor:pointer}
+.slot button:hover{border-color:var(--brass);color:var(--brass-ink)}
+.slot button:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+
+dialog.picker{border:1px solid var(--rule);border-radius:14px;background:var(--surface);color:var(--ink);
+  padding:0;width:min(640px,calc(100vw - 32px));max-height:min(80vh,720px);box-shadow:var(--shadow)}
+dialog.picker::backdrop{background:rgba(10,12,15,.45)}
+.pk-head{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--rule);
+  padding:16px 18px;display:flex;gap:12px;align-items:center;justify-content:space-between;border-radius:14px 14px 0 0}
+.pk-head h3{margin:0;font-family:var(--display);font-size:17px;font-weight:600}
+.pk-body{padding:14px 18px 20px;overflow:auto}
+.pk-series{font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--brass);
+  margin:16px 0 9px}
+.pk-series:first-child{margin-top:4px}
+.pk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px}
+.pk{display:flex;align-items:center;gap:9px;border:1px solid var(--rule);border-radius:9px;background:var(--sunk);
+  padding:7px 9px;cursor:pointer;text-align:left;font:inherit;min-width:0;color:var(--ink)}
+.pk:hover{border-color:var(--brass)}
+.pk[aria-pressed="true"]{border-color:var(--brass);box-shadow:inset 0 0 0 1px var(--brass);background:var(--brass-wash)}
+.pk:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+.pk i{width:22px;height:22px;border-radius:5px;border:1px solid rgba(128,128,128,.4);flex:none}
+.pk .t{min-width:0}
+.pk .t b{display:block;font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk .t span{display:block;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* logo drop */
+.drop{border:1.5px dashed var(--rule);border-radius:12px;background:var(--sunk);padding:18px;
+  display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.drop.on{border-color:var(--brass);background:var(--brass-wash)}
+.drop .prev{width:64px;height:64px;border-radius:50%;border:1px solid var(--rule);background:var(--surface);
+  display:grid;place-items:center;overflow:hidden;flex:none}
+.drop .prev img{width:100%;height:100%;object-fit:contain}
+.drop .prev span{font-size:10px;letter-spacing:.1em;color:var(--muted)}
+.drop .txt{min-width:0;flex:1 1 200px}
+.drop .txt p{margin:0;font-size:13px;color:var(--muted)}
+.drop .txt b{font-size:14px}
+.btn{appearance:none;border:1px solid var(--rule);background:var(--surface);color:var(--ink);font:inherit;
+  font-size:13px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer}
+.btn:hover{border-color:var(--brass);color:var(--brass-ink)}
+.btn:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+.btn.primary{background:var(--brass);border-color:var(--brass);color:#fff;padding:11px 22px;font-size:14.5px}
+.btn.primary:hover{filter:brightness(1.06);color:#fff}
+.btn.primary[disabled]{opacity:.55;cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent}
+
+.submitbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.submitmsg{font-size:13px;color:var(--muted);min-width:0}
+.submitmsg.ok{color:var(--ok)}
+.submitmsg.bad{color:var(--bad)}
+
+/* inbox */
+.inbox{display:grid;gap:12px}
+.req{border:1px solid var(--rule);border-radius:12px;padding:14px;background:var(--surface);
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px}
+.req .thumb{width:54px;height:54px;border-radius:50%;border:1px solid var(--rule);overflow:hidden;
+  display:grid;place-items:center;background:var(--sunk);flex:none}
+.req .thumb img{width:100%;height:100%;object-fit:contain}
+.req .thumb span{font-size:9px;letter-spacing:.08em;color:var(--muted)}
+.req h4{margin:0;font-size:15px;font-weight:600}
+.req .when{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.req dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:9px 0 0;font-size:13px}
+.req dt{color:var(--muted)}
+.req dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.empty{border:1px dashed var(--rule);border-radius:12px;padding:30px 22px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-family:var(--display);font-size:17px;font-weight:600;margin-bottom:5px}
+
+/* costing */
+.costcol{display:flex;flex-direction:column;gap:18px;max-width:720px;padding-block:26px}
+.costgrid{display:grid;gap:9px}
+.cg{display:grid;grid-template-columns:minmax(0,1fr) 88px 80px 76px;gap:10px;align-items:center}
+.cg2{display:grid;grid-template-columns:minmax(0,1fr) 104px;gap:10px;align-items:center}
+.cg .lab,.cg2 .lab{font-size:13.5px;min-width:0;overflow-wrap:anywhere}
+.cg input,.cg2 input{text-align:right;padding:7px 9px;font-size:13.5px}
+.cg .out{text-align:right;font-weight:600;font-size:13.5px;font-variant-numeric:tabular-nums}
+.cg .hd{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+@media (max-width:560px){
+  .cg{grid-template-columns:minmax(0,1fr) 68px 62px 62px;gap:6px}
+  .cg2{grid-template-columns:minmax(0,1fr) 84px}
+  .cg input,.cg2 input{padding:6px 7px;font-size:12.5px}
+}
+.tot{display:grid;gap:9px}
+.tot .r{display:flex;justify-content:space-between;align-items:baseline;gap:14px;font-size:14px;color:var(--ink-2)}
+.tot .r b{font-variant-numeric:tabular-nums;color:var(--ink)}
+.tot .big{border-top:1px solid var(--rule);padding-top:11px;margin-top:3px;font-size:16px;color:var(--ink)}
+.tot .big b{font-size:19px;font-weight:700}
+.tot b.price{color:var(--brass-ink);font-weight:700}
+footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--muted);font-size:12.5px}
+.vis-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="brandline"><span class="pip"></span> Bambu Lab A1 · 0.16 mm · four-colour</div>
+      <h1>Clock Request Desk</h1>
+      <p class="sub">Set the lettering, send a crest, and choose filament. The preview is drawn from the real printed geometry, so what you see is what the plate cuts.</p>
+    </div>
+    <div class="topnav" role="tablist" aria-label="Sections" id="topnav" hidden>
+      <button id="tabBuild" role="tab" aria-selected="true" aria-controls="paneBuild">Build a clock</button>
+      <button id="tabInbox" role="tab" aria-selected="false" aria-controls="paneInbox" hidden>Requests</button>
+      <button id="tabCost" role="tab" aria-selected="false" aria-controls="paneCost" hidden>Costing</button>
+    </div>
+  </header>
+
+  <div id="paneBuild" role="tabpanel" aria-labelledby="tabBuild">
+  <div class="panes">
+    <!-- STAGE -->
+    <div class="stagecol">
+      <div class="stagewrap">
+        <div class="stage">
+          <svg id="clock" viewBox="-62 -97 124 194" role="img" aria-labelledby="clockTitle">
+            <title id="clockTitle">Live preview of the clock</title>
+            <defs>
+              <clipPath id="cpWin"><circle cx="0" cy="5.58" r="47.31"/></clipPath>
+              <clipPath id="cpMed"><circle cx="0.25" cy="-73.5" r="9.3"/></clipPath>
+              <path id="arcT1" fill="none"/>
+              <path id="arcT2" fill="none"/>
+              <path id="arcB" fill="none"/>
+            </defs>
+            <path id="pBody" fill-rule="evenodd"/>
+            <g clip-path="url(#cpWin)">
+              <circle id="cDial" cx="0" cy="5.58" r="50.05"/>
+              <g transform="translate(0,5.58)">
+                <path id="pNum" fill-rule="evenodd"/>
+                <text id="tYear" x="0" y="-16" text-anchor="middle"></text>
+                <text id="tD1" x="0" y="17" text-anchor="middle"></text>
+                <text id="tD2" x="0" y="26" text-anchor="middle"></text>
+              </g>
+              <circle id="cBoss" cx="0" cy="5.58" r="2.7"/>
+            </g>
+            <path id="pAccent" fill-rule="evenodd"/>
+            <circle id="cWell" cx="0.25" cy="-73.5" r="9.3"/>
+            <image id="imgLogo" clip-path="url(#cpMed)" x="-6.4" y="-80.1" width="13.2" height="13.2"
+                   preserveAspectRatio="xMidYMid meet" display="none"></image>
+            <g id="gMedHint">
+              <circle cx="0.25" cy="-73.5" r="6.4" fill="none" stroke-width="0.5" stroke-dasharray="1.6 1.6"/>
+              <text x="0.25" y="-71.6" text-anchor="middle" font-size="3.4" letter-spacing="0.3">CREST</text>
+            </g>
+            <text id="tT1" text-anchor="middle"><textPath href="#arcT1" startOffset="50%"></textPath></text>
+            <text id="tT2" text-anchor="middle"><textPath href="#arcT2" startOffset="50%"></textPath></text>
+            <text id="tB" text-anchor="middle"><textPath href="#arcB" startOffset="50%"></textPath></text>
+          </svg>
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="stagefoot">
+          <span>Housing 117 × 183 mm · dial Ø100.1 mm</span>
+          <span id="capNote"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHEET -->
+    <div class="sheet">
+      <section class="card">
+        <div class="cardhead"><span class="step">01</span><h2>Layout</h2></div>
+        <p class="cardnote">Where the names sit. Each one prints from a different plate.</p>
+        <div class="layouts" id="layouts"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><span class="step">02</span><h2>Lettering</h2></div>
+        <p class="cardnote">Raised relief in the accent filament. Text is cut to fit the arc automatically — the counter warns before it gets too small to print cleanly.</p>
+        <div class="fields" id="fields"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><span class="step">03</span><h2>Crest</h2></div>
+        <p class="cardnote">Goes in the medallion at the top. It is reproduced as single-colour raised relief in the accent filament, so a bold silhouette carries far better than fine detail or gradients.</p>
+        <div class="drop" id="drop">
+          <div class="prev" id="logoPrev"><span>NONE</span></div>
+          <div class="txt">
+            <b id="logoName">No crest yet</b>
+            <p id="logoHelp">Drop a PNG, JPEG or SVG here, or choose a file. 20 MB limit.</p>
+          </div>
+          <input type="file" id="logoFile" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="vis-hidden">
+          <button class="btn" type="button" id="logoBtn">Choose file</button>
+          <button class="btn ghost" type="button" id="logoClear" hidden>Remove</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><span class="step">04</span><h2>Filament</h2></div>
+        <p class="cardnote">Real Bambu Lab colours, one per AMS slot. Hex values are Bambu's own; screens still flatter metallics, so order a sample before a long run.</p>
+        <div class="slots" id="slots"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><span class="step">05</span><h2>Order</h2></div>
+        <p class="cardnote">Enough to quote the job and get back to you.</p>
+        <form id="orderForm" novalidate>
+          <div class="fields">
+            <div class="row2">
+              <div class="f"><label for="fClub">Club or organisation</label>
+                <input type="text" id="fClub" autocomplete="organization" placeholder="Huntsville Country Club"></div>
+              <div class="f"><label for="fContact">Your name</label>
+                <input type="text" id="fContact" autocomplete="name"></div>
+            </div>
+            <div class="row2">
+              <div class="f"><label for="fEmail">Email</label>
+                <input type="email" id="fEmail" autocomplete="email" placeholder="you@club.org"></div>
+              <div class="f"><label for="fPhone">Phone <span class="cnt">optional</span></label>
+                <input type="text" id="fPhone" autocomplete="tel"></div>
+            </div>
+            <div class="row2">
+              <div class="f"><label for="fQty">How many</label>
+                <input type="number" id="fQty" min="1" max="200" step="1" value="1"></div>
+              <div class="f"><label for="fDue">Needed by <span class="cnt">optional</span></label>
+                <input type="date" id="fDue"></div>
+            </div>
+            <div class="f"><label for="fNotes">Anything else <span class="cnt">optional</span></label>
+              <textarea id="fNotes" placeholder="Presentation date, engraving on the back, packaging…"></textarea></div>
+          </div>
+          <div class="submitbar" style="margin-top:18px">
+            <button class="btn primary" type="submit" id="sendBtn">Send request</button>
+            <span class="submitmsg" id="sendMsg"></span>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+  </div>
+
+  <div id="paneInbox" role="tabpanel" aria-labelledby="tabInbox" hidden>
+    <section class="card" style="margin-top:26px">
+      <div class="cardhead"><span class="step">IN</span><h2>Incoming requests</h2></div>
+      <p class="cardnote" id="inboxNote">Everything sent from this page, newest first. Only you can see this tab.</p>
+      <div class="inbox" id="inbox"></div>
+    </section>
+  </div>
+
+  <div id="paneCost" role="tabpanel" aria-labelledby="tabCost" hidden>
+    <div class="costcol">
+      <section class="card">
+        <div class="cardhead"><h2>Per clock</h2></div>
+        <p class="cardnote">One finished clock: housing, post, dial, numerals, hands and mechanism. Your own time is not counted.</p>
+        <div class="tot" id="costOut"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><span class="step">01</span><h2>Filament</h2></div>
+        <p class="cardnote">Grams are worked out from the meshes as a 1 mm shell plus 15% infill. Slice a plate and replace them with the weights Bambu Studio reports. Purge is entered for a whole plate run.</p>
+        <div class="costgrid" id="costFil"></div>
+        <p class="cardnote" id="batchNote" style="margin:14px 0 0"></p>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><span class="step">02</span><h2>Everything else</h2></div>
+        <p class="cardnote">Cost per finished clock.</p>
+        <div class="costgrid" id="costOther"></div>
+      </section>
+
+      <section class="card">
+        <div class="cardhead"><span class="step">03</span><h2>Allowances</h2></div>
+        <div class="row2">
+          <div class="f"><label for="cBatch">Clocks per plate run</label>
+            <input type="number" id="cBatch" min="1" max="12" step="1">
+            <span class="hint">Two housings fit the bed; posts go four up. Flush is spent per layer, not per part, so a full plate splits it.</span></div>
+          <div class="f"><label for="cScrap">Scrap allowance %</label>
+            <input type="number" id="cScrap" min="0" max="60" step="1"></div>
+        </div>
+        <div class="row2" style="margin-top:14px">
+          <div class="f"><label for="cMargin">Target margin %</label>
+            <input type="number" id="cMargin" min="0" max="95" step="1"></div>
+          <div></div>
+        </div>
+        <div class="submitbar" style="margin-top:18px">
+          <button class="btn primary" type="button" id="costSave">Save these figures</button>
+          <span class="submitmsg" id="costMsg"></span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="foot">
+    Filament names and hex values are Bambu Lab's published figures. The preview approximates printed appearance; it is not a colour proof.
+  </footer>
+</div>
+
+<dialog class="picker" id="picker">
+  <div class="pk-head">
+    <h3 id="pkTitle">Choose filament</h3>
+    <button class="btn" type="button" id="pkClose">Close</button>
+  </div>
+  <div class="pk-body" id="pkBody"></div>
+</dialog>
+
+<script type="application/json" id="geomData">__GEOM__</script>
+<script>
+(function(){
+"use strict";
+var G = JSON.parse(document.getElementById('geomData').textContent);
+
+/* ---------- Bambu Lab filament palette (published hex values) ---------- */
+var PALETTE = [
+ ["PLA Basic", [
+  ["Jade White","#FFFFFF"],["Beige","#F7E6DE"],["Light Gray","#D1D3D5"],["Silver","#A6A9AA"],
+  ["Gray","#8E9089"],["Dark Gray","#545454"],["Black","#000000"],["Magenta","#EC008C"],
+  ["Pink","#F55A74"],["Hot Pink","#F5547C"],["Orange","#FF6A13"],["Pumpkin Orange","#FF9016"],
+  ["Gold","#E4BD68"],["Sunflower Yellow","#FEC600"],["Yellow","#F4EE2A"],["Bronze","#847D48"],
+  ["Bright Green","#BECF00"],["Bambu Green","#00AE42"],["Mistletoe Green","#3F8E43"],
+  ["Turquoise","#00B1B7"],["Cyan","#0086D6"],["Blue","#0A2989"],["Cobalt Blue","#0056B8"],
+  ["Blue Grey","#5B6579"],["Purple","#5E43B7"],["Indigo Purple","#482960"],
+  ["Cocoa Brown","#6F5034"],["Brown","#9D432C"],["Maroon Red","#9D2235"],["Red","#C12E1F"]
+ ]],
+ ["PLA Matte", [
+  ["Ivory White","#FFFFFF"],["Bone White","#CBC6B8"],["Desert Tan","#E8DBB7"],["Latte Brown","#D3B7A7"],
+  ["Caramel","#AE835B"],["Terracotta","#B15533"],["Dark Brown","#7D6556"],["Dark Chocolate","#4D3324"],
+  ["Lilac Purple","#AE96D4"],["Sakura Pink","#E8AFCF"],["Mandarin Orange","#F99963"],
+  ["Lemon Yellow","#F7D959"],["Plum","#950051"],["Scarlet Red","#DE4343"],["Dark Red","#BB3D43"],
+  ["Dark Green","#68724D"],["Grass Green","#61C680"],["Apple Green","#C2E189"],["Ice Blue","#A3D8E1"],
+  ["Sky Blue","#56B7E6"],["Marine Blue","#0078BF"],["Dark Blue","#042F56"],["Ash Gray","#9B9EA0"],
+  ["Nardo Gray","#757575"],["Charcoal","#000000"]
+ ]],
+ ["PLA Metal", [
+  ["Iridium Gold Metallic","#B39B84"],["Copper Brown Metallic","#AA6443"],
+  ["Oxide Green Metallic","#1D7C6A"],["Cobalt Blue Metallic","#39699E"],["Iron Gray Metallic","#43403D"]
+ ]]
+];
+function findFil(series,name){
+  for(var i=0;i<PALETTE.length;i++) if(PALETTE[i][0]===series)
+    for(var j=0;j<PALETTE[i][1].length;j++) if(PALETTE[i][1][j][0]===name)
+      return {series:series,name:name,hex:PALETTE[i][1][j][1]};
+  return {series:series,name:name,hex:"#888888"};
+}
+
+/* ---------- measured housing geometry (mm, model space) ---------- */
+var TOP_C=[0.0,-7.10], TOP_RBASE=61.14, TOP_CAP=7.16, TOP_T0=126.5, TOP_T1=53.5;
+var BOT_C=[0.06,-12.63], BOT_RBASE=57.97, BOT_CAP=5.89, BOT_T0=-114.0, BOT_T1=-66.0;
+var STACK_ROUT=65.55, STACK_RIN=60.55, STACK_CAP=4.0;
+var CAP_RATIO=0.667;          /* Caladea cap height / em */
+var TRACK=0.25;               /* letter tracking, mm */
+var CAP_FLOOR=3.1;            /* below this the relief gets fragile at 0.4 mm nozzle */
+var DIAL_CZ=5.58;             /* dial centre in SVG units */
+
+var SLOTS=[
+  {key:"dial",   role:"Dial",     def:["PLA Basic","Jade White"]},
+  {key:"body",   role:"Housing",  def:["PLA Matte","Dark Blue"]},
+  {key:"accent", role:"Accents",  def:["PLA Basic","Bronze"]},
+  {key:"numeral",role:"Numerals", def:["PLA Basic","Black"]}
+];
+
+var LAYOUTS=[
+  {id:"stacked", name:"Stacked arc",
+   desc:"Club name and event on two arcs at the crown.",
+   fields:["topA","topB","bottom","year"],
+   labels:{topA:"Crown, upper line",topB:"Crown, lower line",bottom:"Lower arc",year:"Dial text"}},
+  {id:"dial", name:"On the dial",
+   desc:"Event at the crown, club name across the dial face.",
+   fields:["topA","bottom","year","dialA","dialB"],
+   labels:{topA:"Crown arc",bottom:"Lower arc",year:"Dial text",dialA:"Dial line 1",dialB:"Dial line 2"}},
+  {id:"single", name:"Single arc",
+   desc:"Club name at the crown, award on the lower arc.",
+   fields:["topA","bottom","year"],
+   labels:{topA:"Crown arc",bottom:"Lower arc",year:"Dial text"}}
+];
+
+/* opens on a real spec rather than an empty shell */
+var S={
+  layout:"single",
+  topA:"HUNTSVILLE COUNTRY CLUB", topB:"CLUB CHAMPIONSHIP",
+  bottom:"CLUB CHAMPION", year:"2026", dialA:"HUNTSVILLE", dialB:"COUNTRY CLUB",
+  fil:{}, logoUrl:null, logoId:null, logoName:null
+};
+SLOTS.forEach(function(s){ S.fil[s.key]=findFil(s.def[0],s.def[1]); });
+
+/* ---------- svg helpers ---------- */
+var $=function(id){return document.getElementById(id);};
+function arcD(cx,cz,r,t0,t1){
+  var n=90,p=[],i,t;
+  for(i=0;i<=n;i++){ t=(t0+(t1-t0)*i/n)*Math.PI/180;
+    p.push((cx+r*Math.cos(t)).toFixed(3)+","+(-(cz+r*Math.sin(t))).toFixed(3)); }
+  return "M"+p[0]+"L"+p.slice(1).join("L");
+}
+var SPAN_TOP=(TOP_T0-TOP_T1)*Math.PI/180, SPAN_BOT=(BOT_T1-BOT_T0)*Math.PI/180;
+
+/* Fit text to an arc the way the plate builder does: shrink the cap height
+   until the string fits the band, never below the print floor. */
+function fitArc(textEl, pathEl, str, capMax, which){
+  var tp=textEl.firstChild, cap=capMax, r, arcLen, L, i;
+  if(!str){ textEl.setAttribute("visibility","hidden"); tp.textContent=""; return 0; }
+  textEl.removeAttribute("visibility");
+  tp.textContent=str;
+  for(i=0;i<3;i++){
+    if(which==="t1s"){ r=STACK_ROUT; }
+    else if(which==="t2s"){ r=STACK_RIN; }
+    else if(which==="top"){ r=TOP_RBASE+(TOP_CAP-cap)/2; }
+    else { r=BOT_RBASE-(BOT_CAP-cap)/2; }
+    if(which==="bot") pathEl.setAttribute("d",arcD(BOT_C[0],BOT_C[1],r,BOT_T0,BOT_T1));
+    else pathEl.setAttribute("d",arcD(TOP_C[0],TOP_C[1],r,TOP_T0,TOP_T1));
+    arcLen=(which==="bot"?SPAN_BOT:SPAN_TOP)*r;
+    textEl.style.fontSize=(cap/CAP_RATIO).toFixed(3)+"px";
+    L=textEl.getComputedTextLength();
+    if(L<=arcLen*0.985) break;
+    cap=Math.max(CAP_FLOOR, cap*arcLen*0.985/L);
+    if(cap<=CAP_FLOOR+1e-6){ textEl.style.fontSize=(cap/CAP_RATIO).toFixed(3)+"px"; break; }
+  }
+  return cap;
+}
+
+var PRINT_FONT="'Caladea Print','Caladea','Cambria',Georgia,serif";
+function styleText(el,fill){
+  el.setAttribute("font-family",PRINT_FONT);
+  el.setAttribute("font-weight","700");
+  el.setAttribute("letter-spacing",TRACK);
+  el.setAttribute("fill",fill);
+}
+
+var caps={};
+function render(){
+  var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0];
+  var body=S.fil.body.hex, acc=S.fil.accent.hex, dial=S.fil.dial.hex, num=S.fil.numeral.hex;
+
+  $("pBody").setAttribute("fill",body);
+  $("pAccent").setAttribute("fill",acc);
+  $("cDial").setAttribute("fill",dial);
+  $("pNum").setAttribute("fill",num);
+  $("cBoss").setAttribute("fill",body);
+  $("cWell").setAttribute("fill",body);
+
+  [["tT1",acc],["tT2",acc],["tB",acc],["tYear",num],["tD1",num],["tD2",num]]
+    .forEach(function(p){ styleText($(p[0]),p[1]); });
+
+  var stacked = S.layout==="stacked";
+  caps.t1 = fitArc($("tT1"),$("arcT1"), S.topA, stacked?STACK_CAP:TOP_CAP, stacked?"t1s":"top");
+  caps.t2 = stacked ? fitArc($("tT2"),$("arcT2"), S.topB, STACK_CAP, "t2s")
+                    : fitArc($("tT2"),$("arcT2"), "", STACK_CAP, "t2s");
+  caps.b  = fitArc($("tB"),$("arcB"), S.bottom, BOT_CAP, "bot");
+
+  /* dial face */
+  var showDial = S.layout==="dial";
+  setDialText($("tYear"), S.year, 9.6, -16);
+  setDialText($("tD1"), showDial?S.dialA:"", 6.6, 17);
+  setDialText($("tD2"), showDial?S.dialB:"", 6.6, 26);
+
+  /* crest */
+  if(S.logoUrl){
+    $("imgLogo").setAttributeNS("http://www.w3.org/1999/xlink","href",S.logoUrl);
+    $("imgLogo").setAttribute("href",S.logoUrl);
+    $("imgLogo").removeAttribute("hidden"); $("imgLogo").removeAttribute("display");
+    $("gMedHint").setAttribute("display","none");
+  }else{
+    $("imgLogo").setAttribute("display","none");
+    $("gMedHint").removeAttribute("display");
+    $("gMedHint").querySelector("circle").setAttribute("stroke",acc);
+    $("gMedHint").querySelector("text").setAttribute("fill",acc);
+    $("gMedHint").querySelector("text").setAttribute("font-family",PRINT_FONT);
+  }
+
+  renderChips();
+  var tight=[];
+  if(caps.t1&&caps.t1<=CAP_FLOOR+0.05) tight.push("crown");
+  if(caps.t2&&caps.t2<=CAP_FLOOR+0.05) tight.push("second line");
+  if(caps.b&&caps.b<=CAP_FLOOR+0.05) tight.push("lower arc");
+  $("capNote").textContent = tight.length
+    ? "Too long: " + tight.join(" and ") + " is at the print floor"
+    : "Lettering " + (caps.t1?caps.t1.toFixed(1):"–") + " mm / " + (caps.b?caps.b.toFixed(1):"–") + " mm cap";
+  $("capNote").style.color = tight.length ? "var(--warn)" : "";
+  void L;
+}
+/* Keep dial text clear of the chapter ring: the numerals start at r 32.5, so
+   the width available depends on how far the line sits from the centre. */
+function setDialText(el,str,capMax,y){
+  if(!str){ el.setAttribute("visibility","hidden"); el.textContent=""; return; }
+  el.removeAttribute("visibility");
+  el.textContent=str;
+  el.setAttribute("letter-spacing",0.2);
+  var R=32.5, cap=capMax, i, edge, maxW, L;
+  for(i=0;i<3;i++){
+    edge = Math.abs(y) + (y<0 ? cap : 0);
+    maxW = 2*Math.sqrt(Math.max(1, R*R - edge*edge))*0.97;
+    el.style.fontSize=(cap/CAP_RATIO).toFixed(3)+"px";
+    L=el.getComputedTextLength();
+    if(L<=maxW) break;
+    cap=Math.max(2.6, cap*maxW/L);
+  }
+}
+
+function renderChips(){
+  var h="";
+  SLOTS.forEach(function(s){
+    var f=S.fil[s.key];
+    h+='<span class="chip"><i style="background:'+esc(f.hex)+'"></i><b>'+esc(f.name)+'</b></span>';
+  });
+  $("chips").innerHTML=h;
+}
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+/* ---------- layout cards ---------- */
+function layoutGlyph(id){
+  var a='stroke="currentColor" fill="none" stroke-width="1.4" stroke-linecap="round"';
+  var base='<svg class="glyph" viewBox="0 0 64 40" aria-hidden="true" style="color:var(--muted)">'+
+    '<circle cx="32" cy="22" r="12" '+a+'/>';
+  if(id==="stacked") base+='<path d="M14 11 A22 22 0 0 1 50 11" '+a+'/><path d="M17 15.5 A19 19 0 0 1 47 15.5" '+a+'/><path d="M22 36 A16 16 0 0 0 42 36" '+a+'/>';
+  if(id==="dial")    base+='<path d="M14 11 A22 22 0 0 1 50 11" '+a+'/><path d="M22 36 A16 16 0 0 0 42 36" '+a+'/><path d="M25 24 h14 M27 28 h10" '+a+'/>';
+  if(id==="single")  base+='<path d="M14 11 A22 22 0 0 1 50 11" '+a+'/><path d="M22 36 A16 16 0 0 0 42 36" '+a+'/>';
+  return base+'</svg>';
+}
+function buildLayouts(){
+  var h="";
+  LAYOUTS.forEach(function(L){
+    h+='<label class="lay"><input type="radio" name="layout" value="'+L.id+'"'+(S.layout===L.id?" checked":"")+'>'+
+       '<span class="box">'+layoutGlyph(L.id)+
+       '<span class="nm">'+esc(L.name)+'</span><span class="ds">'+esc(L.desc)+'</span></span></label>';
+  });
+  $("layouts").innerHTML=h;
+  Array.prototype.forEach.call($("layouts").querySelectorAll("input"),function(r){
+    r.addEventListener("change",function(){ S.layout=r.value; buildFields(); render(); });
+  });
+}
+
+/* ---------- lettering fields ---------- */
+var LIMITS={topA:28,topB:28,bottom:18,year:14,dialA:18,dialB:18};
+function buildFields(){
+  var L=LAYOUTS.filter(function(x){return x.id===S.layout;})[0], h="";
+  L.fields.forEach(function(k){
+    h+='<div class="f"><label for="x_'+k+'">'+esc(L.labels[k])+
+       '<span class="cnt" id="c_'+k+'"></span></label>'+
+       '<input type="text" id="x_'+k+'" value="'+esc(S[k])+'" maxlength="'+(LIMITS[k]+10)+'" spellcheck="false"></div>';
+  });
+  $("fields").innerHTML=h;
+  L.fields.forEach(function(k){
+    var el=$("x_"+k);
+    el.addEventListener("input",function(){
+      S[k]= k==="year" ? el.value : el.value.toUpperCase();
+      if(k!=="year" && el.value!==S[k]){ var p=el.selectionStart; el.value=S[k]; el.setSelectionRange(p,p); }
+      count(k); render();
+    });
+    count(k);
+  });
+}
+function count(k){
+  var c=$("c_"+k); if(!c) return;
+  var n=String(S[k]||"").length;
+  c.textContent=n+" / "+LIMITS[k];
+  c.className="cnt"+(n>LIMITS[k]?" over":"");
+}
+
+/* ---------- filament slots + picker ---------- */
+var pickTarget=null;
+function buildSlots(){
+  var h="";
+  SLOTS.forEach(function(s){
+    var f=S.fil[s.key];
+    h+='<div class="slot"><span class="sw" id="sw_'+s.key+'" style="background:'+esc(f.hex)+'"></span>'+
+       '<span class="meta"><span class="role">'+esc(s.role)+'</span>'+
+       '<span class="val" id="vl_'+s.key+'">'+esc(f.name)+' <span>'+esc(f.series)+' · '+esc(f.hex)+'</span></span></span>'+
+       '<button type="button" data-slot="'+s.key+'">Change</button></div>';
+  });
+  $("slots").innerHTML=h;
+  Array.prototype.forEach.call($("slots").querySelectorAll("button"),function(b){
+    b.addEventListener("click",function(){ openPicker(b.getAttribute("data-slot")); });
+  });
+}
+function refreshSlot(k){
+  var f=S.fil[k];
+  $("sw_"+k).style.background=f.hex;
+  $("vl_"+k).innerHTML=esc(f.name)+' <span>'+esc(f.series)+' · '+esc(f.hex)+'</span>';
+}
+function openPicker(k){
+  pickTarget=k;
+  var slot=SLOTS.filter(function(s){return s.key===k;})[0];
+  $("pkTitle").textContent="Filament for "+slot.role.toLowerCase();
+  var cur=S.fil[k], h="";
+  PALETTE.forEach(function(grp){
+    h+='<div class="pk-series">'+esc(grp[0])+'</div><div class="pk-grid">';
+    grp[1].forEach(function(c){
+      var on = (cur.series===grp[0] && cur.name===c[0]);
+      h+='<button type="button" class="pk" aria-pressed="'+(on?"true":"false")+
+         '" data-s="'+esc(grp[0])+'" data-n="'+esc(c[0])+'">'+
+         '<i style="background:'+esc(c[1])+'"></i><span class="t"><b>'+esc(c[0])+'</b><span>'+esc(c[1])+'</span></span></button>';
+    });
+    h+='</div>';
+  });
+  $("pkBody").innerHTML=h;
+  Array.prototype.forEach.call($("pkBody").querySelectorAll(".pk"),function(b){
+    b.addEventListener("click",function(){
+      S.fil[pickTarget]=findFil(b.getAttribute("data-s"),b.getAttribute("data-n"));
+      refreshSlot(pickTarget); render(); closePicker();
+    });
+  });
+  if($("picker").showModal) $("picker").showModal(); else $("picker").setAttribute("open","");
+  $("pkBody").scrollTop=0;
+}
+function closePicker(){ var d=$("picker"); if(d.close) d.close(); else d.removeAttribute("open"); }
+$("pkClose").addEventListener("click",closePicker);
+
+/* ---------- crest upload ---------- */
+var pendingFile=null;
+function acceptFile(file){
+  if(!file) return;
+  if(!/^image\/(png|jpeg|svg\+xml|webp)$/.test(file.type)){
+    $("logoHelp").textContent="That file type won't work here — PNG, JPEG, WebP or SVG only.";
+    $("logoHelp").className="warn"; return;
+  }
+  if(file.size>20*1024*1024){
+    $("logoHelp").textContent="That file is over the 20 MB limit."; return;
+  }
+  if(S.logoUrl && S.logoUrl.indexOf("blob:")===0) URL.revokeObjectURL(S.logoUrl);
+  pendingFile=file;
+  S.logoUrl=URL.createObjectURL(file);
+  S.logoId=null; S.logoName=file.name;
+  $("logoName").textContent=file.name;
+  $("logoHelp").textContent=Math.round(file.size/1024)+" KB · shown in the medallion";
+  $("logoHelp").className="";
+  $("logoPrev").innerHTML='<img alt="" src="'+esc(S.logoUrl)+'">';
+  $("logoClear").hidden=false;
+  render();
+}
+$("logoBtn").addEventListener("click",function(){ $("logoFile").click(); });
+$("logoFile").addEventListener("change",function(e){ acceptFile(e.target.files[0]); });
+$("logoClear").addEventListener("click",function(){
+  if(S.logoUrl && S.logoUrl.indexOf("blob:")===0) URL.revokeObjectURL(S.logoUrl);
+  pendingFile=null; S.logoUrl=null; S.logoId=null; S.logoName=null;
+  $("logoPrev").innerHTML='<span>NONE</span>';
+  $("logoName").textContent="No crest yet";
+  $("logoHelp").textContent="Drop a PNG, JPEG or SVG here, or choose a file. 20 MB limit.";
+  $("logoClear").hidden=true; $("logoFile").value=""; render();
+});
+["dragenter","dragover"].forEach(function(ev){
+  $("drop").addEventListener(ev,function(e){ e.preventDefault(); $("drop").classList.add("on"); });
+});
+["dragleave","drop"].forEach(function(ev){
+  $("drop").addEventListener(ev,function(e){ e.preventDefault(); $("drop").classList.remove("on"); });
+});
+$("drop").addEventListener("drop",function(e){
+  if(e.dataTransfer && e.dataTransfer.files) acceptFile(e.dataTransfer.files[0]);
+});
+
+/* ---------- tabs ---------- */
+var TABS=[["tabBuild","paneBuild"],["tabInbox","paneInbox"],["tabCost","paneCost"]];
+function showTab(id){
+  TABS.forEach(function(p){
+    var on=(p[0]===id);
+    $(p[0]).setAttribute("aria-selected",on?"true":"false");
+    $(p[1]).hidden=!on;
+  });
+}
+$("tabBuild").addEventListener("click",function(){ showTab("tabBuild"); });
+$("tabInbox").addEventListener("click",function(){ showTab("tabInbox"); loadInbox(); });
+$("tabCost").addEventListener("click",function(){ showTab("tabCost"); });
+
+/* ---------- capabilities ---------- */
+var DB=null, ASSETS=null, USER=null, canEdit=false, UID=null;
+function msg(t,cls){ var m=$("sendMsg"); m.textContent=t; m.className="submitmsg"+(cls?" "+cls:""); }
+
+(async function boot(){
+  try{
+    if(window.claude && claude.use){
+      DB = await claude.use("db").catch(function(){return null;});
+      ASSETS = await claude.use("assets").catch(function(){return null;});
+      USER = await claude.use("user").catch(function(){return null;});
+    }
+  }catch(e){ /* page works without them */ }
+  if(USER){
+    try{ canEdit = await USER.canEdit(); }catch(e){ canEdit=false; }
+    try{ UID = await USER.id(); }catch(e){ UID=null; }
+  }
+  if(canEdit){
+    $("tabInbox").hidden=false; $("tabCost").hidden=false; $("topnav").hidden=false;
+    await loadCostConfig();
+    buildCost();
+  }
+  if(!ASSETS){
+    $("logoHelp").textContent="Drop a file to see it in the preview. Uploading isn't available for your account, so email the artwork to the shop after you submit.";
+  }
+  if(!DB || !UID){
+    msg("Submitting isn't available for this account. The spec below is still accurate — screenshot it or send it on.","");
+    $("sendBtn").disabled=true;
+  }
+})();
+
+/* ---------- submit ---------- */
+function rid(){
+  var s="0123456789abcdefghijklmnopqrstuvwxyz", o="", i;
+  for(i=0;i<16;i++) o+=s[Math.floor(Math.random()*s.length)];
+  return "r"+Date.now().toString(36)+o.slice(0,8);
+}
+$("orderForm").addEventListener("submit",async function(e){
+  e.preventDefault();
+  if(!DB || !UID) return;
+  var email=$("fEmail").value.trim(), club=$("fClub").value.trim();
+  if(!club){ msg("Add the club or organisation so the request can be matched up.","bad"); $("fClub").focus(); return; }
+  if(!email || email.indexOf("@")<1){ msg("Add an email so there's a way to reply.","bad"); $("fEmail").focus(); return; }
+  $("sendBtn").disabled=true; msg("Sending…");
+  var assetId=null;
+  try{
+    if(pendingFile && ASSETS){
+      msg("Uploading crest…");
+      var up=await ASSETS.upload(pendingFile);
+      assetId=up.id; S.logoId=assetId;
+    }
+  }catch(err){
+    assetId=null;
+    msg("Crest didn't upload ("+(err&&err.code?err.code:"unknown")+") — sending the rest.","");
+  }
+  var entry={
+    id:rid(),
+    createdAt:new Date().toISOString(),
+    status:"new",
+    layout:S.layout,
+    lettering:{topA:S.topA,topB:S.topB,bottom:S.bottom,year:S.year,dialA:S.dialA,dialB:S.dialB},
+    filament:{
+      dial:S.fil.dial, body:S.fil.body, accent:S.fil.accent, numeral:S.fil.numeral
+    },
+    crest: assetId ? {assetId:assetId, filename:S.logoName||""} : null,
+    club:club, contact:$("fContact").value.trim(), email:email, phone:$("fPhone").value.trim(),
+    qty:Math.max(1,parseInt($("fQty").value,10)||1),
+    due:$("fDue").value||"", notes:$("fNotes").value.trim()
+  };
+  try{
+    var ref=DB.doc("requests/"+UID), prev=[], snap;
+    try{ snap=await ref.get(); if(snap.exists){ prev=(snap.data().submissions)||[]; } }catch(e){ prev=[]; }
+    if(!Array.isArray(prev)) prev=[];
+    prev.push(entry);
+    if(prev.length>40) prev=prev.slice(prev.length-40);
+    await ref.set({updatedAt:entry.createdAt, submissions:prev});
+    msg("Sent. The shop has your spec"+(assetId?" and the crest file.":"."),"ok");
+    $("sendBtn").disabled=false;
+    inboxLoaded=false;
+  }catch(err){
+    var code=err&&err.code;
+    if(code==="invalid_argument"){
+      msg("This account can't submit from here. Send the spec to the shop directly.","bad");
+    }else if(code==="quota_exceeded"){
+      msg("The request store is full — tell the shop so they can clear it.","bad");
+    }else{
+      msg("Couldn't send just now. Try once more in a moment.","bad");
+    }
+    $("sendBtn").disabled=false;
+  }
+});
+
+/* ---------- inbox ---------- */
+var inboxLoaded=false;
+async function loadInbox(){
+  if(inboxLoaded || !DB) {
+    if(!DB) $("inbox").innerHTML='<div class="empty"><b>Not available</b>The request store can\'t be reached from this view.</div>';
+    return;
+  }
+  inboxLoaded=true;
+  $("inbox").innerHTML='<div class="empty"><b>Loading</b>Reading the request store…</div>';
+  var timer=setTimeout(function(){
+    if($("inbox").textContent.indexOf("Reading")>-1)
+      $("inbox").innerHTML='<div class="empty"><b>Still waiting</b>The request store hasn\'t answered yet.</div>';
+  },10000);
+  try{
+    var snap=await DB.collection("requests").orderBy("updatedAt","desc").limit(200).get();
+    clearTimeout(timer);
+    var all=[];
+    snap.docs.forEach(function(d){
+      var subs=(d.data()||{}).submissions;
+      if(Array.isArray(subs)) subs.forEach(function(s){ if(s&&typeof s==="object") all.push(s); });
+    });
+    all.sort(function(a,b){ return String(b.createdAt||"").localeCompare(String(a.createdAt||"")); });
+    if(!all.length){
+      $("inbox").innerHTML='<div class="empty"><b>No requests yet</b>Anything sent from the Build tab lands here, newest first.</div>';
+      return;
+    }
+    var h="";
+    all.forEach(function(r){
+      var f=r.filament||{}, l=r.lettering||{};
+      var when=r.createdAt?new Date(r.createdAt).toLocaleString():"";
+      var thumb = r.crest&&r.crest.assetId
+        ? '<img alt="" src="'+esc("/_blob/"+r.crest.assetId)+'">' : '<span>NONE</span>';
+      h+='<article class="req"><div class="thumb">'+thumb+'</div><div>'+
+        '<h4>'+esc(r.club||"Untitled")+' · '+esc(String(r.qty||1))+'</h4>'+
+        '<div class="when">'+esc(when)+'</div><dl>'+
+        '<dt>Layout</dt><dd>'+esc(r.layout||"")+'</dd>'+
+        '<dt>Crown</dt><dd>'+esc(l.topA||"")+(l.topB?" / "+esc(l.topB):"")+'</dd>'+
+        '<dt>Lower</dt><dd>'+esc(l.bottom||"")+'</dd>'+
+        '<dt>Dial</dt><dd>'+esc(l.year||"")+(l.dialA?" · "+esc(l.dialA)+" "+esc(l.dialB||""):"")+'</dd>'+
+        '<dt>Filament</dt><dd>'+[f.body,f.accent,f.dial,f.numeral].map(function(x){
+            return x?esc(x.name):"—"; }).join(" · ")+'</dd>'+
+        '<dt>Contact</dt><dd>'+esc(r.contact||"")+' — '+esc(r.email||"")+(r.phone?" · "+esc(r.phone):"")+'</dd>'+
+        '<dt>Est. cost</dt><dd>'+esc(costLine(r.qty))+'</dd>'+
+        (r.due?'<dt>Needed</dt><dd>'+esc(r.due)+'</dd>':'')+
+        (r.notes?'<dt>Notes</dt><dd>'+esc(r.notes)+'</dd>':'')+
+        '</dl></div></article>';
+    });
+    $("inbox").innerHTML=h;
+  }catch(err){
+    clearTimeout(timer);
+    $("inbox").innerHTML='<div class="empty"><b>Couldn\'t read the requests</b>'+esc(err&&err.code?err.code:"Try again shortly.")+'</div>';
+  }
+}
+
+/* ---------- costing (admin only) ---------- */
+var COST={
+  fil:[{k:"dial",  label:"Dial",                     g:22.9, rate:20},
+       {k:"body",  label:"Housing",                  g:133.6,rate:20},
+       {k:"accent",label:"Accents, rings and hands", g:12.9, rate:20},
+       {k:"black", label:"Post and numerals",        g:83.1, rate:20},
+       {k:"purge", label:"Purge and flush waste",    g:145,  rate:20}],
+  other:[{k:"mech", label:"Clock mechanism", v:3.00},
+         {k:"batt", label:"Battery",          v:0.35},
+         {k:"box",  label:"Box and packing",  v:1.50},
+         {k:"power",label:"Electricity",      v:0.18}],
+  scrap:5, margin:60, batch:2
+};
+function num(v){ var n=parseFloat(v); return (isFinite(n)&&n>=0)?n:0; }
+function money(n){ return "$"+(Math.round(n*100)/100).toFixed(2); }
+function batchDiv(k){ return k==="purge" ? Math.max(1,COST.batch||1) : 1; }
+function costCalc(){
+  var f=0,o=0,g=0,i,r,d;
+  for(i=0;i<COST.fil.length;i++){
+    r=COST.fil[i]; d=batchDiv(r.k);
+    f+=r.g*r.rate/1000/d; g+=r.g/d;
+  }
+  for(i=0;i<COST.other.length;i++) o+=COST.other[i].v;
+  var scrap=(f+o)*(COST.scrap/100), total=f+o+scrap, m=COST.margin/100;
+  return {fil:f,other:o,grams:g,scrap:scrap,total:total,price:(m<1?total/(1-m):null)};
+}
+function costLine(qty){
+  var c=costCalc(), q=Math.max(1,qty||1);
+  return money(c.total)+" each"+(q>1?"  ·  "+money(c.total*q)+" for "+q:"");
+}
+function costMsg(t,cls){ var m=$("costMsg"); m.textContent=t; m.className="submitmsg"+(cls?" "+cls:""); }
+function costRender(){
+  var c=costCalc();
+  COST.fil.forEach(function(r){
+    var el=$("co_"+r.k), d=batchDiv(r.k);
+    if(el) el.textContent=money(r.g*r.rate/1000/d);
+  });
+  $("batchNote").textContent = COST.batch>1
+    ? "Flush is charged once per plate, so "+COST.batch+" clocks a run splits it "+COST.batch+" ways — "
+      +(COST.fil[4].g/COST.batch).toFixed(0)+" g each."
+    : "One clock a run carries the whole flush by itself.";
+  $("costOut").innerHTML=
+    '<div class="r"><span>Filament ('+c.grams.toFixed(0)+' g)</span><b>'+money(c.fil)+'</b></div>'+
+    '<div class="r"><span>Everything else</span><b>'+money(c.other)+'</b></div>'+
+    '<div class="r"><span>Scrap allowance</span><b>'+money(c.scrap)+'</b></div>'+
+    '<div class="r big"><span>Cost per clock</span><b>'+money(c.total)+'</b></div>'+
+    '<div class="r"><span>Suggested price at '+COST.margin.toFixed(0)+'%</span><b class="price">'+
+      (c.price==null?"—":money(c.price))+'</b></div>';
+}
+function buildCost(){
+  var h='<div class="cg"><span class="hd">Filament</span>'+
+        '<span class="hd" style="text-align:right">Grams</span>'+
+        '<span class="hd" style="text-align:right">$ / kg</span>'+
+        '<span class="hd" style="text-align:right">Cost</span></div>';
+  COST.fil.forEach(function(r){
+    h+='<div class="cg"><span class="lab">'+esc(r.label)+'</span>'+
+       '<input type="number" step="0.1" min="0" id="cg_'+r.k+'" value="'+r.g+'" aria-label="'+esc(r.label)+' grams">'+
+       '<input type="number" step="0.5" min="0" id="cr_'+r.k+'" value="'+r.rate+'" aria-label="'+esc(r.label)+' price per kilo">'+
+       '<span class="out" id="co_'+r.k+'"></span></div>';
+  });
+  $("costFil").innerHTML=h;
+  var h2="";
+  COST.other.forEach(function(r){
+    h2+='<div class="cg2"><span class="lab">'+esc(r.label)+'</span>'+
+        '<input type="number" step="0.05" min="0" id="cv_'+r.k+'" value="'+r.v+'" aria-label="'+esc(r.label)+' cost per clock"></div>';
+  });
+  $("costOther").innerHTML=h2;
+  $("cScrap").value=COST.scrap; $("cMargin").value=COST.margin; $("cBatch").value=COST.batch;
+  COST.fil.forEach(function(r){
+    $("cg_"+r.k).addEventListener("input",function(e){ r.g=num(e.target.value); costRender(); });
+    $("cr_"+r.k).addEventListener("input",function(e){ r.rate=num(e.target.value); costRender(); });
+  });
+  COST.other.forEach(function(r){
+    $("cv_"+r.k).addEventListener("input",function(e){ r.v=num(e.target.value); costRender(); });
+  });
+  $("cScrap").addEventListener("input",function(e){ COST.scrap=num(e.target.value); costRender(); });
+  $("cMargin").addEventListener("input",function(e){ COST.margin=num(e.target.value); costRender(); });
+  $("cBatch").addEventListener("input",function(e){ COST.batch=Math.max(1,Math.round(num(e.target.value))||1); costRender(); });
+  costRender();
+}
+async function loadCostConfig(){
+  if(!DB) return;
+  try{
+    var s=await DB.doc("config/costing").get();
+    if(!s.exists) return;
+    var d=s.data()||{};
+    if(Array.isArray(d.fil)) d.fil.forEach(function(x){
+      COST.fil.forEach(function(r){ if(x&&r.k===x.k){ r.g=num(x.g); r.rate=num(x.rate); } });
+    });
+    if(Array.isArray(d.other)) d.other.forEach(function(x){
+      COST.other.forEach(function(r){ if(x&&r.k===x.k) r.v=num(x.v); });
+    });
+    if(typeof d.scrap==="number") COST.scrap=num(d.scrap);
+    if(typeof d.margin==="number") COST.margin=Math.min(95,num(d.margin));
+    if(typeof d.batch==="number") COST.batch=Math.max(1,Math.round(num(d.batch))||1);
+  }catch(e){ /* defaults stand */ }
+}
+$("costSave").addEventListener("click",async function(){
+  if(!DB){ costMsg("Can't save from this view.","bad"); return; }
+  $("costSave").disabled=true; costMsg("Saving…");
+  try{
+    await DB.doc("config/costing").set({
+      updatedAt:new Date().toISOString(),
+      fil:COST.fil.map(function(r){ return {k:r.k,g:r.g,rate:r.rate}; }),
+      other:COST.other.map(function(r){ return {k:r.k,v:r.v}; }),
+      scrap:COST.scrap, margin:COST.margin, batch:COST.batch
+    });
+    costMsg("Saved.","ok");
+  }catch(e){
+    costMsg("Couldn't save"+(e&&e.code?" ("+e.code+")":"")+".","bad");
+  }
+  $("costSave").disabled=false;
+});
+
+/* ---------- go ---------- */
+$("pBody").setAttribute("d",G.body);
+$("pAccent").setAttribute("d",G.accent);
+$("pNum").setAttribute("d",G.numerals);
+buildLayouts(); buildFields(); buildSlots(); render();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(render);
+})();
+</script>
