@@ -29,7 +29,7 @@ def must_replace(s, old, new):
 
 
 HIDDEN = ['clock', 'club_name', 'lower_line', 'filament_housing',
-          'filament_accents', 'filament_dial', 'filament_numerals', 'spec', 'build_brief']
+          'filament_accents', 'filament_dial', 'filament_numerals', 'spec', 'build_brief', 'order_id']
 
 
 def build(t):
@@ -62,6 +62,7 @@ def build(t):
          '            action="/thanks.html" id="orderForm">\n'
          '        <input type="hidden" name="form-name" value="clock-request">\n'
          '        <p hidden><label>Leave this empty: <input name="bot-field"></label></p>\n'
+         '        <input type="file" name="crest_print" id="crestPrint" hidden>\n'
          + hidden + '\n\n' + t[crest_open:])
     t = must_replace(t, '<form id="orderForm" novalidate>', '<div>')
     t = must_replace(t, '          </div>\n        </form>\n      </section>',
@@ -82,11 +83,21 @@ function specText(){
   if(S.logoName) out.push("Crest file: "+S.logoName);
   return out.join("\n");
 }
+/* one ID per request: the email, the pipeline repo folder and the build chat all use it */
+var ORDER_ID=(function(){
+  var d=new Date(), p=function(n){return (n<10?"0":"")+n;};
+  return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+"-"+p(d.getHours())+p(d.getMinutes())+"-"+
+         Math.random().toString(36).slice(2,6);
+})();
 function val(id){ var el=$(id); return el ? el.value.trim() : ""; }
 /* a self-contained prompt: paste it into a Claude chat in the 3D Prints project */
 function briefText(){
   var o=[], f=S.fil;
   o.push("Build the print files for this custom post clock order.");
+  o.push("");
+  o.push("REQUEST "+ORDER_ID);
+  o.push("- Filed in the private repo afternoongolfclub/clock-pipeline at requests/"+ORDER_ID+"/ (order.json, crest, this brief).");
+  o.push("- Run: python3 order_build.py requests/"+ORDER_ID+"/order.json");
   o.push("");
   o.push("ORDER");
   o.push("- Club: "+(val("fClub")||"(not given)"));
@@ -104,13 +115,13 @@ function briefText(){
   o.push("- Under the dial: "+(S.bottom||"(blank)")+(caps.b?"  [preview cap height "+caps.b.toFixed(1)+" mm]":""));
   o.push("");
   o.push("CREST");
-  o.push(S.logoName ? "- Use the attached file ("+S.logoName+") in the medallion as single-colour raised relief in the accent filament."
+  o.push(S.logoName ? "- Filed as requests/"+ORDER_ID+"/crest.png: the one-colour version the customer approved in the preview"+(CREST.invert?" (raised and flat swapped)":"")+". Their original ("+S.logoName+") is beside it as crest_original.*."
                     : "- No crest was sent. Ask me before printing; do not reuse another club's crest.");
   o.push("");
   o.push("FILAMENT (one per AMS slot)");
   SLOTS.forEach(function(s){ o.push("- "+s.role+": "+f[s.key].series+" "+f[s.key].name+" "+f[s.key].hex); });
   o.push("");
-  o.push("ORDER JSON (save as order.json, then: python3 order_build.py order.json)");
+  o.push("ORDER JSON (same as requests/"+ORDER_ID+"/order.json; save it yourself only if that folder is missing)");
   o.push(JSON.stringify({size:(S.style==="post363"?"363":"516"), club_name:S.topA||"", lower_line:S.bottom||"",
     crest:S.logoName||"", ams:[f.body.hex,f.accent.hex,f.dial.hex,f.numeral.hex], printer:"p1s"}));
   o.push("");
@@ -118,14 +129,14 @@ function briefText(){
   o.push("- Use the post clock pipeline (private repo afternoongolfclub/clock-pipeline, order_build.py): it writes Bambu Studio 3MF plates for the P1S with AMS, colours in slots 1-4.");
   o.push("- If it stops on a lettering warning, tell me the cap heights rather than shortening the club's wording yourself.");
   o.push("- Flag anything that will not print cleanly at a 0.4 mm nozzle before I slice it.");
-  o.push("- The crest is the file attached to the request email; attach it to the chat.");
+  o.push("- If requests/"+ORDER_ID+"/ is missing, the crest is the file linked in the request email; attach it to the chat.");
   return o.join("\n");
 }
 function syncHidden(){
   var map={clock:styleName(), club_name:S.topA||"", lower_line:S.bottom||"",
     filament_housing:filTxt(S.fil.body), filament_accents:filTxt(S.fil.accent),
     filament_dial:filTxt(S.fil.dial), filament_numerals:filTxt(S.fil.numeral),
-    spec:specText(), build_brief:briefText()};
+    spec:specText(), build_brief:briefText(), order_id:ORDER_ID};
   Object.keys(map).forEach(function(k){ var el=$("h_"+k); if(el) el.value=map[k]; });
 }
 /* a dropped crest has to land in the file input, or it never posts */
@@ -133,6 +144,7 @@ $("drop").addEventListener("drop",function(e){
   try{ if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length && pendingFile===e.dataTransfer.files[0])
          $("logoFile").files=e.dataTransfer.files; }catch(err){}
 });
+var printReady=false;
 $("orderForm").addEventListener("submit",function(e){
   var email=$("fEmail").value.trim(), club=$("fClub").value.trim();
   if(!club){ e.preventDefault(); msg("Add the club or organisation so the request can be matched up.","bad"); $("fClub").focus(); return; }
@@ -140,6 +152,15 @@ $("orderForm").addEventListener("submit",function(e){
   syncHidden();
   msg("Sending…");
   $("sendBtn").disabled=true;
+  /* attach the one-colour print version of the crest (what the preview shows) next to the original */
+  if(S.logoName && CREST.mask && !printReady){
+    e.preventDefault();
+    crestPrintBlob(function(b){
+      try{ var dt=new DataTransfer(); dt.items.add(new File([b],"crest_print.png",{type:"image/png"})); $("crestPrint").files=dt.files; }catch(err){}
+      printReady=true; syncHidden(); $("orderForm").submit();
+    });
+    return;
+  }
   /* let the browser post it: Netlify takes the multipart body, crest included */
 });
 

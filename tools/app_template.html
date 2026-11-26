@@ -168,6 +168,10 @@ dialog.picker::backdrop{background:rgba(10,12,15,.45)}
 .drop .txt{min-width:0;flex:1 1 200px}
 .drop .txt p{margin:0;font-size:13px;color:var(--muted)}
 .drop .txt b{font-size:14px}
+.drop .prev img.mask{background:#fff;padding:6px;box-sizing:border-box}
+.crestopts{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:12px}
+.crestnote{font-size:13px;color:var(--muted)}
+.crestnote.warn{color:var(--warn)}
 .btn{appearance:none;border:1px solid var(--rule);background:var(--surface);color:var(--ink);font:inherit;
   font-size:13px;font-weight:600;padding:8px 14px;border-radius:9px;cursor:pointer}
 .btn:hover{border-color:var(--brass);color:var(--brass-ink)}
@@ -304,7 +308,7 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
 
       <section class="card">
         <div class="cardhead"><span class="step">04</span><h2>Crest</h2></div>
-        <p class="cardnote">Goes in the medallion at the top. It is reproduced as single-colour raised relief in the accent filament, so a bold silhouette carries far better than fine detail or gradients.</p>
+        <p class="cardnote">Goes in the medallion at the top, as single-colour raised relief in the accent filament. The preview shows exactly what prints: dark parts of your image stand up in gold, light or transparent parts stay flat. A bold silhouette carries far better than fine detail or gradients.</p>
         <div class="drop" id="drop">
           <div class="prev" id="logoPrev"><span>NONE</span></div>
           <div class="txt">
@@ -314,6 +318,10 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
           <input type="file" id="logoFile" accept="image/png,image/jpeg,image/svg+xml,image/webp" class="vis-hidden">
           <button class="btn" type="button" id="logoBtn">Choose file</button>
           <button class="btn ghost" type="button" id="logoClear" hidden>Remove</button>
+        </div>
+        <div class="crestopts" id="crestOpts" hidden>
+          <button class="btn ghost" type="button" id="crestInvert">Swap raised and flat</button>
+          <span class="crestnote" id="crestNote"></span>
         </div>
       </section>
 
@@ -590,9 +598,11 @@ function renderPost(){
   /* crest in the gold ring */
   var cr=g.crest; $("cpPostMedC").setAttribute("cx",cr.cx); $("cpPostMedC").setAttribute("cy",cr.cy); $("cpPostMedC").setAttribute("r",cr.r);
   var hint=$("pMedHint"), hc=hint.querySelector("circle"), ht=hint.querySelector("text");
-  if(S.logoUrl){
-    var im=$("pLogo"); im.setAttribute("x",cr.cx-cr.r); im.setAttribute("y",cr.cy-cr.r); im.setAttribute("width",2*cr.r); im.setAttribute("height",2*cr.r);
-    im.setAttributeNS("http://www.w3.org/1999/xlink","href",S.logoUrl); im.setAttribute("href",S.logoUrl); im.removeAttribute("display");
+  var crestUrl=S.logoUrl ? crestTinted(acc) : null;
+  if(crestUrl){
+    var lw=2*cr.r*0.86, im=$("pLogo");          /* 18 mm logo in the 21 mm field of the ring (14 in 16 at 363) */
+    im.setAttribute("x",cr.cx-lw/2); im.setAttribute("y",cr.cy-lw/2); im.setAttribute("width",lw); im.setAttribute("height",lw);
+    im.setAttributeNS("http://www.w3.org/1999/xlink","href",crestUrl); im.setAttribute("href",crestUrl); im.removeAttribute("display");
     hint.setAttribute("display","none");
   }else{
     $("pLogo").setAttribute("display","none"); hint.removeAttribute("display");
@@ -727,7 +737,7 @@ function buildStyles(){
   $("styles").innerHTML=h;
   Array.prototype.forEach.call($("styles").querySelectorAll("input"),function(r){
     r.addEventListener("change",function(){
-      S.style=r.value; $("layoutCard").hidden=isPost(); renumber();
+      S.style=r.value; $("layoutCard").hidden=isPost(); renumber(); crestNote();
       if(isPost() && S.topA===S.dialA) S.topA="HUNTSVILLE COUNTRY CLUB";
       buildFields(); render();
     });
@@ -813,6 +823,120 @@ function openPicker(k){
 function closePicker(){ var d=$("picker"); if(d.close) d.close(); else d.removeAttribute("open"); }
 $("pkClose").addEventListener("click",closePicker);
 
+/* ---------- crest: same rule the print pipeline uses ----------
+   ink = alpha x (1 - luminance), raised where ink > 0.5 (vectorize_logo.py). The page builds that
+   one-bit mask, previews it in the accent filament, and sends it as the print file, so the preview
+   and the plate come from the same pixels. */
+var CREST={mask:null,w:0,h:0,invert:false,tint:{},printUrl:null,survive:{}};
+var CREST_MM={"516":18,"363":14};          /* logo width inside the gold ring, mm */
+function crestBuild(img){
+  var M=512, sc=Math.min(1, M/Math.max(img.naturalWidth||img.width||M, img.naturalHeight||img.height||M));
+  var w=Math.max(1,Math.round((img.naturalWidth||M)*sc)), h=Math.max(1,Math.round((img.naturalHeight||M)*sc));
+  var cv=document.createElement("canvas"); cv.width=w; cv.height=h;
+  var cx=cv.getContext("2d"); cx.drawImage(img,0,0,w,h);
+  var px=cx.getImageData(0,0,w,h).data, ink=new Float32Array(w*h), i, a, lum;
+  var opaqueEdge=0, darkEdge=0, edges=0;
+  for(i=0;i<w*h;i++){
+    a=px[i*4+3]/255; lum=(0.299*px[i*4]+0.587*px[i*4+1]+0.114*px[i*4+2])/255;
+    ink[i]=a*(1-lum);
+    var x=i%w, y=(i/w)|0;
+    if(x===0||y===0||x===w-1||y===h-1){ edges++; if(a>0.5){ opaqueEdge++; if(lum<0.5) darkEdge++; } }
+  }
+  /* a light logo on a dark, solid background would print as a gold slab: start inverted */
+  CREST.autoInvert = opaqueEdge>edges*0.9 && darkEdge>edges*0.6;
+  CREST.ink=ink; CREST.alpha=function(j){return px[j*4+3]/255;}; CREST.lum=function(j){return (0.299*px[j*4]+0.587*px[j*4+1]+0.114*px[j*4+2])/255;};
+  CREST.srcW=w; CREST.srcH=h; CREST.invert=CREST.autoInvert;
+  crestMask();
+}
+function crestMask(){
+  var w=CREST.srcW, h=CREST.srcH, m=new Uint8Array(w*h), i, x0=w, y0=h, x1=-1, y1=-1, v;
+  for(i=0;i<w*h;i++){
+    v = CREST.invert ? CREST.alpha(i)*CREST.lum(i) : CREST.ink[i];
+    if(v>0.5){ m[i]=1; var x=i%w, y=(i/w)|0; if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }
+  }
+  if(x1<0){ CREST.mask=null; CREST.w=CREST.h=0; }
+  else{
+    var cw=x1-x0+1, ch=y1-y0+1, c=new Uint8Array(cw*ch), y;
+    for(y=0;y<ch;y++) c.set(m.subarray((y0+y)*w+x0,(y0+y)*w+x0+cw), y*cw);
+    CREST.mask=c; CREST.w=cw; CREST.h=ch;
+  }
+  CREST.tint={}; CREST.survive={}; CREST.printUrl=null;
+}
+function crestCanvas(hex, pad){
+  pad=pad||0;
+  var w=CREST.w, h=CREST.h, cv=document.createElement("canvas"); cv.width=w+2*pad; cv.height=h+2*pad;
+  var cx=cv.getContext("2d"), im=cx.createImageData(w,h), d=im.data, r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16), i;
+  for(i=0;i<w*h;i++) if(CREST.mask[i]){ d[i*4]=r; d[i*4+1]=g; d[i*4+2]=b; d[i*4+3]=255; }
+  cx.putImageData(im,pad,pad); return cv;
+}
+function crestTinted(hex){
+  if(!CREST.mask) return null;
+  if(!CREST.tint[hex]) CREST.tint[hex]=crestCanvas(hex).toDataURL("image/png");
+  return CREST.tint[hex];
+}
+/* black ink on transparent: what order_build.py vectorises */
+function crestPrintBlob(cb){ if(!CREST.mask) return cb(null); crestCanvas("#000000",8).toBlob(cb,"image/png"); }
+/* the pipeline's printability check at the printed size: gold thinner than a 0.5 mm line drops out,
+   gaps narrower than 0.4 mm fill in. Returns the share of gold that holds and both areas in mm2. */
+function crestSurvive(size){
+  if(!CREST.mask) return {pct:1,thin:0,gaps:0};
+  if(CREST.survive[size]) return CREST.survive[size];
+  var w=CREST.w+40, h=CREST.h+40, mmpp=CREST_MM[size]/Math.max(CREST.w,CREST.h), N=w*h, INF=1e12, i, x, y;
+  /* exact squared Euclidean distance to the nearest "feature" pixel (Felzenszwalb & Huttenlocher) */
+  function edt(feat){
+    var D=new Float64Array(N), n=Math.max(w,h), f=new Float64Array(n), d=new Float64Array(n), v=new Int32Array(n), z=new Float64Array(n+1);
+    function line(len){
+      var k=0, q, sP; v[0]=0; z[0]=-INF; z[1]=INF;
+      for(q=1;q<len;q++){
+        while(true){ sP=((f[q]+q*q)-(f[v[k]]+v[k]*v[k]))/(2*q-2*v[k]); if(sP<=z[k]){ k--; continue; } break; }
+        k++; v[k]=q; z[k]=sP; z[k+1]=INF;
+      }
+      for(k=0,q=0;q<len;q++){ while(z[k+1]<q) k++; d[q]=(q-v[k])*(q-v[k])+f[v[k]]; }
+    }
+    for(x=0;x<w;x++){ for(y=0;y<h;y++) f[y]=feat[y*w+x]?0:INF; line(h); for(y=0;y<h;y++) D[y*w+x]=d[y]; }
+    for(y=0;y<h;y++){ for(x=0;x<w;x++) f[x]=D[y*w+x]; line(w); for(x=0;x<w;x++) D[y*w+x]=d[x]; }
+    return D;
+  }
+  var m=new Uint8Array(N), not=function(a){ var o=new Uint8Array(N); for(var j=0;j<N;j++) o[j]=a[j]?0:1; return o; };
+  for(y=0;y<CREST.h;y++) for(x=0;x<CREST.w;x++) m[(y+20)*w+x+20]=CREST.mask[y*CREST.w+x];
+  var within=function(D,r){ var o=new Uint8Array(N), r2=r*r; for(var j=0;j<N;j++) o[j]=D[j]<=r2?1:0; return o; };
+  /* the pipeline thickens the crest 0.08 mm per side (logo_thicken) before printing */
+  m=within(edt(m), 0.08/mmpp);
+  var ro=0.25/mmpp, rc=0.2/mmpp;
+  var er=not(within(edt(not(m)), ro));                 /* erode by a 0.5 mm round line */
+  var op=within(edt(er), ro);                           /* ...and grow back: what a 0.5 mm line can draw */
+  var cl=not(within(edt(not(within(edt(m), rc))), rc)); /* close 0.4 mm gaps */
+  var a=0, kept=0, filled=0;
+  for(i=0;i<N;i++){ if(m[i]){ a++; if(op[i]) kept++; } else if(cl[i]) filled++; }
+  var px2=mmpp*mmpp;
+  /* biggest single piece that a 0.5 mm line can't draw: a whole stroke vanishing, not just softened tips */
+  var lost=new Uint8Array(N), seen=new Uint8Array(N), big=0, stack=[], c, n;
+  for(i=0;i<N;i++) lost[i]=m[i]&&!op[i]?1:0;
+  for(i=0;i<N;i++) if(lost[i]&&!seen[i]){
+    n=0; stack.push(i); seen[i]=1;
+    while(stack.length){ c=stack.pop(); n++;
+      [c-1,c+1,c-w,c+w].forEach(function(q){ if(q>=0&&q<N&&lost[q]&&!seen[q]){ seen[q]=1; stack.push(q); } }); }
+    if(n>big) big=n;
+  }
+  return (CREST.survive[size]={pct:a?kept/a:1, thin:(a-kept)*px2, gaps:filled*px2, stroke:big*px2});
+}
+function crestNote(){
+  var box=$("crestOpts"); if(!box) return;
+  box.hidden=!S.logoName;
+  if(!S.logoName) return;
+  var n=$("crestNote");
+  if(!CREST.mask){ n.textContent="Nothing in this image would stand up in gold. Try Swap raised and flat."; n.className="crestnote warn"; return; }
+  var size=(S.style==="post363"?"363":"516"), q=crestSurvive(size), pct=Math.round(q.pct*100), bad=[];
+  if(q.stroke>0.6) bad.push("parts of it are thinner than a 0.5 mm line and may print thin or drop out");
+  else if(pct<93) bad.push("only "+pct+"% of the detail holds at a 0.5 mm line, so fine parts will soften or drop out");
+  if(q.gaps>1.5) bad.push("some gaps are narrower than 0.4 mm and may fill in");
+  n.textContent = bad.length ? "At "+CREST_MM[size]+" mm wide, "+bad.join("; ")+". A bolder version will print better."
+    : "Prints cleanly at "+CREST_MM[size]+" mm wide: "+pct+"% of the detail holds at a 0.5 mm line.";
+  n.className="crestnote"+(bad.length?" warn":"");
+  n.setAttribute("data-q", JSON.stringify(q));
+  var pv=$("logoPrev"); var u=crestTinted("#1B1F24"); if(u) pv.innerHTML='<img class="mask" alt="" src="'+u+'">';
+}
+
 /* ---------- crest upload ---------- */
 var pendingFile=null;
 function acceptFile(file){
@@ -833,6 +957,10 @@ function acceptFile(file){
   $("logoHelp").className="";
   $("logoPrev").innerHTML='<img alt="" src="'+esc(S.logoUrl)+'">';
   $("logoClear").hidden=false;
+  var img=new Image();
+  img.onload=function(){ try{ crestBuild(img); }catch(e){ CREST.mask=null; } crestNote(); render(); };
+  img.onerror=function(){ CREST.mask=null; $("logoHelp").textContent="That image couldn't be read. Try a PNG."; $("logoHelp").className="warn"; };
+  img.src=S.logoUrl;
   render();
 }
 $("logoBtn").addEventListener("click",function(){ $("logoFile").click(); });
@@ -843,7 +971,10 @@ $("logoClear").addEventListener("click",function(){
   $("logoPrev").innerHTML='<span>NONE</span>';
   $("logoName").textContent="No crest yet";
   $("logoHelp").textContent="Drop a PNG, JPEG or SVG here, or choose a file. 20 MB limit.";
-  $("logoClear").hidden=true; $("logoFile").value=""; render();
+  $("logoClear").hidden=true; $("logoFile").value=""; CREST.mask=null; crestNote(); render();
+});
+$("crestInvert").addEventListener("click",function(){
+  if(!CREST.ink) return; CREST.invert=!CREST.invert; crestMask(); crestNote(); render();
 });
 ["dragenter","dragover"].forEach(function(ev){
   $("drop").addEventListener(ev,function(e){ e.preventDefault(); $("drop").classList.add("on"); });
