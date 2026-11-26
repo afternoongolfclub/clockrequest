@@ -243,7 +243,7 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
 <div class="wrap">
   <header class="top">
     <div>
-      <div class="brandline"><span class="pip"></span> Bambu Lab A1 · 0.16 mm · four-colour</div>
+      <div class="brandline"><span class="pip"></span> Bambu Lab P1S · 0.16 mm · four-colour</div>
       <h1>Clock Request Desk</h1>
       <p class="sub">Set the lettering, send a crest, and choose filament. The preview is rendered from the real print files, so what you see is what the plates make.</p>
     </div>
@@ -867,7 +867,8 @@ function briefText(){
   SLOTS.forEach(function(s){ o.push("- "+s.role+": "+f[s.key].series+" "+f[s.key].name+" "+f[s.key].hex); });
   o.push("");
   o.push("DELIVER");
-  o.push("- Bambu Studio 3MF plates for the A1, same plate split as the reference build, with these colours assigned per part.");
+  o.push("- Bambu Studio 3MF plates for the Bambu Lab P1S with AMS (256 x 256 mm bed), with these colours assigned per part.");
+  o.push("- Set the printer profile to the P1S, not the A1 the reference files were made on; re-arrange or split plates if anything no longer fits the bed.");
   o.push("- Flag anything that will not print cleanly at a 0.4 mm nozzle before I slice it.");
   return o.join("\n");
 }

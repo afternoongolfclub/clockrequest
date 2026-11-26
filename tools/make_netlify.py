@@ -112,7 +112,8 @@ function briefText(){
   SLOTS.forEach(function(s){ o.push("- "+s.role+": "+f[s.key].series+" "+f[s.key].name+" "+f[s.key].hex); });
   o.push("");
   o.push("DELIVER");
-  o.push("- Bambu Studio 3MF plates for the A1, same plate split as the reference build, with these colours assigned per part.");
+  o.push("- Bambu Studio 3MF plates for the Bambu Lab P1S with AMS (256 x 256 mm bed), with these colours assigned per part.");
+  o.push("- Set the printer profile to the P1S, not the A1 the reference files were made on; re-arrange or split plates if anything no longer fits the bed.");
   o.push("- Flag anything that will not print cleanly at a 0.4 mm nozzle before I slice it.");
   return o.join("\n");
 }

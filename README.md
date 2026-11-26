@@ -1,6 +1,6 @@
 # Clock Request Desk
 
-Static order page for custom branded golf-club clocks, printed on a Bambu Lab A1.
+Static order page for custom branded golf-club clocks, printed on a Bambu Lab P1S.
 
 Visitors choose a layout, set the lettering, upload a crest and pick Bambu Lab
 filament colours. The preview is drawn from the real print geometry — the
