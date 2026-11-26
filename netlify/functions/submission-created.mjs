@@ -90,6 +90,15 @@ export async function fileRequest(payload, token, fetchImpl = fetch) {
   }
   if (!printed && !original) order.crest = '';
   order.request_id = id;
+  // who and what, for the shop's Requests inbox (this repo is private)
+  order.customer = {
+    club: data.club || '', contact: data.contact || '', email: data.email || '', phone: data.phone || '',
+    quantity: data.quantity || '1', needed_by: data.needed_by || '', notes: data.notes || '',
+  };
+  order.filaments = {
+    housing: data.filament_housing || '', accents: data.filament_accents || '',
+    dial: data.filament_dial || '', numerals: data.filament_numerals || '',
+  };
   order.received = payload.created_at || new Date().toISOString();
   files.push([`${dir}/order.json`, Buffer.from(JSON.stringify(order, null, 1) + '\n')]);
   if (data.build_brief) files.push([`${dir}/brief.txt`, Buffer.from(String(data.build_brief))]);
