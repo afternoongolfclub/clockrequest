@@ -29,7 +29,7 @@ function gatePage(failed: boolean): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Clock Request Desk</title>
+<title>Club Clocks by Afternoon Golf Club</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <style>
 :root{--bg:#F1F2F4;--surface:#FFFFFF;--sunk:#F7F8F9;--ink:#191C20;--muted:#6B737C;
@@ -62,7 +62,7 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 </head>
 <body>
   <form class="card" method="POST" action="/__gate">
-    <p class="eyebrow"><span class="pip"></span> Clock Request Desk</p>
+    <p class="eyebrow"><span class="pip"></span> Club Clocks · Afternoon Golf Club</p>
     <h1>Enter your access code</h1>
     <p>This page is for clubs working with the shop. Use the code you were sent.</p>
     <label for="code">Access code</label>

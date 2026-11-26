@@ -1,4 +1,6 @@
-# Clock Request Desk
+# Club Clocks by Afternoon Golf Club
+
+The order site for Club Clocks (formerly the Clock Request Desk).
 
 Static order page for custom branded golf-club clocks, printed on a Bambu Lab P1S.
 

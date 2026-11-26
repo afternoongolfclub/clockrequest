@@ -1,4 +1,4 @@
-"""Build the Netlify edition of the Clock Request Desk from the artifact source.
+"""Build the Netlify edition of Club Clocks (the order site) from the artifact source.
 
 Same design and the same rendered post-clock preview. What changes:
   - no claude.use() capabilities; the page is plain static HTML
@@ -36,7 +36,7 @@ def build(t):
     # ---- strip the artifact skeleton; a real <head> is added below --------
     t = t[t.index('<body>') + len('<body>'):].lstrip('\n')
     t = t[:t.rindex('</body>')].rstrip() + '\n'
-    title = '<title>Clock Request Desk</title>\n'
+    title = '<title>Club Clocks</title>\n'
     t = must_replace(t, title, '')
     t = must_replace(t, '<meta name="claude:viewport-fit-sides" content="cover">\n', '')
 
@@ -186,7 +186,7 @@ $("orderForm").addEventListener("submit",function(e){
 
     head = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
-            '<title>Clock Request Desk</title>\n'
+            '<title>Club Clocks by Afternoon Golf Club</title>\n'
             '<meta name="description" content="Order a custom branded golf post clock: lettering, crest and Bambu Lab filament, with a live preview rendered from the real print files.">\n'
             '<style>:root{color-scheme:light}html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n'
             '</head>\n<body>\n')
