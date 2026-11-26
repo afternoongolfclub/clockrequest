@@ -854,10 +854,9 @@ function briefText(){
   o.push("CLOCK");
   o.push("- "+styleName()+" (the Huntsville CC post clock model at this size)");
   o.push("");
-  o.push("LETTERING (Caladea Bold, raised relief in the accent filament)");
+  o.push("LETTERING (raised gold relief in the accent filament)");
   o.push("- Arched over the dial: "+(S.topA||"(blank)")+(caps.t1?"  [preview cap height "+caps.t1.toFixed(1)+" mm]":""));
   o.push("- Under the dial: "+(S.bottom||"(blank)")+(caps.b?"  [preview cap height "+caps.b.toFixed(1)+" mm]":""));
-  o.push("- Keep the 3.1 mm cap-height floor; if a line will not fit above it, stop and tell me rather than shrinking further.");
   o.push("");
   o.push("CREST");
   o.push(S.logoName ? "- Use the attached file ("+S.logoName+") in the medallion as single-colour raised relief in the accent filament."
@@ -866,10 +865,15 @@ function briefText(){
   o.push("FILAMENT (one per AMS slot)");
   SLOTS.forEach(function(s){ o.push("- "+s.role+": "+f[s.key].series+" "+f[s.key].name+" "+f[s.key].hex); });
   o.push("");
+  o.push("ORDER JSON (save as order.json, then: python3 order_build.py order.json)");
+  o.push(JSON.stringify({size:(S.style==="post363"?"363":"516"), club_name:S.topA||"", lower_line:S.bottom||"",
+    crest:S.logoName||"", ams:[f.body.hex,f.accent.hex,f.dial.hex,f.numeral.hex], printer:"p1s"}));
+  o.push("");
   o.push("DELIVER");
-  o.push("- Bambu Studio 3MF plates for the Bambu Lab P1S with AMS (256 x 256 mm bed), with these colours assigned per part.");
-  o.push("- Set the printer profile to the P1S, not the A1 the reference files were made on; re-arrange or split plates if anything no longer fits the bed.");
+  o.push("- Use the post clock pipeline (order_build.py) in the 3D Prints project: it writes Bambu Studio 3MF plates for the P1S with AMS, colours in slots 1-4.");
+  o.push("- If it stops on a lettering warning, tell me the cap heights rather than shortening the club's wording yourself.");
   o.push("- Flag anything that will not print cleanly at a 0.4 mm nozzle before I slice it.");
+  o.push("- The crest is the file attached to the request email; attach it to the chat.");
   return o.join("\n");
 }
 function syncHidden(){
