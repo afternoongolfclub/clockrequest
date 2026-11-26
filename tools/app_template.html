@@ -103,6 +103,10 @@ section.card{background:var(--surface);border:1px solid var(--rule);border-radiu
 .lay .box{display:block;border:1px solid var(--rule);border-radius:11px;padding:12px;background:var(--sunk);height:100%;pointer-events:none}
 .lay input:checked+.box{border-color:var(--brass);background:var(--brass-wash);box-shadow:inset 0 0 0 1px var(--brass)}
 .lay input:focus-visible+.box{outline:2px solid var(--brass);outline-offset:2px}
+.brandrow{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.brandrow h1{margin:0}
+.brandrow .brandline{margin:2px 0 0}
+.brandmark{width:56px;height:56px;flex:none}
 .lay .glyph{display:block;width:100%;height:auto;margin-bottom:8px}
 .clockfig{display:flex;align-items:flex-end;justify-content:center;gap:10px;height:184px;padding-top:8px;margin-bottom:10px;overflow:hidden}
 .clockfig canvas{display:block;flex:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.18))}
@@ -264,8 +268,8 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
 <div class="wrap">
   <header class="top">
     <div>
-      <div class="brandline"><span class="pip"></span> by Afternoon Golf Club</div>
-      <h1>Club Clocks</h1>
+      <div class="brandrow"><img class="brandmark" src="logo-mark.svg" alt="" width="56" height="56">
+      <div><h1>Club Clocks</h1><div class="brandline">by Afternoon Golf Club</div></div></div>
       <p class="sub">Set the lettering, send a crest, and choose filament. The preview is rendered from the real print files, so what you see is what the plates make.</p>
     </div>
     <div class="topnav" role="tablist" aria-label="Sections" id="topnav" hidden>
@@ -297,6 +301,9 @@ footer.foot{border-top:1px solid var(--rule);padding-block:20px;color:var(--mute
                 <text id="pName" text-anchor="middle"><textPath href="#arcPost" startOffset="50%"></textPath></text>
                 <text id="pMeasure" x="0" y="0" visibility="hidden"></text>
                 <text id="pBottom" text-anchor="middle"></text>
+              </g>
+              <g id="pDialG">
+                <text id="pDial" text-anchor="middle" lengthAdjust="spacingAndGlyphs"></text>
               </g>
             </svg>
             <div class="picload" id="picLoad">Loading preview…</div>
@@ -527,7 +534,7 @@ var STYLES=[
   {id:"post516", name:"Post clock · 516 mm", desc:"Free-standing, 516 mm tall, 103 mm dial."},
   {id:"post363", name:"Post clock · 363 mm", desc:"Free-standing, 363 mm tall, 83 mm dial."}
 ];
-var POST_LAYOUT={id:"post", fields:["topA","bottom"], labels:{topA:"Club name (arched over the dial)", bottom:"Line under the dial"}};
+var POST_LAYOUT={id:"post", fields:["topA","dial","bottom"], labels:{topA:"Club name (arched over the dial)", dial:"Line on the dial, under the XII (optional)", bottom:"Line under the dial"}};
 var PG=null;   /* post clock front-view geometry, loaded from post_geom.json */
 var CAL={}, REF_NAME="HUNTSVILLE COUNTRY CLUB";
 var LAYOUTS=[
@@ -550,7 +557,7 @@ var S={
   style:"post516",
   layout:"single",
   topA:"HUNTSVILLE COUNTRY CLUB", topB:"CLUB CHAMPIONSHIP",
-  bottom:"CLUB CHAMPION", year:"2026", dialA:"HUNTSVILLE", dialB:"COUNTRY CLUB",
+  bottom:"CLUB CHAMPION", year:"2026", dial:"", dialA:"HUNTSVILLE", dialB:"COUNTRY CLUB",
   fil:{}, logoUrl:null, logoId:null, logoName:null
 };
 SLOTS.forEach(function(s){ S.fil[s.key]=findFil(s.def[0],s.def[1]); });
@@ -632,6 +639,32 @@ function renderPost(){
   if(L>g.bottom.maxw){ bc=Math.max(CAP_FLOOR,bc*g.bottom.maxw/L); bt.style.fontSize=(bc/CAP_RATIO).toFixed(3)+"px"; }
   bt.setAttribute("x",0); bt.setAttribute("y",(g.bottom.y+bc/2).toFixed(2));
   caps.b=S.bottom?bc:0;
+  /* line on the dial under the XII, black like the numerals, fitted between them as the plate builder does */
+  var D=g.dial, dt=$("pDial"), str=(S.dial||"").trim();
+  caps.d=0; caps.dTooLong=false;
+  if(!str||!D){ dt.textContent=""; dt.setAttribute("visibility","hidden"); }
+  else{
+    dt.removeAttribute("visibility"); styleText(dt,num); dt.setAttribute("letter-spacing","0");
+    var msr=$("pMeasure"); msr.textContent=D.ref; msr.style.fontSize=(10/CAP_RATIO).toFixed(3)+"px";
+    var K=D.wref/(msr.getComputedTextLength()/10);           /* plate font width per mm of cap, from the reference line */
+    msr.textContent=str; var per=msr.getComputedTextLength()/10*K;   /* this line's width per mm of cap */
+    msr.textContent=S.topA||"";
+    var dy=D.y, dcap=D.cap, w, edge, maxw, k2;
+    for(k2=0;k2<4;k2++){
+      w=per*dcap; edge=Math.abs(dy)+dcap/2; maxw=2*Math.sqrt(Math.max(1,D.r_in*D.r_in-edge*edge));
+      if(w<=maxw||dcap<=D.floor) break;
+      dcap=Math.max(D.floor,dcap*maxw/w*0.98);
+    }
+    w=per*dcap;
+    if(w>maxw+0.05){
+      var ymin=D.hub+3+dcap/2, yfit=Math.sqrt(Math.max(0,D.r_in*D.r_in-(w/2)*(w/2)))-dcap/2;
+      dy=Math.max(ymin,Math.min(dy,yfit)); edge=dy+dcap/2; maxw=2*Math.sqrt(Math.max(1,D.r_in*D.r_in-edge*edge));
+    }
+    caps.d=dcap; caps.dTooLong=(w>maxw+0.05);
+    dt.textContent=str; dt.style.fontSize=(dcap/CAP_RATIO).toFixed(3)+"px";
+    dt.setAttribute("textLength",w.toFixed(2));
+    dt.setAttribute("x",0); dt.setAttribute("y",(g.dial_cy-dy+dcap/2).toFixed(2));
+  }
   /* crest in the gold ring */
   var cr=g.crest; $("cpPostMedC").setAttribute("cx",cr.cx); $("cpPostMedC").setAttribute("cy",cr.cy); $("cpPostMedC").setAttribute("r",cr.r);
   var hint=$("pMedHint"), hc=hint.querySelector("circle"), ht=hint.querySelector("text");
@@ -716,8 +749,9 @@ function render(){
     var tight=[];
     if(caps.t1&&caps.t1<=CAP_FLOOR+0.05) tight.push("club name");
     if(caps.b&&caps.b<=CAP_FLOOR+0.05) tight.push("lower line");
-    $("capNote").textContent = tight.length ? "Too long: " + tight.join(" and ") + " is at the print floor"
-      : "Lettering " + (caps.t1?caps.t1.toFixed(1):"–") + " mm / " + (caps.b?caps.b.toFixed(1):"–") + " mm cap";
+    if(caps.dTooLong) tight.push("dial line");
+    $("capNote").textContent = tight.length ? "Too long: " + tight.join(" and ") + (tight.length>1?" are":" is") + " at the print floor"
+      : "Lettering " + (caps.t1?caps.t1.toFixed(1):"–") + " mm / " + (caps.b?caps.b.toFixed(1):"–") + " mm cap"+(caps.d?" · dial "+caps.d.toFixed(1)+" mm":"");
     $("capNote").style.color = tight.length ? "var(--warn)" : "";
   }
 }
@@ -829,7 +863,7 @@ fetch("post_geom.json").then(function(r){ if(!r.ok) throw 0; return r.json(); })
   .catch(function(){ buildStyles(); });
 
 /* ---------- lettering fields ---------- */
-var LIMITS={topA:28,topB:28,bottom:18,year:14,dialA:18,dialB:18};
+var LIMITS={topA:28,topB:28,bottom:18,year:14,dialA:18,dialB:18,dial:24};
 function buildFields(){
   var L=isPost()?POST_LAYOUT:LAYOUTS.filter(function(x){return x.id===S.layout;})[0], h="";
   L.fields.forEach(function(k){
@@ -1168,7 +1202,7 @@ $("orderForm").addEventListener("submit",async function(e){
     status:"new",
     style:S.style,
     layout:isPost()?"post":S.layout,
-    lettering:{topA:S.topA,topB:S.topB,bottom:S.bottom,year:S.year,dialA:S.dialA,dialB:S.dialB},
+    lettering:{topA:S.topA,topB:S.topB,bottom:S.bottom,year:S.year,dialA:S.dialA,dialB:S.dialB,dial:S.dial||""},
     filament:{
       dial:S.fil.dial, body:S.fil.body, accent:S.fil.accent, numeral:S.fil.numeral
     },
@@ -1252,7 +1286,7 @@ async function loadInbox(){
         '<dt>Layout</dt><dd>'+esc(r.layout||"")+'</dd>'+
         '<dt>Crown</dt><dd>'+esc(l.topA||"")+(l.topB?" / "+esc(l.topB):"")+'</dd>'+
         '<dt>Lower</dt><dd>'+esc(l.bottom||"")+'</dd>'+
-        '<dt>Dial</dt><dd>'+esc(l.year||"")+(l.dialA?" · "+esc(l.dialA)+" "+esc(l.dialB||""):"")+'</dd>'+
+        '<dt>Dial</dt><dd>'+esc(l.dial||l.year||"")+'</dd>'+
         '<dt>Filament</dt><dd>'+[f.body,f.accent,f.dial,f.numeral].map(function(x){
             return x?esc(x.name):"—"; }).join(" · ")+'</dd>'+
         '<dt>Contact</dt><dd>'+esc(r.contact||"")+' — '+esc(r.email||"")+(r.phone?" · "+esc(r.phone):"")+'</dd>'+

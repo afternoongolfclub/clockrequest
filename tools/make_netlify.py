@@ -28,7 +28,7 @@ def must_replace(s, old, new):
     return s.replace(old, new)
 
 
-HIDDEN = ['clock', 'club_name', 'lower_line', 'filament_housing',
+HIDDEN = ['clock', 'club_name', 'dial_text', 'lower_line', 'filament_housing',
           'filament_accents', 'filament_dial', 'filament_numerals', 'spec', 'build_brief', 'order_id']
 
 
@@ -112,6 +112,7 @@ function briefText(){
   o.push("");
   o.push("LETTERING (raised gold relief in the accent filament)");
   o.push("- Arched over the dial: "+(S.topA||"(blank)")+(caps.t1?"  [preview cap height "+caps.t1.toFixed(1)+" mm]":""));
+  o.push("- On the dial, under the XII: "+(S.dial||"(none)")+(caps.d?"  [preview cap height "+caps.d.toFixed(1)+" mm]":""));
   o.push("- Under the dial: "+(S.bottom||"(blank)")+(caps.b?"  [preview cap height "+caps.b.toFixed(1)+" mm]":""));
   o.push("");
   o.push("CREST");
@@ -122,7 +123,7 @@ function briefText(){
   SLOTS.forEach(function(s){ o.push("- "+s.role+": "+f[s.key].series+" "+f[s.key].name+" "+f[s.key].hex); });
   o.push("");
   o.push("ORDER JSON (same as requests/"+ORDER_ID+"/order.json; save it yourself only if that folder is missing)");
-  o.push(JSON.stringify({size:(S.style==="post363"?"363":"516"), club_name:S.topA||"", lower_line:S.bottom||"",
+  o.push(JSON.stringify({size:(S.style==="post363"?"363":"516"), club_name:S.topA||"", dial_text:S.dial||"", lower_line:S.bottom||"",
     crest:S.logoName||"", ams:[f.body.hex,f.accent.hex,f.dial.hex,f.numeral.hex], printer:"p1s"}));
   o.push("");
   o.push("DELIVER");
@@ -133,7 +134,7 @@ function briefText(){
   return o.join("\n");
 }
 function syncHidden(){
-  var map={clock:styleName(), club_name:S.topA||"", lower_line:S.bottom||"",
+  var map={clock:styleName(), club_name:S.topA||"", dial_text:S.dial||"", lower_line:S.bottom||"",
     filament_housing:filTxt(S.fil.body), filament_accents:filTxt(S.fil.accent),
     filament_dial:filTxt(S.fil.dial), filament_numerals:filTxt(S.fil.numeral),
     spec:specText(), build_brief:briefText(), order_id:ORDER_ID};
@@ -187,6 +188,7 @@ $("orderForm").addEventListener("submit",function(e){
     head = ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
             '<title>Club Clocks by Afternoon Golf Club</title>\n'
+            '<link rel="icon" href="/favicon.svg" type="image/svg+xml">\n<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">\n<link rel="manifest" href="/site.webmanifest">\n<meta name="theme-color" content="#1E4A3A">\n<meta name="apple-mobile-web-app-title" content="Club Clocks">\n'
             '<meta name="description" content="Order a custom branded golf post clock: lettering, crest and Bambu Lab filament, with a live preview rendered from the real print files.">\n'
             '<style>:root{color-scheme:light}html,body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n'
             '</head>\n<body>\n')

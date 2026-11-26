@@ -30,6 +30,13 @@ function gatePage(failed: boolean): string {
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>Club Clocks by Afternoon Golf Club</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#1E4A3A">
+<meta name="apple-mobile-web-app-title" content="Club Clocks">
+
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <style>
 :root{--bg:#F1F2F4;--surface:#FFFFFF;--sunk:#F7F8F9;--ink:#191C20;--muted:#6B737C;
@@ -62,7 +69,7 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 </head>
 <body>
   <form class="card" method="POST" action="/__gate">
-    <p class="eyebrow"><span class="pip"></span> Club Clocks · Afternoon Golf Club</p>
+    <img src="/logo.svg" alt="Club Clocks by Afternoon Golf Club" style="display:block;width:100%;max-width:300px;height:auto;margin:0 0 18px">
     <h1>Enter your access code</h1>
     <p>This page is for clubs working with the shop. Use the code you were sent.</p>
     <label for="code">Access code</label>
@@ -75,6 +82,10 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 </html>`;
 }
 
+/* brand files a phone fetches for its home-screen icon, before anyone has the code */
+const PUBLIC = new Set(['/favicon.svg', '/favicon-32.png', '/apple-touch-icon.png', '/icon-192.png',
+  '/icon-512.png', '/site.webmanifest', '/logo.svg', '/logo-light.svg', '/logo-mark.svg', '/logo.png', '/logo-light.png']);
+
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'x-robots-tag': 'noindex' };
 
 export default async (request: Request): Promise<Response | undefined> => {
@@ -83,6 +94,7 @@ export default async (request: Request): Promise<Response | undefined> => {
 
   const expected = await sha256(code + SALT);
   const url = new URL(request.url);
+  if (PUBLIC.has(url.pathname)) return;
 
   if (url.pathname === '/__gate') {
     if (request.method !== 'POST') {
