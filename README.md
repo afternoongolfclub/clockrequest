@@ -45,3 +45,13 @@ readable summary suitable for pasting into a quote.
 - `index.html` — the whole app: markup, styles, geometry and script
 - `thanks.html` — post-submit page
 - `netlify.toml` — publish directory and headers
+
+
+## Shop admin (/admin)
+
+https://clubclocks.netlify.app/admin/ — dashboard, orders (status, quote, payments, notes,
+build brief), and costing. Sign-in is the `ADMIN_CODE` environment variable (separate from the
+customers' `ACCESS_CODE`; the admin area stays locked while it is unset). Data lives in the private
+`afternoongolfclub/clock-pipeline` repo: `requests/<id>/admin.json` per order and
+`config/costing.json`, read and written by `netlify/functions/admin-api.mjs` with
+`CLOCK_PIPELINE_TOKEN`.

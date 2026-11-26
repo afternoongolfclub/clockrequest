@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Club Clocks · Shop</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#1E4A3A">
+<meta name="apple-mobile-web-app-title" content="Club Clocks Shop">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+<style>
+/* VOICE: a shop ledger, calm and exact. IDEA: the job board behind a workshop counter.
+   PICTURE: the status board of orders moving left to right. COLOR and TYPE: the order site's green
+   and brass, Source Serif titles, Inter figures. LAYOUT: tabs across the top, cards below. */
+:root{
+  --bg:#F1F2F4; --surface:#FFFFFF; --sunk:#F7F8F9;
+  --ink:#191C20; --ink-2:#434A52; --muted:#6B737C;
+  --rule:#DBDFE4; --rule-soft:#E9ECEF;
+  --brass:#7A7040; --brass-ink:#5E562F; --brass-wash:#F1EFE2;
+  --green:#1E4A3A; --green-wash:#E3ECE7;
+  --ok:#2F6F4F; --warn:#8A5A14; --bad:#9A3029;
+  --shadow:0 1px 2px rgba(17,20,24,.06),0 8px 24px rgba(17,20,24,.06);
+  --ui:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --display:'Source Serif 4',Georgia,serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#141619; --surface:#1C1F24; --sunk:#181B1F;
+  --ink:#E9EBEE; --ink-2:#B8BFC7; --muted:#8B939C;
+  --rule:#2C3138; --rule-soft:#24282E;
+  --brass:#BCAF6E; --brass-ink:#D6CA8C; --brass-wash:#24231A;
+  --green:#7FC3A2; --green-wash:#18261F;
+  --ok:#6FBF93; --warn:#D9A95C; --bad:#E08B81;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  color-scheme:dark;
+}}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--ui);overflow-x:clip;
+  padding-left:env(safe-area-inset-left,0);padding-right:env(safe-area-inset-right,0)}
+a{color:var(--brass-ink)}
+.top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--rule);
+  padding:10px max(3vw,14px) 0;padding-top:max(10px,env(safe-area-inset-top))}
+.brand{display:flex;align-items:center;gap:10px;max-width:1240px;margin:0 auto}
+.brand img{width:36px;height:36px}
+.brand h1{font:600 20px/1.1 var(--display);margin:0}
+.brand small{display:block;font:500 12px var(--ui);color:var(--muted)}
+.brand .sp{flex:1}
+.tabs{display:flex;gap:4px;max-width:1240px;margin:8px auto 0;overflow-x:auto}
+.tabs button{appearance:none;border:0;background:none;font:600 14px var(--ui);color:var(--muted);
+  padding:10px 14px;border-bottom:2px solid transparent;cursor:pointer;min-height:44px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--brass)}
+main{max-width:1240px;margin:0 auto;padding:18px max(3vw,14px) 60px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow)}
+.card h2{font:600 17px/1.2 var(--display);margin:0 0 10px}
+.note{color:var(--muted);font-size:13px}
+.btn{appearance:none;border:1px solid var(--rule);background:var(--surface);color:var(--ink);font:600 14px var(--ui);
+  padding:9px 14px;border-radius:9px;cursor:pointer;min-height:40px}
+.btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+.btn:focus-visible,.tabs button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--brass);outline-offset:1px}
+.btn:disabled{opacity:.55;cursor:default}
+input,select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--sunk);border:1px solid var(--rule);
+  border-radius:8px;padding:8px 10px;width:100%}
+textarea{min-height:90px;resize:vertical}
+label.f{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin:0 0 4px}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.err{background:#FBEDEB;color:var(--bad);border:1px solid #EBC4BF;border-radius:10px;padding:10px 12px;margin:0 0 14px}
+@media (prefers-color-scheme:dark){.err{background:#2A1C1B;border-color:#5A302C}}
+[hidden]{display:none!important}
+
+/* status pills */
+.pill{display:inline-block;font:600 11.5px/1 var(--ui);padding:5px 8px;border-radius:999px;white-space:nowrap;
+  background:var(--sunk);color:var(--ink-2);border:1px solid var(--rule)}
+.pill.new{background:#FFF4DC;color:#7A4B00;border-color:#F0D9A6}
+.pill.quoted{background:#E8EEF9;color:#2C4C8C;border-color:#C8D5EE}
+.pill.approved{background:var(--brass-wash);color:var(--brass-ink);border-color:#DCD5B5}
+.pill.printing{background:#EDE6F7;color:#5B3A8C;border-color:#D7C9EC}
+.pill.ready{background:var(--green-wash);color:var(--green);border-color:#C3D8CC}
+.pill.delivered{background:#E6EFE9;color:var(--ok);border-color:#C3D8CC}
+.pill.cancelled{text-decoration:line-through;color:var(--muted)}
+@media (prefers-color-scheme:dark){.pill{filter:saturate(.8) brightness(.9)}}
+
+/* dashboard */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px 16px}
+.kpi b{display:block;font:600 clamp(22px,3vw,30px)/1.1 var(--display)}
+.kpi span{font-size:13px;color:var(--muted)}
+.kpi.warn b{color:var(--warn)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px}
+@media(max-width:860px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.board{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin:4px 0 2px}
+.board div{background:var(--sunk);border:1px solid var(--rule-soft);border-radius:9px;padding:10px 8px;text-align:center;cursor:pointer}
+.board div b{display:block;font:600 22px var(--display)}
+.board div span{font-size:11.5px;color:var(--muted)}
+@media(max-width:600px){.board{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.bars{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;align-items:end;height:170px;margin-top:8px}
+.bars .b{display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center}
+.bars .b i{display:block;background:var(--green);border-radius:4px 4px 0 0;min-height:2px}
+.bars .b small{font-size:10.5px;color:var(--muted);margin-top:4px}
+.bars .b em{font-style:normal;font-size:10.5px;color:var(--ink-2);margin-bottom:3px}
+@media(max-width:520px){.bars .b em{display:none}}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--rule-soft);cursor:pointer}
+.list li:last-child{border-bottom:0}
+.fil{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;font-size:14px}
+
+/* orders */
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.tools input{max-width:280px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{appearance:none;border:1px solid var(--rule);background:var(--surface);border-radius:999px;font:600 12.5px var(--ui);
+  padding:7px 11px;color:var(--ink-2);cursor:pointer;min-height:36px}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.orders{display:grid;gap:8px}
+.orow{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--surface);
+  border:1px solid var(--rule);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left;width:100%;font:inherit;color:inherit}
+.orow:hover{border-color:var(--brass)}
+.thumb{width:52px;height:52px;border-radius:50%;background:var(--green);display:grid;place-items:center;overflow:hidden}
+.thumb img{width:76%;height:76%;object-fit:contain;filter:invert(73%) sepia(28%) saturate(560%) hue-rotate(8deg) brightness(92%)}
+.thumb span{color:#E8D9A6;font:600 10px var(--ui)}
+.orow h3{font:600 15px/1.25 var(--ui);margin:0}
+.orow .meta{font-size:12.5px;color:var(--muted)}
+.orow .r{text-align:right;display:grid;gap:4px;justify-items:end}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+
+/* order detail */
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(10,12,14,.45);display:flex;justify-content:flex-end}
+.panel{background:var(--bg);width:min(760px,100%);height:100%;overflow-y:auto;box-shadow:var(--shadow)}
+.phead{position:sticky;top:0;z-index:2;background:var(--surface);border-bottom:1px solid var(--rule);display:flex;gap:10px;align-items:center;
+  padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top))}
+.phead h2{font:600 18px/1.2 var(--display);margin:0;flex:1}
+.pbody{padding:14px 16px 90px;display:grid;gap:12px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+@media(max-width:560px){.two{grid-template-columns:minmax(0,1fr)}}
+dl.kv{display:grid;grid-template-columns:8.5em minmax(0,1fr);gap:6px 12px;margin:0;font-size:14px}
+dl.kv dt{color:var(--muted)}
+dl.kv dd{margin:0;overflow-wrap:anywhere}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid var(--rule);vertical-align:-1px;margin-right:6px}
+.crests{display:flex;gap:12px;flex-wrap:wrap}
+.crests figure{margin:0;text-align:center}
+.crests img{width:120px;height:120px;object-fit:contain;background:#fff;border:1px solid var(--rule);border-radius:10px;padding:6px}
+.crests figcaption{font-size:12px;color:var(--muted);margin-top:4px}
+.steps{display:flex;flex-wrap:wrap;gap:6px}
+.steps button{appearance:none;border:1px solid var(--rule);background:var(--surface);border-radius:999px;padding:7px 11px;font:600 12.5px var(--ui);
+  color:var(--ink-2);cursor:pointer;min-height:36px}
+.steps button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
+.money{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.money div{background:var(--sunk);border-radius:9px;padding:9px 10px}
+.money b{display:block;font:600 17px var(--ui);font-variant-numeric:tabular-nums}
+.money span{font-size:11.5px;color:var(--muted)}
+@media(max-width:560px){.money{grid-template-columns:repeat(2,minmax(0,1fr))}}
+table.pay{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+table.pay td{padding:6px 4px;border-bottom:1px solid var(--rule-soft);vertical-align:middle}
+table.pay input,table.pay select{padding:6px 8px}
+@media(max-width:560px){
+  table.pay tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;gap:6px;padding:8px 0;border-bottom:1px solid var(--rule-soft)}
+  table.pay td{display:block;width:auto!important;padding:0;border:0}
+  table.pay td:nth-child(3){grid-column:1}table.pay td:nth-child(4){grid-column:2}table.pay td:nth-child(5){grid-column:3;grid-row:1}
+}
+.pfoot{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--rule);display:flex;gap:10px;align-items:center;
+  padding:10px 16px;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+.pfoot .msg{flex:1;font-size:13px;color:var(--muted)}
+pre.brief{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;background:var(--sunk);border-radius:9px;padding:10px;max-height:260px;overflow:auto;margin:8px 0 0}
+
+/* costing */
+.cg{display:grid;grid-template-columns:minmax(0,1fr) 96px 86px 80px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--rule-soft)}
+.cg .hd{font-size:11.5px;font-weight:600;color:var(--muted)}
+.cg2{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--rule-soft)}
+.seg{display:inline-flex;gap:4px;background:var(--sunk);border:1px solid var(--rule);border-radius:10px;padding:4px;margin:0 0 10px}
+.seg button{appearance:none;border:0;background:none;font:600 13px var(--ui);padding:8px 12px;border-radius:7px;color:var(--ink-2);cursor:pointer;min-height:38px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.sum .r{display:grid;grid-template-columns:minmax(0,1fr) 110px 110px;gap:8px;padding:6px 0;border-bottom:1px solid var(--rule-soft);font-size:14px}
+.sum .r b{text-align:right;font-variant-numeric:tabular-nums}
+.sum .r.big b{font-size:17px}
+@media(max-width:520px){.cg{grid-template-columns:minmax(0,1fr) 76px 70px 62px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <img src="/logo-mark.svg" alt="">
+    <div><h1>Club Clocks</h1><small>Shop · orders and business</small></div>
+    <span class="sp"></span>
+    <a class="btn" href="/" target="_blank" rel="noopener">Order site</a>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" id="t-dash" aria-selected="true" data-v="dash">Dashboard</button>
+    <button role="tab" id="t-orders" aria-selected="false" data-v="orders">Orders</button>
+    <button role="tab" id="t-cost" aria-selected="false" data-v="cost">Costing</button>
+  </nav>
+</header>
+<main>
+  <div class="err" id="err" hidden></div>
+
+  <section id="v-dash" role="tabpanel" aria-labelledby="t-dash">
+    <div class="kpis" id="kpis"></div>
+    <div class="card" style="margin-bottom:14px">
+      <h2>Where every order stands</h2>
+      <div class="board" id="board"></div>
+    </div>
+    <div class="grid2">
+      <div class="card"><h2>Money in, last 12 months</h2><div class="bars" id="bars"></div>
+        <p class="note" id="barsNote"></p></div>
+      <div class="card"><h2>Due soon</h2><ul class="list" id="due"></ul></div>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div class="card"><h2>Waiting on payment</h2><ul class="list" id="owed"></ul></div>
+      <div class="card"><h2>Filament this year</h2><div class="fil" id="fil"></div>
+        <p class="note">Orders printing, ready or delivered this year, from the Costing weights.</p></div>
+    </div>
+  </section>
+
+  <section id="v-orders" role="tabpanel" aria-labelledby="t-orders" hidden>
+    <div class="tools">
+      <input type="search" id="q" placeholder="Search club, contact or request" aria-label="Search orders">
+      <div class="chips" id="chips"></div>
+      <span class="sp" style="flex:1"></span>
+      <button class="btn" id="reload" type="button">Refresh</button>
+    </div>
+    <div class="orders" id="orders"><div class="empty">Loading orders…</div></div>
+  </section>
+
+  <section id="v-cost" role="tabpanel" aria-labelledby="t-cost" hidden>
+    <div class="grid2">
+      <div class="card">
+        <h2>Per clock</h2>
+        <div class="sum" id="costSum"></div>
+        <p class="note">Every order's cost and profit uses these figures. Your own time isn't counted.</p>
+      </div>
+      <div class="card">
+        <h2>Allowances</h2>
+        <div class="cg2"><label for="cScrap">Scrap and failed prints, %</label><input id="cScrap" type="number" min="0" step="1" inputmode="decimal"></div>
+        <div class="cg2"><label for="cMargin">Target margin, %</label><input id="cMargin" type="number" min="0" max="95" step="1" inputmode="decimal"></div>
+        <div class="cg2"><label for="cBatch">Clocks per plate run</label><input id="cBatch" type="number" min="1" step="1" inputmode="numeric"></div>
+        <p class="note">More clocks per plate run share the color-change purge.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h2>Filament</h2>
+      <div class="seg" id="costSize" role="group" aria-label="Clock size for these weights">
+        <button type="button" data-k="516" aria-pressed="true">516 mm (20.3 in)</button>
+        <button type="button" data-k="363" aria-pressed="false">363 mm (14.3 in)</button>
+      </div>
+      <div id="costFil"></div>
+      <p class="note">Grams per clock for the size above, worked out from the P1S plate files. Replace them with what Bambu Studio reports when you slice. Prices per kilo are shared by both sizes.</p>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h2>Everything else, per clock</h2>
+      <div id="costOther"></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;margin-top:14px">
+      <button class="btn primary" id="costSave" type="button">Save costing</button>
+      <span class="note" id="costMsg"></span>
+    </div>
+  </section>
+</main>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <div class="phead">
+      <button class="btn" id="dClose" type="button">← Orders</button>
+      <h2 id="dTitle">Order</h2>
+      <span id="dPill"></span>
+    </div>
+    <div class="pbody" id="dBody"></div>
+    <div class="pfoot">
+      <span class="msg" id="dMsg"></span>
+      <button class="btn primary" id="dSave" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=v=>(v<0?"−":"")+"$"+Math.abs(v).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const money0=v=>"$"+Math.round(v).toLocaleString("en-US");
+const today=()=>new Date().toISOString().slice(0,10);
+const STATUSES=[["new","New"],["quoted","Quoted"],["approved","Approved"],["printing","Printing"],["ready","Ready"],["delivered","Delivered"],["cancelled","Cancelled"]];
+const SLABEL=Object.fromEntries(STATUSES);
+const METHODS=["Cash","Check","Card","Venmo","Zelle","PayPal","Other"];
+const SIZEL={"516":"516 mm (20.3 in)","363":"363 mm (14.3 in)"};
+
+/* ---------- costing model (same figures as the order site's Costing tab) ---------- */
+const DEFAULT_COST={
+  grams:{"516":{body:381.0,accent:19.8,dial:24.5,black:1.9,purge:42.3},"363":{body:189.4,accent:8.4,dial:16.4,black:1.5,purge:31.9}},
+  fil:[{k:"body",label:"Housing, post and base",rate:20},{k:"accent",label:"Gold trim and lettering",rate:20},
+       {k:"dial",label:"Dial",rate:20},{k:"black",label:"Numerals and hands",rate:20},{k:"purge",label:"Color-change purge",rate:20}],
+  other:[{k:"mech",label:"Clock movement (MH011)",v:3.00},{k:"batt",label:"Battery",v:0.35},{k:"ballast",label:"Ballast (steel BBs or sand)",v:0},
+         {k:"glue",label:"CA glue",v:0.05},{k:"box",label:"Box and packing",v:1.50},{k:"power",label:"Electricity",v:0.18}],
+  scrap:5, margin:60, batch:1
+};
+let COST=JSON.parse(JSON.stringify(DEFAULT_COST)), costSize="516";
+function mergeCost(c){
+  if(!c) return;
+  ["516","363"].forEach(k=>{ if(c.grams&&c.grams[k]) Object.keys(COST.grams[k]).forEach(f=>{ if(typeof c.grams[k][f]==="number") COST.grams[k][f]=c.grams[k][f]; }); });
+  (c.fil||[]).forEach(x=>COST.fil.forEach(r=>{ if(r.k===x.k&&typeof x.rate==="number") r.rate=x.rate; }));
+  (c.other||[]).forEach(x=>COST.other.forEach(r=>{ if(r.k===x.k&&typeof x.v==="number") r.v=x.v; }));
+  ["scrap","margin","batch"].forEach(k=>{ if(typeof c[k]==="number") COST[k]=c[k]; });
+}
+function costPer(size){
+  const G=COST.grams[size]||COST.grams["516"]; let f=0,g=0,o=0;
+  COST.fil.forEach(r=>{ const d=r.k==="purge"?Math.max(1,COST.batch||1):1; f+=(G[r.k]||0)*r.rate/1000/d; g+=(G[r.k]||0)/d; });
+  COST.other.forEach(r=>o+=r.v);
+  const scrap=(f+o)*COST.scrap/100, total=f+o+scrap, m=COST.margin/100;
+  return {fil:f,grams:g,other:o,scrap,total,price:m<1?total/(1-m):null};
+}
+
+/* ---------- data ---------- */
+let ORDERS=[], filter="open", query="";
+async function api(path,opt){
+  const r=await fetch("/api/admin/"+path,Object.assign({headers:{"content-type":"application/json"},credentials:"same-origin"},opt||{}));
+  if(r.status===401){ location.href="/admin/"; throw new Error("Signed out"); }
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(j.error||("Error "+r.status));
+  return j;
+}
+function showErr(e){ const el=$("err"); if(!e){ el.hidden=true; return; } el.hidden=false; el.textContent=e.message||String(e); }
+const qty=o=>Math.max(1,parseInt((o.order.customer&&o.order.customer.quantity)||o.order.quantity||1,10)||1);
+const size=o=>String(o.order.size||"516").replace(/\D/g,"")==="363"?"363":"516";
+const club=o=>(o.order.customer&&o.order.customer.club)||o.order.club_name||"Untitled";
+const status=o=>(o.admin&&o.admin.status)||"new";
+const price=o=>(o.admin&&+o.admin.price)||0;
+const paid=o=>((o.admin&&o.admin.payments)||[]).reduce((s,p)=>s+(+p.amount||0),0);
+const due=o=>(o.admin&&o.admin.promised)||(o.order.customer&&o.order.customer.needed_by)||"";
+const open=o=>!["delivered","cancelled"].includes(status(o));
+const cost=o=>costPer(size(o)).total*qty(o);
+const received=o=>String(o.order.received||"").slice(0,10)||o.id.slice(0,4)+"-"+o.id.slice(4,6)+"-"+o.id.slice(6,8);
+
+async function load(){
+  showErr(null);
+  try{
+    const [o,c]=await Promise.all([api("orders"),api("costing")]);
+    ORDERS=o.orders||[]; mergeCost(c.costing);
+    renderAll();
+  }catch(e){ showErr(e); $("orders").innerHTML='<div class="empty">Orders could not be loaded.</div>'; }
+}
+function renderAll(){ renderDash(); renderOrders(); renderCost(); }
+
+/* ---------- dashboard ---------- */
+function renderDash(){
+  const now=new Date(), ym=now.toISOString().slice(0,7), y=now.getFullYear()+"";
+  const live=ORDERS.filter(o=>status(o)!=="cancelled");
+  const pays=[]; ORDERS.forEach(o=>((o.admin&&o.admin.payments)||[]).forEach(p=>pays.push({o,p})));
+  const inMonth=pays.filter(x=>String(x.p.date).startsWith(ym)).reduce((s,x)=>s+(+x.p.amount||0),0);
+  const inYear=pays.filter(x=>String(x.p.date).startsWith(y)).reduce((s,x)=>s+(+x.p.amount||0),0);
+  const committed=live.filter(o=>["approved","printing","ready","delivered"].includes(status(o))&&price(o)>0);
+  const owed=committed.reduce((s,o)=>s+Math.max(0,price(o)-paid(o)),0);
+  const quoted=ORDERS.filter(o=>status(o)==="quoted");
+  const doneYear=ORDERS.filter(o=>status(o)==="delivered"&&received(o).startsWith(y));
+  const profit=doneYear.reduce((s,o)=>s+price(o)-cost(o),0);
+  const soon=new Date(Date.now()+14*864e5).toISOString().slice(0,10);
+  const dueSoon=ORDERS.filter(o=>open(o)&&due(o)&&due(o)<=soon).sort((a,b)=>due(a).localeCompare(due(b)));
+  const k=[
+    [ORDERS.filter(open).length,"open orders",""],
+    [dueSoon.length,"due in the next 14 days",dueSoon.some(o=>due(o)<today())?"warn":""],
+    [money0(owed),"owed on approved orders",owed>0?"warn":""],
+    [money0(inMonth),"taken this month",""],
+    [money0(inYear),"taken in "+y,""],
+    [money0(profit),"profit on "+doneYear.length+" delivered this year",""],
+    [quoted.length+" · "+money0(quoted.reduce((s,o)=>s+price(o),0)),"quotes waiting on a yes",""],
+  ];
+  $("kpis").innerHTML=k.map(x=>'<div class="kpi '+x[2]+'"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>').join("");
+  $("board").innerHTML=STATUSES.filter(s=>s[0]!=="cancelled").map(s=>'<div role="button" tabindex="0" data-s="'+s[0]+'"><b>'+
+    ORDERS.filter(o=>status(o)===s[0]).length+'</b><span>'+s[1]+'</span></div>').join("");
+  $("board").querySelectorAll("[data-s]").forEach(d=>{ const go=()=>{ filter=d.dataset.s; show("orders"); renderOrders(); };
+    d.addEventListener("click",go); d.addEventListener("keydown",e=>{ if(e.key==="Enter") go(); }); });
+  // money in by month
+  const months=[]; for(let i=11;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); months.push(d.toISOString().slice(0,7)); }
+  const tot=months.map(m=>pays.filter(x=>String(x.p.date).startsWith(m)).reduce((s,x)=>s+(+x.p.amount||0),0));
+  const mx=Math.max(1,...tot);
+  $("bars").innerHTML=months.map((m,i)=>'<div class="b" title="'+esc(m+": "+money(tot[i]))+'"><em>'+(tot[i]?money0(tot[i]):"")+'</em><i style="height:'+
+    (tot[i]/mx*100).toFixed(1)+'%"></i><small>'+new Date(m+"-15").toLocaleString("en-US",{month:"short"})+'</small></div>').join("");
+  $("barsNote").textContent=pays.length?"From the payments you record on each order.":"Nothing recorded yet: add payments on an order and they show here.";
+  const li=(o,right)=>'<li data-id="'+esc(o.id)+'"><span>'+esc(club(o))+' <span class="note">· '+esc(SIZEL[size(o)])+' × '+qty(o)+'</span></span><span class="num">'+right+'</span></li>';
+  $("due").innerHTML=dueSoon.length?dueSoon.slice(0,8).map(o=>li(o,(due(o)<today()?'<b style="color:var(--warn)">overdue </b>':'')+esc(due(o)))).join(""):'<li class="note" style="cursor:default">Nothing due in the next two weeks.</li>';
+  const owedL=committed.filter(o=>price(o)-paid(o)>0.005);
+  $("owed").innerHTML=owedL.length?owedL.map(o=>li(o,money(price(o)-paid(o)))).join(""):'<li class="note" style="cursor:default">Nothing outstanding.</li>';
+  document.querySelectorAll("#due [data-id],#owed [data-id]").forEach(l=>l.addEventListener("click",()=>openOrder(l.dataset.id)));
+  // filament
+  const used={body:0,accent:0,dial:0,black:0,purge:0};
+  ORDERS.filter(o=>["printing","ready","delivered"].includes(status(o))&&received(o).startsWith(y)).forEach(o=>{
+    const G=COST.grams[size(o)]; Object.keys(used).forEach(kk=>used[kk]+=(G[kk]||0)*qty(o)); });
+  $("fil").innerHTML=COST.fil.map(r=>'<span>'+esc(r.label)+'</span><span class="num">'+(used[r.k]/1000).toFixed(2)+' kg</span>').join("")+
+    '<b>Total</b><b class="num">'+(Object.values(used).reduce((a,b)=>a+b,0)/1000).toFixed(2)+' kg</b>';
+}
+
+/* ---------- orders ---------- */
+function renderOrders(){
+  const counts={all:ORDERS.length,open:ORDERS.filter(open).length};
+  STATUSES.forEach(s=>counts[s[0]]=ORDERS.filter(o=>status(o)===s[0]).length);
+  const chips=[["open","Open"],["all","All"]].concat(STATUSES);
+  $("chips").innerHTML=chips.map(c=>'<button type="button" data-f="'+c[0]+'" aria-pressed="'+(filter===c[0])+'">'+c[1]+' '+(counts[c[0]]||0)+'</button>').join("");
+  $("chips").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{ filter=b.dataset.f; renderOrders(); }));
+  const q=query.trim().toLowerCase();
+  const rows=ORDERS.filter(o=>filter==="all"||(filter==="open"?open(o):status(o)===filter))
+    .filter(o=>!q||[club(o),o.id,o.order.club_name,o.order.customer&&o.order.customer.contact,o.order.customer&&o.order.customer.email].join(" ").toLowerCase().includes(q));
+  $("orders").innerHTML=rows.length?rows.map(o=>{
+    const crest=o.files.includes("crest.png")?"crest.png":o.files.find(f=>f.startsWith("crest"));
+    const th=crest?'<img alt="" loading="lazy"'+(crest==="crest.png"?'':' style="filter:none"')+' src="/api/admin/file/'+encodeURIComponent(o.id)+'/'+encodeURIComponent(crest)+'">':'<span>NO CREST</span>';
+    const p=price(o), bal=p-paid(o);
+    return '<button class="orow" type="button" data-id="'+esc(o.id)+'"><span class="thumb">'+th+'</span><span><h3>'+esc(club(o))+'</h3>'+
+      '<span class="meta">'+esc(SIZEL[size(o)])+' × '+qty(o)+' · '+esc(o.order.club_name||"")+(due(o)?' · due '+esc(due(o)):'')+'</span></span>'+
+      '<span class="r"><span class="pill '+status(o)+'">'+SLABEL[status(o)]+'</span><span class="num note">'+(p?money(p)+(bal>0.005&&status(o)!=="cancelled"?' · '+money(bal)+' owed':' · paid'):'no quote')+'</span></span></button>';
+  }).join(""):'<div class="empty">No orders here.</div>';
+  $("orders").querySelectorAll(".orow").forEach(b=>b.addEventListener("click",()=>openOrder(b.dataset.id)));
+}
+$("q").addEventListener("input",e=>{ query=e.target.value; renderOrders(); });
+$("reload").addEventListener("click",load);
+
+/* ---------- one order ---------- */
+let CUR=null, DIRTY=false;
+async function openOrder(id){
+  const o=ORDERS.find(x=>x.id===id); if(!o) return;
+  CUR={id, o, admin:JSON.parse(JSON.stringify(o.admin||{status:"new",price:0,payments:[],notes:"",promised:""})), brief:""};
+  DIRTY=false; $("dMsg").textContent=""; $("sheet").hidden=false; document.body.style.overflow="hidden";
+  try{ if(location.hash!=="#order-"+id) history.pushState(null,"","#order-"+id); }catch(e){}
+  renderOrder();
+  try{ const d=await api("orders/"+encodeURIComponent(id)); CUR.brief=d.brief||""; if(d.order) CUR.o.order=d.order; renderOrder(); }catch(e){ $("dMsg").textContent=e.message; }
+  $("dClose").focus();
+}
+function closeOrder(fromPop){
+  if($("sheet").hidden) return;
+  if(DIRTY&&!window.confirmClose){ $("dMsg").innerHTML='<b style="color:var(--warn)">Unsaved changes.</b> Save, or press ← Orders again to discard.'; window.confirmClose=true; return; }
+  window.confirmClose=false; $("sheet").hidden=true; document.body.style.overflow=""; CUR=null;
+  if(!fromPop){ try{ if(location.hash.startsWith("#order-")) history.back(); }catch(e){} }
+}
+$("dClose").addEventListener("click",()=>closeOrder(false));
+window.addEventListener("popstate",()=>{ if(!location.hash.startsWith("#order-")){ window.confirmClose=true; closeOrder(true); } });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("sheet").hidden) closeOrder(false); });
+
+function renderOrder(){
+  const o=CUR.o, a=CUR.admin, od=o.order, cu=od.customer||{}, fl=od.filaments||{};
+  const q=qty(o), c=costPer(size(o)), cst=c.total*q, p=+a.price||0, pd=(a.payments||[]).reduce((s,x)=>s+(+x.amount||0),0);
+  $("dTitle").textContent=club(o);
+  $("dPill").innerHTML='<span class="pill '+esc(a.status||"new")+'">'+SLABEL[a.status||"new"]+'</span>';
+  const swatch=t=>{ const m=/#[0-9A-Fa-f]{6}/.exec(t||""); return (m?'<span class="sw" style="background:'+m[0]+'"></span>':'')+esc(String(t||"").replace(/#[0-9A-Fa-f]{6}/,"").trim()||"–"); };
+  const ams=od.ams||[];
+  const fileUrl=n=>"/api/admin/file/"+encodeURIComponent(o.id)+"/"+encodeURIComponent(n);
+  const crests=o.files.filter(f=>/^crest/.test(f));
+  $("dBody").innerHTML=
+    '<div class="card"><h2>Status</h2><div class="steps" id="dSteps">'+STATUSES.map(s=>'<button type="button" data-s="'+s[0]+'" aria-pressed="'+((a.status||"new")===s[0])+'">'+s[1]+'</button>').join("")+'</div>'+
+    ((a.history||[]).length?'<p class="note" style="margin:8px 0 0">'+(a.history||[]).slice(-4).map(h=>esc(SLABEL[h.status]||h.status)+' '+esc(String(h.at).slice(0,10))).join(" → ")+'</p>':'')+'</div>'+
+
+    '<div class="card"><h2>Quote and payments</h2><div class="two">'+
+      '<div><label class="f" for="dPrice">Quoted price, whole order ($)</label><input id="dPrice" type="number" min="0" step="0.01" inputmode="decimal" value="'+(p||"")+'" placeholder="'+(c.price?(c.price*q).toFixed(2):"")+'"></div>'+
+      '<div><label class="f" for="dPromised">Promised by</label><input id="dPromised" type="date" value="'+esc(a.promised||cu.needed_by||"")+'"></div></div>'+
+      '<div class="money"><div><b>'+(p?money(p):"–")+'</b><span>quoted</span></div><div><b>'+money(pd)+'</b><span>paid</span></div>'+
+      '<div><b style="color:'+(p-pd>0.005?"var(--warn)":"var(--ok)")+'">'+(p?money(Math.max(0,p-pd)):"–")+'</b><span>still owed</span></div>'+
+      '<div><b>'+(p?money(p-cst):"–")+'</b><span>profit · cost '+money(cst)+'</span></div></div>'+
+      '<p class="note" style="margin:8px 0 0">Cost is '+money(c.total)+' per clock × '+q+' from Costing; at your '+COST.margin+'% margin the suggested price is '+(c.price?money(c.price*q):"–")+'.</p>'+
+      '<table class="pay"><tbody id="dPays"></tbody></table>'+
+      '<button class="btn" id="dAddPay" type="button" style="margin-top:8px">+ Record a payment</button></div>'+
+
+    '<div class="card"><h2>Club and contact</h2><dl class="kv">'+
+      '<dt>Club</dt><dd>'+esc(cu.club||od.club_name||"–")+'</dd>'+
+      '<dt>Contact</dt><dd>'+esc(cu.contact||"–")+'</dd>'+
+      '<dt>Email</dt><dd>'+(cu.email?esc(cu.email)+' · <a href="mailto:'+esc(cu.email)+'">write</a>':'–')+'</dd>'+
+      '<dt>Phone</dt><dd>'+(cu.phone?esc(cu.phone)+' · <a href="tel:'+esc(cu.phone.replace(/[^\d+]/g,""))+'">call</a>':'–')+'</dd>'+
+      '<dt>Quantity</dt><dd>'+q+'</dd><dt>Needed by</dt><dd>'+esc(cu.needed_by||"–")+'</dd>'+
+      (cu.notes?'<dt>Their notes</dt><dd>'+esc(cu.notes)+'</dd>':'')+
+      '<dt>Received</dt><dd>'+esc(received(o))+' · '+esc(o.id)+'</dd></dl></div>'+
+
+    '<div class="card"><h2>The clock</h2><dl class="kv">'+
+      '<dt>Size</dt><dd>Post clock '+esc(SIZEL[size(o)])+'</dd>'+
+      '<dt>Arched name</dt><dd>'+esc(od.club_name||"–")+'</dd>'+
+      '<dt>On the dial</dt><dd>'+esc(od.dial_text||"–")+'</dd>'+
+      '<dt>Under the dial</dt><dd>'+esc(od.lower_line||"–")+'</dd>'+
+      '<dt>Housing</dt><dd>'+swatch(fl.housing||ams[0])+'</dd><dt>Accents</dt><dd>'+swatch(fl.accents||ams[1])+'</dd>'+
+      '<dt>Dial</dt><dd>'+swatch(fl.dial||ams[2])+'</dd><dt>Numerals</dt><dd>'+swatch(fl.numerals||ams[3])+'</dd></dl>'+
+      (crests.length?'<div class="crests" style="margin-top:12px">'+crests.map(f=>'<figure><a href="'+fileUrl(f)+'" target="_blank" rel="noopener"><img alt="" src="'+fileUrl(f)+'"></a><figcaption>'+
+        (f==="crest.png"?"As it prints":"Their original")+'</figcaption></figure>').join("")+'</div>':'<p class="note">No crest sent.</p>')+'</div>'+
+
+    '<div class="card"><h2>Notes</h2><textarea id="dNotes" aria-label="Notes">'+esc(a.notes||"")+'</textarea></div>'+
+
+    '<div class="card"><h2>Build</h2><p class="note" style="margin:0">Paste the brief into a chat in the 3D Prints project, or run <code>python3 order_build.py requests/'+esc(o.id)+'/order.json</code> in the pipeline.</p>'+
+      '<button class="btn" id="dCopy" type="button" style="margin-top:8px"'+(CUR.brief?'':' disabled')+'>Copy build brief</button> <span class="note" id="dCopied"></span>'+
+      (CUR.brief?'<details><summary class="note" style="cursor:pointer;margin-top:8px">Show the brief</summary><pre class="brief">'+esc(CUR.brief)+'</pre></details>':'')+'</div>';
+
+  const pays=$("dPays");
+  const drawPays=()=>{
+    pays.innerHTML=(a.payments||[]).map((x,i)=>'<tr><td style="width:9.5em"><input type="date" data-i="'+i+'" data-k="date" value="'+esc(x.date)+'" aria-label="Payment date"></td>'+
+      '<td style="width:7.5em"><input type="number" step="0.01" min="0" inputmode="decimal" data-i="'+i+'" data-k="amount" value="'+(x.amount||"")+'" aria-label="Amount"></td>'+
+      '<td style="width:8em"><select data-i="'+i+'" data-k="method" aria-label="Method">'+METHODS.map(m=>'<option'+(m===x.method?' selected':'')+'>'+m+'</option>').join("")+'</select></td>'+
+      '<td><input data-i="'+i+'" data-k="note" value="'+esc(x.note||"")+'" placeholder="Deposit, balance…" aria-label="Note"></td>'+
+      '<td style="width:2.5em"><button class="btn" type="button" data-del="'+i+'" aria-label="Remove payment">×</button></td></tr>').join("");
+    pays.querySelectorAll("[data-k]").forEach(el=>el.addEventListener("input",()=>{ a.payments[+el.dataset.i][el.dataset.k]=el.dataset.k==="amount"?+el.value:el.value; dirty(); }));
+    pays.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{ a.payments.splice(+b.dataset.del,1); dirty(); renderOrder(); }));
+  };
+  drawPays();
+  $("dAddPay").addEventListener("click",()=>{ (a.payments=a.payments||[]).push({date:today(),amount:0,method:"Card",note:a.payments.length?"":"Deposit"}); dirty(); drawPays(); });
+  $("dSteps").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{ a.status=b.dataset.s; dirty(); renderOrder(); }));
+  $("dPrice").addEventListener("change",e=>{ a.price=+e.target.value||0; dirty(); renderOrder(); });
+  $("dPromised").addEventListener("change",e=>{ a.promised=e.target.value; dirty(); });
+  $("dNotes").addEventListener("input",e=>{ a.notes=e.target.value; dirty(); });
+  $("dCopy").addEventListener("click",()=>{ navigator.clipboard.writeText(CUR.brief).then(()=>$("dCopied").textContent="Copied.",()=>$("dCopied").textContent="Copy was blocked: open Show the brief and copy it."); });
+}
+function dirty(){ DIRTY=true; window.confirmClose=false; $("dMsg").textContent="Unsaved changes"; }
+$("dSave").addEventListener("click",async()=>{
+  if(!CUR) return; const btn=$("dSave"); btn.disabled=true; $("dMsg").textContent="Saving…";
+  try{
+    const r=await api("orders/"+encodeURIComponent(CUR.id),{method:"PUT",body:JSON.stringify(CUR.admin)});
+    CUR.admin=r.admin; CUR.o.admin=r.admin; DIRTY=false; $("dMsg").textContent="Saved."; renderOrder(); renderDash(); renderOrders();
+  }catch(e){ $("dMsg").textContent="Not saved: "+e.message; }
+  btn.disabled=false;
+});
+
+/* ---------- costing ---------- */
+function renderCost(){
+  const G=COST.grams[costSize];
+  $("costFil").innerHTML='<div class="cg"><span class="hd">Filament</span><span class="hd num">Grams</span><span class="hd num">$ / kg</span><span class="hd num">Cost</span></div>'+
+    COST.fil.map(r=>'<div class="cg"><span>'+esc(r.label)+'</span><input type="number" step="0.1" min="0" inputmode="decimal" data-g="'+r.k+'" value="'+(G[r.k]||0)+'" aria-label="'+esc(r.label)+' grams">'+
+      '<input type="number" step="0.5" min="0" inputmode="decimal" data-r="'+r.k+'" value="'+r.rate+'" aria-label="'+esc(r.label)+' price per kilo"><span class="num" data-o="'+r.k+'"></span></div>').join("");
+  $("costOther").innerHTML=COST.other.map(r=>'<div class="cg2"><span>'+esc(r.label)+'</span><input type="number" step="0.05" min="0" inputmode="decimal" data-v="'+r.k+'" value="'+r.v+'" aria-label="'+esc(r.label)+'"></div>').join("");
+  $("cScrap").value=COST.scrap; $("cMargin").value=COST.margin; $("cBatch").value=COST.batch;
+  document.querySelectorAll("#costSize button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===costSize));
+  $("costFil").querySelectorAll("[data-g]").forEach(i=>i.addEventListener("input",()=>{ COST.grams[costSize][i.dataset.g]=+i.value||0; costOut(); }));
+  $("costFil").querySelectorAll("[data-r]").forEach(i=>i.addEventListener("input",()=>{ COST.fil.find(r=>r.k===i.dataset.r).rate=+i.value||0; costOut(); }));
+  $("costOther").querySelectorAll("[data-v]").forEach(i=>i.addEventListener("input",()=>{ COST.other.find(r=>r.k===i.dataset.v).v=+i.value||0; costOut(); }));
+  costOut();
+}
+function costOut(){
+  const G=COST.grams[costSize];
+  COST.fil.forEach(r=>{ const el=document.querySelector('[data-o="'+r.k+'"]'); if(el) el.textContent=money((G[r.k]||0)*r.rate/1000/(r.k==="purge"?Math.max(1,COST.batch):1)); });
+  const c=[costPer("516"),costPer("363")], row=(l,f,cls)=>'<div class="r'+(cls?" "+cls:"")+'"><span>'+l+'</span><b>'+f(c[0])+'</b><b>'+f(c[1])+'</b></div>';
+  $("costSum").innerHTML='<div class="r"><span></span><b class="note">516 mm</b><b class="note">363 mm</b></div>'+
+    row("Filament",x=>money(x.fil))+row("Everything else",x=>money(x.other))+row("Scrap allowance",x=>money(x.scrap))+
+    row("Cost per clock",x=>money(x.total),"big")+row("Price at "+COST.margin+"% margin",x=>x.price==null?"–":money(x.price));
+  if(ORDERS.length) renderDash();
+}
+["cScrap","cMargin","cBatch"].forEach(id=>$(id).addEventListener("input",e=>{ const k={cScrap:"scrap",cMargin:"margin",cBatch:"batch"}[id];
+  COST[k]=k==="batch"?Math.max(1,Math.round(+e.target.value)||1):(+e.target.value||0); costOut(); }));
+document.querySelectorAll("#costSize button").forEach(b=>b.addEventListener("click",()=>{ costSize=b.dataset.k; renderCost(); }));
+$("costSave").addEventListener("click",async()=>{
+  $("costSave").disabled=true; $("costMsg").textContent="Saving…";
+  try{ await api("costing",{method:"PUT",body:JSON.stringify({costing:{grams:COST.grams,fil:COST.fil.map(r=>({k:r.k,rate:r.rate})),
+      other:COST.other.map(r=>({k:r.k,label:r.label,v:r.v})),scrap:COST.scrap,margin:COST.margin,batch:COST.batch}})});
+    $("costMsg").textContent="Saved."; }catch(e){ $("costMsg").textContent="Not saved: "+e.message; }
+  $("costSave").disabled=false;
+});
+
+/* ---------- tabs ---------- */
+function show(v){
+  ["dash","orders","cost"].forEach(x=>{ $("v-"+x).hidden=x!==v; $("t-"+x).setAttribute("aria-selected",x===v); });
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.v)));
+window.addEventListener("beforeunload",e=>{ if(DIRTY){ e.preventDefault(); e.returnValue=""; } });
+
+load();
+}
+</script>
+</body>
+</html>

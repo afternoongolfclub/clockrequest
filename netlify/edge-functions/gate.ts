@@ -9,6 +9,10 @@
  * by editing ACCESS_CODE in the project's environment variables and redeploying.
  * With no ACCESS_CODE set the site stays open, so a misconfiguration cannot
  * lock everyone out.
+ *
+ * The shop's admin area (/admin and /api/admin) has its own password in
+ * ADMIN_CODE and its own cookie. It fails closed: with no ADMIN_CODE set it
+ * stays locked, and the customers' access code never opens it.
  */
 
 const COOKIE = 'clockgate';
@@ -22,14 +26,29 @@ async function sha256(value: string): Promise<string> {
     .join('');
 }
 
-function gatePage(failed: boolean): string {
+const ADMIN_COOKIE = 'ccadmin';
+const ADMIN_SALT = '::clubclocks-admin';
+
+type GateText = { action: string; title: string; heading: string; intro: string; label: string; error: string; button: string };
+const CUSTOMER: GateText = {
+  action: '/__gate', title: 'Club Clocks by Afternoon Golf Club', heading: 'Enter your access code',
+  intro: 'This page is for clubs working with the shop. Use the code you were sent.',
+  label: 'Access code', error: 'That code was not recognised. Check it and try again.', button: 'Continue',
+};
+const ADMIN: GateText = {
+  action: '/__admin', title: 'Club Clocks · Shop admin', heading: 'Shop admin',
+  intro: 'Orders, quotes, payments and costing. Sign in with the admin password.',
+  label: 'Admin password', error: 'That password was not recognised.', button: 'Sign in',
+};
+
+function gatePage(failed: boolean, t: GateText = CUSTOMER): string {
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Club Clocks by Afternoon Golf Club</title>
+<title>${t.title}</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -68,15 +87,15 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 </style>
 </head>
 <body>
-  <form class="card" method="POST" action="/__gate">
+  <form class="card" method="POST" action="${t.action}">
     <img src="/logo.svg" alt="Club Clocks by Afternoon Golf Club" style="display:block;width:100%;max-width:300px;height:auto;margin:0 0 18px">
-    <h1>Enter your access code</h1>
-    <p>This page is for clubs working with the shop. Use the code you were sent.</p>
-    <label for="code">Access code</label>
-    <input id="code" name="code" type="password" autocomplete="one-time-code"
+    <h1>${t.heading}</h1>
+    <p>${t.intro}</p>
+    <label for="code">${t.label}</label>
+    <input id="code" name="code" type="password" autocomplete="${t === ADMIN ? 'current-password' : 'one-time-code'}"
            autocapitalize="off" autocorrect="off" spellcheck="false" autofocus required>
-    <button type="submit">Continue</button>
-    ${failed ? '<p class="err">That code was not recognised. Check it and try again.</p>' : ''}
+    <button type="submit">${t.button}</button>
+    ${failed ? `<p class="err">${t.error}</p>` : ''}
   </form>
 </body>
 </html>`;
@@ -88,7 +107,46 @@ const PUBLIC = new Set(['/favicon.svg', '/favicon-32.png', '/apple-touch-icon.pn
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'x-robots-tag': 'noindex' };
 
+const isAdminPath = (p: string) =>
+  p === '/admin' || p.startsWith('/admin/') || p === '/api/admin' || p.startsWith('/api/admin/') || p === '/__admin';
+
+async function adminGate(request: Request, url: URL): Promise<Response | undefined> {
+  const code = Netlify.env.get('ADMIN_CODE');
+  const api = url.pathname.startsWith('/api/admin');
+  if (!code) {                                         // fails closed
+    const msg = 'The admin area is not set up yet: add ADMIN_CODE in the Netlify environment variables, then redeploy.';
+    return api
+      ? Response.json({ error: msg }, { status: 503 })
+      : new Response(`<!doctype html><meta charset="utf-8"><title>Admin locked</title><p style="font:16px system-ui;margin:40px">${msg}</p>`,
+          { status: 503, headers: HTML });
+  }
+  const expected = await sha256(code + ADMIN_SALT);
+  if (url.pathname === '/__admin') {
+    if (request.method !== 'POST') return new Response(gatePage(false, ADMIN), { status: 401, headers: HTML });
+    const given = String((await request.formData()).get('code') ?? '').trim();
+    if (given && (await sha256(given + ADMIN_SALT)) === expected) {
+      return new Response(null, {
+        status: 303,
+        headers: {
+          Location: '/admin/',
+          'Set-Cookie': `${ADMIN_COOKIE}=${expected}; Path=/; Max-Age=${THIRTY_DAYS}; HttpOnly; Secure; SameSite=Strict`,
+        },
+      });
+    }
+    await new Promise((r) => setTimeout(r, 900));      // slows guessing
+    return new Response(gatePage(true, ADMIN), { status: 401, headers: HTML });
+  }
+  const cookies = (request.headers.get('cookie') ?? '').split(/;\s*/);
+  if (cookies.includes(`${ADMIN_COOKIE}=${expected}`)) return;    // through to the admin site / API
+  return api
+    ? Response.json({ error: 'Not signed in' }, { status: 401 })
+    : new Response(gatePage(false, ADMIN), { status: 401, headers: HTML });
+}
+
 export default async (request: Request): Promise<Response | undefined> => {
+  const url0 = new URL(request.url);
+  if (isAdminPath(url0.pathname)) return adminGate(request, url0);   // before the customer gate, which may be open
+
   const code = Netlify.env.get('ACCESS_CODE');
   if (!code) return;                                  // not configured: stay open
 
