@@ -6,6 +6,8 @@
  *   requests/<id>/admin.json     the shop's side: status, quote, payments, notes, promised date
  *   config/costing.json          filament, parts and margin settings
  *   books/purchases.json         what the shop has bought: filament, parts, packaging, tools
+ *   books/receipts/<file>        receipt photos and PDFs, named after their purchase
+ *   requests/<id>/photos/<file>  photos of the finished clock
  *
  * Routes (all behind the admin password, checked again here as well as at the edge):
  *   GET  /api/admin/orders              every order with its admin record
@@ -17,7 +19,13 @@
  *   GET  /api/admin/purchases           every purchase
  *   POST /api/admin/purchases           add a purchase
  *   PUT  /api/admin/purchases/<pid>     change a purchase
- *   DELETE /api/admin/purchases/<pid>   remove a purchase
+ *   DELETE /api/admin/purchases/<pid>   remove a purchase (and its receipts)
+ *   POST /api/admin/purchases/<pid>/receipt          attach a receipt (raw image/jpeg, image/png or application/pdf body)
+ *   DELETE /api/admin/purchases/<pid>/receipt/<name> remove a receipt
+ *   GET  /api/admin/receipt/<name>                   a receipt file
+ *   POST /api/admin/orders/<id>/photos               add a photo of the finished clock (raw image body)
+ *   DELETE /api/admin/orders/<id>/photos/<name>      remove a photo
+ *   GET  /api/admin/file/<id>/photos/<name>          a photo
  */
 
 const REPO = process.env.CLOCK_PIPELINE_REPO || 'afternoongolfclub/clock-pipeline';
@@ -25,7 +33,12 @@ const BRANCH = 'main';
 const STATUSES = ['new', 'quoted', 'approved', 'printing', 'ready', 'delivered', 'cancelled'];
 const ID = /^[A-Za-z0-9-]{1,40}$/;
 const FILE = /^crest(_original)?\.(png|jpe?g|svg|webp)$/;
-const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', svg: 'image/svg+xml', webp: 'image/webp' };
+const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', svg: 'image/svg+xml', webp: 'image/webp', pdf: 'application/pdf' };
+const PHOTO = /^\d{8}-\d{6}-[a-z0-9]{4}\.(jpg|png)$/;
+const RECEIPT = /^p[a-z0-9]{6,24}-[a-z0-9]{4}\.(jpg|png|pdf)$/;
+const UPLOAD_TYPES = { 'image/jpeg': 'jpg', 'image/png': 'png', 'application/pdf': 'pdf' };
+const MAX_UPLOAD = 4.5 * 1024 * 1024;
+const rand4 = () => Math.random().toString(36).slice(2, 6).padEnd(4, '0');
 
 const PURCHASES = 'books/purchases.json';
 const CATS = ['filament', 'parts', 'packaging', 'tools', 'maintenance', 'shipping', 'other'];
@@ -114,6 +127,43 @@ async function updateJSON(path, change, message) {
   throw new Error(`Could not save ${path}: it changed while saving. Try again.`);
 }
 
+async function putFile(path, buf, message) {
+  const r = await gh(`contents/${path}`, {
+    method: 'PUT', body: JSON.stringify({ message, branch: BRANCH, content: Buffer.from(buf).toString('base64') }),
+  });
+  if (!r.ok) throw new Error(`GitHub ${r.status} saving ${path}`);
+}
+
+async function deleteFile(path, message) {
+  const g = await gh(`contents/${path}?ref=${BRANCH}`);
+  if (g.status === 404) return;
+  if (!g.ok) throw new Error(`GitHub ${g.status} reading ${path}`);
+  const { sha } = await g.json();
+  const r = await gh(`contents/${path}`, { method: 'DELETE', body: JSON.stringify({ message, branch: BRANCH, sha }) });
+  if (!r.ok && r.status !== 404) throw new Error(`GitHub ${r.status} removing ${path}`);
+}
+
+// an uploaded file from the request body: checked by type and size, and by its first bytes
+async function upload(req, allowPdf) {
+  const type = (req.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+  const ext = UPLOAD_TYPES[type];
+  if (!ext || (ext === 'pdf' && !allowPdf)) throw Object.assign(new Error('Send a JPEG or PNG photo' + (allowPdf ? ', or a PDF' : '')), { status: 415 });
+  const buf = Buffer.from(await req.arrayBuffer());
+  if (!buf.length) throw Object.assign(new Error('The file was empty'), { status: 400 });
+  if (buf.length > MAX_UPLOAD) throw Object.assign(new Error('That file is over 4.5 MB'), { status: 413 });
+  const magic = { jpg: [0xff, 0xd8, 0xff], png: [0x89, 0x50, 0x4e, 0x47], pdf: [0x25, 0x50, 0x44, 0x46] }[ext];
+  if (!magic.every((b, i) => buf[i] === b)) throw Object.assign(new Error('That file is not the type it claims to be'), { status: 415 });
+  return { buf, ext };
+}
+
+function serveFile(buf, name) {
+  const ext = name.split('.').pop().toLowerCase();
+  const headers = { 'content-type': MIME[ext] || 'application/octet-stream', 'cache-control': 'private, max-age=3600',
+    'x-content-type-options': 'nosniff', 'content-disposition': `inline; filename="${name}"` };
+  if (ext !== 'pdf') headers['content-security-policy'] = "default-src 'none'; style-src 'unsafe-inline'";
+  return new Response(buf, { headers });
+}
+
 const num = (v) => (Number.isFinite(+v) ? Math.round(+v * 100) / 100 : 0);
 const str = (v, n = 2000) => String(v ?? '').slice(0, n);
 
@@ -155,6 +205,8 @@ async function listOrders() {
   const t = await tree();
   const byId = {};
   for (const e of t) {
+    const ph = /^requests\/([^/]+)\/photos\/([^/]+)$/.exec(e.path);
+    if (ph && e.type === 'blob' && PHOTO.test(ph[2])) { (byId[ph[1]] ||= { id: ph[1], files: [], sha: {} }).photos = [...(byId[ph[1]].photos || []), ph[2]]; continue; }
     const m = /^requests\/([^/]+)\/([^/]+)$/.exec(e.path);
     if (!m || e.type !== 'blob') continue;
     (byId[m[1]] ||= { id: m[1], files: [], sha: {} }).files.push(m[2]);
@@ -178,7 +230,7 @@ async function listOrders() {
       }
       if (Object.keys(cu).length) order.customer = cu;
     }
-    return order && { id: o.id, files: o.files.filter((f) => FILE.test(f)), order, admin };
+    return order && { id: o.id, files: o.files.filter((f) => FILE.test(f)), photos: (o.photos || []).sort(), order, admin };
   }));
   return rows.filter(Boolean).sort((a, b) => String(b.order.received || b.id).localeCompare(String(a.order.received || a.id)));
 }
@@ -219,6 +271,57 @@ export default async (req) => {
                    'content-security-policy': "default-src 'none'; style-src 'unsafe-inline'", 'x-content-type-options': 'nosniff' },
       });
     }
+    // receipts on a purchase
+    if (parts[0] === 'purchases' && parts[2] === 'receipt' && PID.test(parts[1] || '')) {
+      const pid = parts[1];
+      const has = async () => purchaseList((await readJSON(PURCHASES)).data).some((x) => x.id === pid);
+      if (parts.length === 3 && req.method === 'POST') {
+        if (!(await has())) return json({ error: 'No such purchase' }, 404);
+        const { buf, ext } = await upload(req, true);
+        const name = `${pid}-${rand4()}.${ext}`;
+        await putFile(`books/receipts/${name}`, buf, `Receipt for ${pid}`);
+        const out = await updateJSON(PURCHASES, (d) => ({
+          purchases: purchaseList(d).map((x) => (x.id === pid ? { ...x, receipts: [...(x.receipts || []), name].slice(-10) } : x)),
+        }), `Receipt attached: ${pid}`);
+        return json({ ok: true, name, purchases: out.purchases }, 201);
+      }
+      if (parts.length === 4 && RECEIPT.test(parts[3]) && parts[3].startsWith(pid + '-') && req.method === 'DELETE') {
+        const out = await updateJSON(PURCHASES, (d) => ({
+          purchases: purchaseList(d).map((x) => (x.id === pid ? { ...x, receipts: (x.receipts || []).filter((f) => f !== parts[3]) } : x)),
+        }), `Receipt removed: ${pid}`);
+        await deleteFile(`books/receipts/${parts[3]}`, `Receipt removed: ${parts[3]}`);
+        return json({ ok: true, purchases: out.purchases });
+      }
+    }
+    if (parts[0] === 'receipt' && parts.length === 2 && RECEIPT.test(parts[1]) && req.method === 'GET') {
+      const r = await gh(`contents/books/receipts/${parts[1]}?ref=${BRANCH}`, { headers: { Accept: 'application/vnd.github.raw' } });
+      if (!r.ok) return json({ error: 'No such receipt' }, 404);
+      return serveFile(await r.arrayBuffer(), parts[1]);
+    }
+    // photos of the finished clock
+    if (parts[0] === 'orders' && parts[2] === 'photos' && ID.test(parts[1] || '')) {
+      const id = parts[1];
+      if (parts.length === 3 && req.method === 'POST') {
+        const { data: order } = await readJSON(`requests/${id}/order.json`);
+        if (!order) return json({ error: 'No such order' }, 404);
+        const { buf, ext } = await upload(req, false);
+        // named by the shop's local time when the page sends it, otherwise UTC
+        const local = /^\d{8}-\d{6}$/.test(req.headers.get('x-local-time') || '') ? req.headers.get('x-local-time') : null;
+        const t = new Date().toISOString().replace(/\D/g, '');
+        const name = `${local || t.slice(0, 8) + '-' + t.slice(8, 14)}-${rand4()}.${ext}`;
+        await putFile(`requests/${id}/photos/${name}`, buf, `Photo of the finished clock: ${id}`);
+        return json({ ok: true, name }, 201);
+      }
+      if (parts.length === 4 && PHOTO.test(parts[3]) && req.method === 'DELETE') {
+        await deleteFile(`requests/${id}/photos/${parts[3]}`, `Photo removed: ${id}`);
+        return json({ ok: true });
+      }
+    }
+    if (parts[0] === 'file' && parts.length === 4 && ID.test(parts[1]) && parts[2] === 'photos' && PHOTO.test(parts[3]) && req.method === 'GET') {
+      const r = await gh(`contents/requests/${parts[1]}/photos/${parts[3]}?ref=${BRANCH}`, { headers: { Accept: 'application/vnd.github.raw' } });
+      if (!r.ok) return json({ error: 'No such photo' }, 404);
+      return serveFile(await r.arrayBuffer(), parts[3]);
+    }
     if (parts[0] === 'costing' && parts.length === 1) {
       if (req.method === 'GET') return json({ costing: (await readJSON('config/costing.json')).data });
       if (req.method === 'PUT') {
@@ -248,11 +351,14 @@ export default async (req) => {
       if (parts.length === 2 && PID.test(parts[1]) && (req.method === 'PUT' || req.method === 'DELETE')) {
         const pid = parts[1];
         const b = req.method === 'PUT' ? await req.json() : null;
+        let gone = null;
         const out = await updateJSON(PURCHASES, (d) => {
           const list = purchaseList(d);
           if (!list.some((x) => x.id === pid)) throw Object.assign(new Error('No such purchase'), { status: 404 });
-          return { purchases: list.flatMap((x) => (x.id !== pid ? [x] : b ? [cleanPurchase(b, pid)] : [])) };
+          gone = list.find((x) => x.id === pid);
+          return { purchases: list.flatMap((x) => (x.id !== pid ? [x] : b ? [{ ...cleanPurchase(b, pid), receipts: x.receipts || [] }] : [])) };
         }, `${b ? 'Purchase changed' : 'Purchase removed'}: ${pid}`);
+        if (!b) for (const f of (gone && gone.receipts) || []) await deleteFile(`books/receipts/${f}`, `Receipt removed with ${pid}`).catch(console.error);
         return json({ ok: true, purchases: out.purchases });
       }
     }

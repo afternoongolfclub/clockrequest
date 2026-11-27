@@ -50,8 +50,10 @@ readable summary suitable for pasting into a quote.
 ## Shop admin (/admin)
 
 https://clubclocks.netlify.app/admin/ — dashboard, orders (status, quote, payments, notes,
-build brief), purchases (filament, parts, packaging, tools; CSV export), and costing. Sign-in is the `ADMIN_CODE` environment variable (separate from the
+build brief, photos of the finished clock), purchases (filament, parts, packaging, tools; receipt
+photos or PDFs; CSV export), and costing. Photos are shrunk to 2000 px JPEG in the browser before upload
+(4.5 MB cap per file). Sign-in is the `ADMIN_CODE` environment variable (separate from the
 customers' `ACCESS_CODE`; the admin area stays locked while it is unset). Data lives in the private
 `afternoongolfclub/clock-pipeline` repo: `requests/<id>/admin.json` per order,
-`books/purchases.json` and `config/costing.json`, read and written by `netlify/functions/admin-api.mjs` with
+`requests/<id>/photos/`, `books/purchases.json`, `books/receipts/` and `config/costing.json`, read and written by `netlify/functions/admin-api.mjs` with
 `CLOCK_PIPELINE_TOKEN`.
