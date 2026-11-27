@@ -176,6 +176,41 @@ pre.brief{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;bac
 .sum .r b{text-align:right;font-variant-numeric:tabular-nums}
 .sum .r.big b{font-size:17px}
 @media(max-width:520px){.cg{grid-template-columns:minmax(0,1fr) 76px 70px 62px}}
+
+/* money in and out bars */
+.bars .b .pair{flex:1;display:flex;gap:2px;align-items:flex-end;justify-content:center}
+.bars .b .pair i{flex:1;max-width:16px}
+.bars .b .pair i.out{background:var(--brass)}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* purchases */
+.bform{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.bform .wide{grid-column:1/-1}
+@media(max-width:560px){.bform{grid-template-columns:minmax(0,1fr)}}
+.bacts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.bacts .msg{flex:1;font-size:13px;color:var(--muted)}
+.btn.danger{color:var(--bad)}
+.btn.danger.armed{background:var(--bad);border-color:var(--bad);color:#fff}
+.btools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.btools select{width:auto}
+.btools input{max-width:240px}
+.blist{list-style:none;margin:0;padding:0}
+.blist li{display:grid;grid-template-columns:6.2em minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 6px;border-bottom:1px solid var(--rule-soft);cursor:pointer;border-radius:8px}
+.blist li:hover{background:var(--sunk)}
+.blist li.editing{background:var(--brass-wash)}
+.blist li:last-child{border-bottom:0}
+.blist .d{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.blist .t{font-weight:600}
+.blist .m{font-size:12.5px;color:var(--muted)}
+.blist .a{font-weight:600}
+.blist li.total{cursor:default;font-weight:600;border-top:1px solid var(--rule)}
+.blist li.total:hover{background:none}
+@media(max-width:520px){.blist li{grid-template-columns:minmax(0,1fr) auto}.blist .d{grid-column:1/-1;margin-bottom:-8px}}
+.catbar{height:6px;border-radius:3px;background:var(--brass);margin-top:3px}
+.cats{display:grid;gap:8px;font-size:14px}
+.cats .row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px}
+.cats .row .catbar{grid-column:1/-1}
 </style>
 </head>
 <body>
@@ -189,6 +224,7 @@ pre.brief{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;bac
   <nav class="tabs" role="tablist" aria-label="Sections">
     <button role="tab" id="t-dash" aria-selected="true" data-v="dash">Dashboard</button>
     <button role="tab" id="t-orders" aria-selected="false" data-v="orders">Orders</button>
+    <button role="tab" id="t-buy" aria-selected="false" data-v="buy">Purchases</button>
     <button role="tab" id="t-cost" aria-selected="false" data-v="cost">Costing</button>
   </nav>
 </header>
@@ -202,14 +238,15 @@ pre.brief{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;bac
       <div class="board" id="board"></div>
     </div>
     <div class="grid2">
-      <div class="card"><h2>Money in, last 12 months</h2><div class="bars" id="bars"></div>
+      <div class="card"><h2>Money in and out, last 12 months</h2><div class="bars" id="bars"></div>
+        <div class="legend"><span><i style="background:var(--green)"></i>Taken from orders</span><span><i style="background:var(--brass)"></i>Spent on purchases</span></div>
         <p class="note" id="barsNote"></p></div>
       <div class="card"><h2>Due soon</h2><ul class="list" id="due"></ul></div>
     </div>
     <div class="grid2" style="margin-top:14px">
       <div class="card"><h2>Waiting on payment</h2><ul class="list" id="owed"></ul></div>
       <div class="card"><h2>Filament this year</h2><div class="fil" id="fil"></div>
-        <p class="note">Orders printing, ready or delivered this year, from the Costing weights.</p></div>
+        <p class="note">Used: orders printing, ready or delivered this year, from the Costing weights. Bought: the kilos on your filament purchases.</p></div>
     </div>
   </section>
 
@@ -221,6 +258,48 @@ pre.brief{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;bac
       <button class="btn" id="reload" type="button">Refresh</button>
     </div>
     <div class="orders" id="orders"><div class="empty">Loading orders…</div></div>
+  </section>
+
+  <section id="v-buy" role="tabpanel" aria-labelledby="t-buy" hidden>
+    <div class="kpis" id="buyKpis"></div>
+    <div class="grid2">
+      <div class="card" id="bCard">
+        <h2 id="bTitle">Add a purchase</h2>
+        <div class="bform">
+          <div><label class="f" for="bDate">Date</label><input id="bDate" type="date"></div>
+          <div><label class="f" for="bCat">Category</label><select id="bCat"></select></div>
+          <div class="wide"><label class="f" for="bItem">What you bought</label><input id="bItem" maxlength="200" placeholder="Bambu PLA Basic, Jade White, 4 spools"></div>
+          <div><label class="f" for="bVendor">Where from</label><input id="bVendor" maxlength="100" list="bVendors" placeholder="Bambu Lab, Amazon…"><datalist id="bVendors"></datalist></div>
+          <div><label class="f" for="bAmount">Total paid, with tax and shipping ($)</label><input id="bAmount" type="number" min="0" step="0.01" inputmode="decimal"></div>
+          <div><label class="f" for="bQty">Quantity</label><input id="bQty" type="number" min="0" step="1" inputmode="decimal" placeholder="1"></div>
+          <div id="bKgWrap"><label class="f" for="bKg">Filament weight, kg</label><input id="bKg" type="number" min="0" step="0.25" inputmode="decimal" placeholder="4 spools = 4"></div>
+          <div class="wide"><label class="f" for="bOrder">For an order (optional)</label><select id="bOrder"></select></div>
+          <div class="wide"><label class="f" for="bNote">Note</label><input id="bNote" maxlength="500" placeholder="Order number, receipt location…"></div>
+        </div>
+        <div class="bacts">
+          <button class="btn primary" id="bSave" type="button">Add purchase</button>
+          <button class="btn" id="bCancel" type="button" hidden>Cancel</button>
+          <button class="btn danger" id="bDel" type="button" hidden>Delete</button>
+          <span class="msg" id="bMsg"></span>
+        </div>
+      </div>
+      <div class="card">
+        <h2 id="bCatsTitle">Spent by category</h2>
+        <div class="cats" id="bCats"></div>
+        <div id="bRate" style="margin-top:14px"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h2>Purchase book</h2>
+      <div class="btools">
+        <select id="bYear" aria-label="Year"></select>
+        <select id="bFilt" aria-label="Category"></select>
+        <input type="search" id="bQ" placeholder="Search item, vendor or note" aria-label="Search purchases">
+        <span style="flex:1"></span>
+        <button class="btn" id="bCsv" type="button">Download CSV</button>
+      </div>
+      <ul class="blist" id="bList"></ul>
+    </div>
   </section>
 
   <section id="v-cost" role="tabpanel" aria-labelledby="t-cost" hidden>
@@ -278,12 +357,17 @@ pre.brief{white-space:pre-wrap;font:12.5px/1.45 ui-monospace,Menlo,monospace;bac
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=v=>(v<0?"−":"")+"$"+Math.abs(v).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
-const money0=v=>"$"+Math.round(v).toLocaleString("en-US");
-const today=()=>new Date().toISOString().slice(0,10);
+const money0=v=>(Math.round(v)<0?"−":"")+"$"+Math.abs(Math.round(v)).toLocaleString("en-US");
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());   // local date, not UTC
+const today=()=>ymd(new Date());
 const STATUSES=[["new","New"],["quoted","Quoted"],["approved","Approved"],["printing","Printing"],["ready","Ready"],["delivered","Delivered"],["cancelled","Cancelled"]];
 const SLABEL=Object.fromEntries(STATUSES);
 const METHODS=["Cash","Check","Card","Venmo","Zelle","PayPal","Other"];
 const SIZEL={"516":"516 mm (20.3 in)","363":"363 mm (14.3 in)"};
+const CATS=[["filament","Filament"],["parts","Clock parts and hardware"],["packaging","Boxes and packing"],["tools","Tools and equipment"],
+  ["maintenance","Printer parts and upkeep"],["shipping","Shipping and postage"],["other","Other"]];
+const CATL=Object.fromEntries(CATS);
 
 /* ---------- costing model (same figures as the order site's Costing tab) ---------- */
 const DEFAULT_COST={
@@ -311,7 +395,7 @@ function costPer(size){
 }
 
 /* ---------- data ---------- */
-let ORDERS=[], filter="open", query="";
+let ORDERS=[], BUYS=[], filter="open", query="";
 async function api(path,opt){
   const r=await fetch("/api/admin/"+path,Object.assign({headers:{"content-type":"application/json"},credentials:"same-origin"},opt||{}));
   if(r.status===401){ location.href="/admin/"; throw new Error("Signed out"); }
@@ -334,16 +418,17 @@ const received=o=>String(o.order.received||"").slice(0,10)||o.id.slice(0,4)+"-"+
 async function load(){
   showErr(null);
   try{
-    const [o,c]=await Promise.all([api("orders"),api("costing")]);
-    ORDERS=o.orders||[]; mergeCost(c.costing);
+    const [o,c,b]=await Promise.all([api("orders"),api("costing"),api("purchases")]);
+    ORDERS=o.orders||[]; BUYS=b.purchases||[]; mergeCost(c.costing);
     renderAll();
   }catch(e){ showErr(e); $("orders").innerHTML='<div class="empty">Orders could not be loaded.</div>'; }
 }
-function renderAll(){ renderDash(); renderOrders(); renderCost(); }
+function renderAll(){ if(!EDIT&&!BDIRTY) bForm(); renderDash(); renderOrders(); renderBuys(); renderCost(); }
+const spent=(pre)=>BUYS.filter(b=>String(b.date).startsWith(pre)).reduce((s,b)=>s+(+b.amount||0),0);
 
 /* ---------- dashboard ---------- */
 function renderDash(){
-  const now=new Date(), ym=now.toISOString().slice(0,7), y=now.getFullYear()+"";
+  const now=new Date(), ym=today().slice(0,7), y=now.getFullYear()+"";
   const live=ORDERS.filter(o=>status(o)!=="cancelled");
   const pays=[]; ORDERS.forEach(o=>((o.admin&&o.admin.payments)||[]).forEach(p=>pays.push({o,p})));
   const inMonth=pays.filter(x=>String(x.p.date).startsWith(ym)).reduce((s,x)=>s+(+x.p.amount||0),0);
@@ -353,7 +438,7 @@ function renderDash(){
   const quoted=ORDERS.filter(o=>status(o)==="quoted");
   const doneYear=ORDERS.filter(o=>status(o)==="delivered"&&received(o).startsWith(y));
   const profit=doneYear.reduce((s,o)=>s+price(o)-cost(o),0);
-  const soon=new Date(Date.now()+14*864e5).toISOString().slice(0,10);
+  const soon=ymd(new Date(Date.now()+14*864e5));
   const dueSoon=ORDERS.filter(o=>open(o)&&due(o)&&due(o)<=soon).sort((a,b)=>due(a).localeCompare(due(b)));
   const k=[
     [ORDERS.filter(open).length,"open orders",""],
@@ -361,6 +446,8 @@ function renderDash(){
     [money0(owed),"owed on approved orders",owed>0?"warn":""],
     [money0(inMonth),"taken this month",""],
     [money0(inYear),"taken in "+y,""],
+    [money0(spent(y)),"spent on purchases in "+y,""],
+    [money0(inYear-spent(y)),"net in "+y+" (taken − spent)",inYear-spent(y)<0?"warn":""],
     [money0(profit),"profit on "+doneYear.length+" delivered this year",""],
     [quoted.length+" · "+money0(quoted.reduce((s,o)=>s+price(o),0)),"quotes waiting on a yes",""],
   ];
@@ -370,12 +457,14 @@ function renderDash(){
   $("board").querySelectorAll("[data-s]").forEach(d=>{ const go=()=>{ filter=d.dataset.s; show("orders"); renderOrders(); };
     d.addEventListener("click",go); d.addEventListener("keydown",e=>{ if(e.key==="Enter") go(); }); });
   // money in by month
-  const months=[]; for(let i=11;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); months.push(d.toISOString().slice(0,7)); }
+  const months=[]; for(let i=11;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); months.push(ymd(d).slice(0,7)); }
   const tot=months.map(m=>pays.filter(x=>String(x.p.date).startsWith(m)).reduce((s,x)=>s+(+x.p.amount||0),0));
-  const mx=Math.max(1,...tot);
-  $("bars").innerHTML=months.map((m,i)=>'<div class="b" title="'+esc(m+": "+money(tot[i]))+'"><em>'+(tot[i]?money0(tot[i]):"")+'</em><i style="height:'+
-    (tot[i]/mx*100).toFixed(1)+'%"></i><small>'+new Date(m+"-15").toLocaleString("en-US",{month:"short"})+'</small></div>').join("");
-  $("barsNote").textContent=pays.length?"From the payments you record on each order.":"Nothing recorded yet: add payments on an order and they show here.";
+  const out=months.map(m=>spent(m));
+  const mx=Math.max(1,...tot,...out);
+  $("bars").innerHTML=months.map((m,i)=>'<div class="b" title="'+esc(m+": in "+money(tot[i])+", out "+money(out[i]))+'">'+
+    '<span class="pair"><i style="height:'+(tot[i]/mx*100).toFixed(1)+'%"></i><i class="out" style="height:'+(out[i]/mx*100).toFixed(1)+'%"></i></span>'+
+    '<small>'+new Date(m+"-15").toLocaleString("en-US",{month:"short"})+'</small></div>').join("");
+  $("barsNote").textContent=(pays.length||BUYS.length)?"From the payments on each order and the purchases you record.":"Nothing recorded yet: payments on orders and purchases show here.";
   const li=(o,right)=>'<li data-id="'+esc(o.id)+'"><span>'+esc(club(o))+' <span class="note">· '+esc(SIZEL[size(o)])+' × '+qty(o)+'</span></span><span class="num">'+right+'</span></li>';
   $("due").innerHTML=dueSoon.length?dueSoon.slice(0,8).map(o=>li(o,(due(o)<today()?'<b style="color:var(--warn)">overdue </b>':'')+esc(due(o)))).join(""):'<li class="note" style="cursor:default">Nothing due in the next two weeks.</li>';
   const owedL=committed.filter(o=>price(o)-paid(o)>0.005);
@@ -385,8 +474,10 @@ function renderDash(){
   const used={body:0,accent:0,dial:0,black:0,purge:0};
   ORDERS.filter(o=>["printing","ready","delivered"].includes(status(o))&&received(o).startsWith(y)).forEach(o=>{
     const G=COST.grams[size(o)]; Object.keys(used).forEach(kk=>used[kk]+=(G[kk]||0)*qty(o)); });
+  const boughtKg=BUYS.filter(b=>b.category==="filament"&&String(b.date).startsWith(y)).reduce((s,b)=>s+(+b.kg||0),0);
   $("fil").innerHTML=COST.fil.map(r=>'<span>'+esc(r.label)+'</span><span class="num">'+(used[r.k]/1000).toFixed(2)+' kg</span>').join("")+
-    '<b>Total</b><b class="num">'+(Object.values(used).reduce((a,b)=>a+b,0)/1000).toFixed(2)+' kg</b>';
+    '<b>Total used</b><b class="num">'+(Object.values(used).reduce((a,b)=>a+b,0)/1000).toFixed(2)+' kg</b>'+
+    '<span>Bought</span><span class="num">'+boughtKg.toFixed(2)+' kg</span>';
 }
 
 /* ---------- orders ---------- */
@@ -453,6 +544,9 @@ function renderOrder(){
       '<div><b style="color:'+(p-pd>0.005?"var(--warn)":"var(--ok)")+'">'+(p?money(Math.max(0,p-pd)):"–")+'</b><span>still owed</span></div>'+
       '<div><b>'+(p?money(p-cst):"–")+'</b><span>profit · cost '+money(cst)+'</span></div></div>'+
       '<p class="note" style="margin:8px 0 0">Cost is '+money(c.total)+' per clock × '+q+' from Costing; at your '+COST.margin+'% margin the suggested price is '+(c.price?money(c.price*q):"–")+'.</p>'+
+      (()=>{ const bl=BUYS.filter(b=>b.order===o.id); if(!bl.length) return "";
+        return '<p class="note" style="margin:8px 0 0">Bought for this order: '+bl.map(b=>esc(b.item||b.vendor)+' '+money(+b.amount||0)).join(" · ")+
+          ' (total '+money(bl.reduce((s,b)=>s+(+b.amount||0),0))+'). The profit figure uses Costing, not these.</p>'; })()+
       '<table class="pay"><tbody id="dPays"></tbody></table>'+
       '<button class="btn" id="dAddPay" type="button" style="margin-top:8px">+ Record a payment</button></div>'+
 
@@ -509,6 +603,119 @@ $("dSave").addEventListener("click",async()=>{
   btn.disabled=false;
 });
 
+/* ---------- purchases ---------- */
+let EDIT=null, BDIRTY=false, bYear=String(new Date().getFullYear()), bFilt="all", bQuery="";
+$("bCat").innerHTML=CATS.map(c=>'<option value="'+c[0]+'">'+esc(c[1])+'</option>').join("");
+$("bFilt").innerHTML='<option value="all">All categories</option>'+CATS.map(c=>'<option value="'+c[0]+'">'+esc(c[1])+'</option>').join("");
+function bForm(p){
+  p=p||{date:today(),category:$("bCat").value||"filament"};
+  $("bDate").value=p.date||today(); $("bCat").value=p.category||"filament"; $("bItem").value=p.item||""; $("bVendor").value=p.vendor||"";
+  $("bAmount").value=p.amount||""; $("bQty").value=p.qty||""; $("bKg").value=p.kg||""; $("bNote").value=p.note||"";
+  $("bOrder").innerHTML='<option value="">None: general shop stock</option>'+ORDERS.map(o=>'<option value="'+esc(o.id)+'">'+esc(club(o))+' · '+esc(received(o))+'</option>').join("")+
+    (p.order&&!ORDERS.some(o=>o.id===p.order)?'<option value="'+esc(p.order)+'">'+esc(p.order)+'</option>':'');
+  $("bOrder").value=p.order||"";
+  $("bKgWrap").hidden=$("bCat").value!=="filament";
+  $("bTitle").textContent=EDIT?"Change a purchase":"Add a purchase";
+  $("bSave").textContent=EDIT?"Save changes":"Add purchase";
+  $("bCancel").hidden=!EDIT; $("bDel").hidden=!EDIT; $("bDel").classList.remove("armed"); $("bDel").textContent="Delete";
+  BDIRTY=false;
+}
+function bRead(){
+  return {date:$("bDate").value,category:$("bCat").value,item:$("bItem").value.trim(),vendor:$("bVendor").value.trim(),
+    amount:+$("bAmount").value||0,qty:+$("bQty").value||0,kg:$("bCat").value==="filament"?(+$("bKg").value||0):0,order:$("bOrder").value,note:$("bNote").value.trim()};
+}
+["bDate","bItem","bVendor","bAmount","bQty","bKg","bOrder","bNote"].forEach(id=>$(id).addEventListener("input",()=>{ BDIRTY=true; $("bMsg").textContent=""; }));
+$("bCat").addEventListener("change",()=>{ BDIRTY=true; $("bKgWrap").hidden=$("bCat").value!=="filament"; });
+$("bSave").addEventListener("click",async()=>{
+  const p=bRead();
+  if(!p.item&&!p.vendor){ $("bMsg").textContent="Say what you bought."; $("bItem").focus(); return; }
+  if(!p.amount){ $("bMsg").textContent="Enter what you paid."; $("bAmount").focus(); return; }
+  $("bSave").disabled=true; $("bMsg").textContent="Saving…";
+  try{
+    const r=EDIT?await api("purchases/"+encodeURIComponent(EDIT),{method:"PUT",body:JSON.stringify(p)})
+               :await api("purchases",{method:"POST",body:JSON.stringify(p)});
+    BUYS=r.purchases||BUYS; const was=EDIT; EDIT=null;
+    bYear=p.date.slice(0,4); bForm({date:p.date,category:p.category,vendor:was?"":p.vendor}); renderBuys(); renderDash();
+    $("bMsg").textContent=was?"Saved.":"Added "+money(p.amount)+".";
+  }catch(e){ $("bMsg").textContent="Not saved: "+e.message; }
+  $("bSave").disabled=false;
+});
+$("bCancel").addEventListener("click",()=>{ EDIT=null; bForm(); renderBuys(); $("bMsg").textContent=""; });
+$("bDel").addEventListener("click",async()=>{
+  const b=$("bDel");
+  if(!b.classList.contains("armed")){ b.classList.add("armed"); b.textContent="Tap again to delete"; return; }
+  b.disabled=true; $("bMsg").textContent="Deleting…";
+  try{ const r=await api("purchases/"+encodeURIComponent(EDIT),{method:"DELETE"}); BUYS=r.purchases||BUYS; EDIT=null; bForm(); renderBuys(); renderDash(); $("bMsg").textContent="Deleted."; }
+  catch(e){ $("bMsg").textContent="Not deleted: "+e.message; }
+  b.disabled=false;
+});
+function bShown(){
+  const q=bQuery.trim().toLowerCase();
+  return BUYS.filter(b=>bYear==="all"||String(b.date).startsWith(bYear)).filter(b=>bFilt==="all"||b.category===bFilt)
+    .filter(b=>!q||[b.item,b.vendor,b.note,CATL[b.category]].join(" ").toLowerCase().includes(q))
+    .sort((a,b)=>String(b.date).localeCompare(String(a.date))||String(b.id).localeCompare(String(a.id)));
+}
+function renderBuys(){
+  const now=new Date(), y=String(now.getFullYear()), ym=today().slice(0,7);
+  const years=[...new Set([y].concat(BUYS.map(b=>String(b.date).slice(0,4))))].filter(Boolean).sort().reverse();
+  if(bYear!=="all"&&!years.includes(bYear)) bYear=y;
+  $("bYear").innerHTML=years.map(v=>'<option'+(v===bYear?' selected':'')+'>'+v+'</option>').join("")+'<option value="all"'+(bYear==="all"?' selected':'')+'>All years</option>';
+  $("bFilt").value=bFilt;
+  $("bVendors").innerHTML=[...new Set(BUYS.map(b=>b.vendor).filter(Boolean))].sort().map(v=>'<option value="'+esc(v)+'">').join("");
+  // KPIs
+  const fy=BUYS.filter(b=>b.category==="filament"&&String(b.date).startsWith(y)&&+b.kg>0);
+  const kg=fy.reduce((s,b)=>s+(+b.kg),0), fspend=fy.reduce((s,b)=>s+(+b.amount||0),0);
+  const yearOrders=ORDERS.filter(o=>["printing","ready","delivered"].includes(status(o))&&received(o).startsWith(y));
+  const clocks=yearOrders.reduce((s,o)=>s+qty(o),0);
+  $("buyKpis").innerHTML=[
+    [money0(spent(ym)),"spent this month",""],
+    [money0(spent(y)),"spent in "+y,""],
+    [kg?kg.toFixed(kg%1?2:0)+" kg":"–","filament bought in "+y,""],
+    [kg?money(fspend/kg):"–","average filament $ per kg",""],
+    [clocks?money(spent(y)/clocks):"–","spent per clock made in "+y+(clocks?" ("+clocks+")":""),""],
+  ].map(x=>'<div class="kpi '+x[2]+'"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span></div>').join("");
+  // by category for the chosen year
+  const yb=BUYS.filter(b=>bYear==="all"||String(b.date).startsWith(bYear));
+  const byCat=CATS.map(c=>[c,yb.filter(b=>b.category===c[0]).reduce((s,b)=>s+(+b.amount||0),0)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
+  const mx=Math.max(1,...byCat.map(x=>x[1]));
+  $("bCatsTitle").textContent="Spent by category, "+(bYear==="all"?"all years":bYear);
+  $("bCats").innerHTML=byCat.length?byCat.map(x=>'<div class="row"><span>'+esc(x[0][1])+'</span><span class="num">'+money(x[1])+'</span><div class="catbar" style="width:'+(x[1]/mx*100).toFixed(1)+'%"></div></div>').join("")+
+    '<div class="row" style="border-top:1px solid var(--rule);padding-top:8px"><b>Total</b><b class="num">'+money(byCat.reduce((s,x)=>s+x[1],0))+'</b></div>'
+    :'<p class="note" style="margin:0">No purchases '+(bYear==="all"?"yet":"in "+esc(bYear))+'. Add one on the left.</p>';
+  // filament price vs costing
+  const allF=BUYS.filter(b=>b.category==="filament"&&+b.kg>0), akg=allF.reduce((s,b)=>s+(+b.kg),0);
+  const avg=akg?allF.reduce((s,b)=>s+(+b.amount||0),0)/akg:0;
+  const rates=[...new Set(COST.fil.map(r=>r.rate))];
+  $("bRate").innerHTML=avg?'<p class="note" style="margin:0">You have paid '+money(avg)+' per kg of filament on average ('+akg.toFixed(2)+' kg in all). Costing uses '+
+    rates.map(r=>money(r)).join(", ")+' per kg.</p>'+(Math.abs(avg-rates[0])>0.25||rates.length>1?'<button class="btn" id="bUseRate" type="button" style="margin-top:8px">Use '+money(avg)+'/kg in Costing</button>':'')
+    :'<p class="note" style="margin:0">Enter the kilos on filament purchases and this compares what you really pay per kg with the Costing figure.</p>';
+  const ur=$("bUseRate"); if(ur) ur.addEventListener("click",()=>{ const v=Math.round(avg*100)/100; COST.fil.forEach(r=>r.rate=v); renderCost(); show("cost");
+    $("costMsg").textContent="Filament set to "+money(v)+"/kg from your purchases. Save costing to keep it."; });
+  // the book
+  const rows=bShown();
+  $("bList").innerHTML=rows.length?rows.map(b=>'<li data-id="'+esc(b.id)+'"'+(b.id===EDIT?' class="editing"':'')+' tabindex="0"><span class="d">'+esc(b.date)+'</span>'+
+    '<span><span class="t">'+esc(b.item||b.vendor)+'</span><br><span class="m">'+esc([b.item?b.vendor:"",CATL[b.category],b.qty?"× "+b.qty:"",b.kg?b.kg+" kg":"",
+      b.order?"for "+club(ORDERS.find(o=>o.id===b.order)||{order:{club_name:b.order}}):"",b.note].filter(Boolean).join(" · "))+'</span></span>'+
+    '<span class="num a">'+money(+b.amount||0)+'</span></li>').join("")+
+    '<li class="total"><span></span><span>'+rows.length+' purchase'+(rows.length===1?"":"s")+'</span><span class="num">'+money(rows.reduce((s,b)=>s+(+b.amount||0),0))+'</span></li>'
+    :'<li class="note" style="cursor:default">Nothing here yet.</li>';
+  $("bList").querySelectorAll("li[data-id]").forEach(li=>{ const go=()=>{ EDIT=li.dataset.id; bForm(BUYS.find(b=>b.id===EDIT)); renderBuys();
+      $("bMsg").textContent=""; $("bCard").scrollIntoView({behavior:"smooth",block:"start"}); $("bItem").focus({preventScroll:true}); };
+    li.addEventListener("click",go); li.addEventListener("keydown",e=>{ if(e.key==="Enter") go(); }); });
+}
+$("bYear").addEventListener("change",e=>{ bYear=e.target.value; renderBuys(); });
+$("bFilt").addEventListener("change",e=>{ bFilt=e.target.value; renderBuys(); });
+$("bQ").addEventListener("input",e=>{ bQuery=e.target.value; renderBuys(); });
+$("bCsv").addEventListener("click",()=>{
+  const cell=v=>{ v=String(v==null?"":v); if(/^[=+\-@]/.test(v)) v="'"+v; return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; };
+  const lines=[["Date","Vendor","Item","Category","Quantity","Filament kg","Amount","For order","Note"]].concat(
+    bShown().slice().reverse().map(b=>[b.date,b.vendor,b.item,CATL[b.category],b.qty||"",b.kg||"",(+b.amount||0).toFixed(2),b.order?club(ORDERS.find(o=>o.id===b.order)||{order:{club_name:b.order}}):"",b.note]));
+  const url=URL.createObjectURL(new Blob([lines.map(r=>r.map(cell).join(",")).join("\r\n")],{type:"text/csv"}));
+  const a=document.createElement("a"); a.href=url; a.download="club-clocks-purchases-"+(bYear==="all"?"all":bYear)+".csv"; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+bForm();
+
 /* ---------- costing ---------- */
 function renderCost(){
   const G=COST.grams[costSize];
@@ -545,10 +752,10 @@ $("costSave").addEventListener("click",async()=>{
 
 /* ---------- tabs ---------- */
 function show(v){
-  ["dash","orders","cost"].forEach(x=>{ $("v-"+x).hidden=x!==v; $("t-"+x).setAttribute("aria-selected",x===v); });
+  ["dash","orders","buy","cost"].forEach(x=>{ $("v-"+x).hidden=x!==v; $("t-"+x).setAttribute("aria-selected",x===v); });
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.v)));
-window.addEventListener("beforeunload",e=>{ if(DIRTY){ e.preventDefault(); e.returnValue=""; } });
+window.addEventListener("beforeunload",e=>{ if(DIRTY||BDIRTY){ e.preventDefault(); e.returnValue=""; } });
 
 load();
 }

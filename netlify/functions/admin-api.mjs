@@ -5,6 +5,7 @@
  *   requests/<id>/order.json     what the club asked for (written by submission-created)
  *   requests/<id>/admin.json     the shop's side: status, quote, payments, notes, promised date
  *   config/costing.json          filament, parts and margin settings
+ *   books/purchases.json         what the shop has bought: filament, parts, packaging, tools
  *
  * Routes (all behind the admin password, checked again here as well as at the edge):
  *   GET  /api/admin/orders              every order with its admin record
@@ -13,6 +14,10 @@
  *   GET  /api/admin/file/<id>/<name>    a crest file
  *   GET  /api/admin/costing             costing settings
  *   PUT  /api/admin/costing             save costing settings
+ *   GET  /api/admin/purchases           every purchase
+ *   POST /api/admin/purchases           add a purchase
+ *   PUT  /api/admin/purchases/<pid>     change a purchase
+ *   DELETE /api/admin/purchases/<pid>   remove a purchase
  */
 
 const REPO = process.env.CLOCK_PIPELINE_REPO || 'afternoongolfclub/clock-pipeline';
@@ -21,6 +26,10 @@ const STATUSES = ['new', 'quoted', 'approved', 'printing', 'ready', 'delivered',
 const ID = /^[A-Za-z0-9-]{1,40}$/;
 const FILE = /^crest(_original)?\.(png|jpe?g|svg|webp)$/;
 const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', svg: 'image/svg+xml', webp: 'image/webp' };
+
+const PURCHASES = 'books/purchases.json';
+const CATS = ['filament', 'parts', 'packaging', 'tools', 'maintenance', 'shipping', 'other'];
+const PID = /^p[a-z0-9]{6,24}$/;
 
 const NOSTORE = { 'cache-control': 'no-store', 'x-robots-tag': 'noindex' };
 const json = (data, status = 200) => Response.json(data, { status, headers: NOSTORE });
@@ -87,6 +96,24 @@ async function writeJSON(path, data, message) {
   throw new Error(`Could not save ${path}: it changed while saving. Try again.`);
 }
 
+// read, change and write back; retried if the file changed underneath (phone and laptop at once)
+async function updateJSON(path, change, message) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { data, sha } = await readJSON(path);
+    const next = change(data);
+    const r = await gh(`contents/${path}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        message, branch: BRANCH, ...(sha ? { sha } : {}),
+        content: Buffer.from(JSON.stringify(next, null, 1) + '\n').toString('base64'),
+      }),
+    });
+    if (r.ok) return next;
+    if (r.status !== 409 && r.status !== 422) throw new Error(`GitHub ${r.status} saving ${path}`);
+  }
+  throw new Error(`Could not save ${path}: it changed while saving. Try again.`);
+}
+
 const num = (v) => (Number.isFinite(+v) ? Math.round(+v * 100) / 100 : 0);
 const str = (v, n = 2000) => String(v ?? '').slice(0, n);
 
@@ -106,6 +133,23 @@ function cleanAdmin(b, prev) {
     updatedAt: new Date().toISOString(),
   };
 }
+
+function cleanPurchase(b, id) {
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(b.date || '') ? b.date : new Date().toISOString().slice(0, 10);
+  return {
+    id, date,
+    vendor: str(b.vendor, 100).trim(),
+    item: str(b.item, 200).trim(),
+    category: CATS.includes(b.category) ? b.category : 'other',
+    amount: num(b.amount),
+    qty: Math.max(0, num(b.qty)),
+    kg: Math.max(0, Math.round((+b.kg || 0) * 1000) / 1000),
+    order: ID.test(b.order || '') ? b.order : '',
+    note: str(b.note, 500).trim(),
+    updatedAt: new Date().toISOString(),
+  };
+}
+const purchaseList = (d) => (d && Array.isArray(d.purchases) ? d.purchases : []);
 
 async function listOrders() {
   const t = await tree();
@@ -186,10 +230,36 @@ export default async (req) => {
         return json({ ok: true });
       }
     }
+    if (parts[0] === 'purchases') {
+      if (parts.length === 1 && req.method === 'GET') {
+        return json({ purchases: purchaseList((await readJSON(PURCHASES)).data) });
+      }
+      if (parts.length === 1 && req.method === 'POST') {
+        const b = await req.json();
+        const p = cleanPurchase(b, 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
+        if (!p.item && !p.vendor) return json({ error: 'Say what was bought' }, 400);
+        const out = await updateJSON(PURCHASES, (d) => {
+          const list = purchaseList(d);
+          if (list.length >= 5000) throw Object.assign(new Error('The purchase book is full'), { status: 409 });
+          return { purchases: [...list, p] };
+        }, `Purchase: ${p.item || p.vendor} ${p.amount}`);
+        return json({ ok: true, purchase: p, purchases: out.purchases }, 201);
+      }
+      if (parts.length === 2 && PID.test(parts[1]) && (req.method === 'PUT' || req.method === 'DELETE')) {
+        const pid = parts[1];
+        const b = req.method === 'PUT' ? await req.json() : null;
+        const out = await updateJSON(PURCHASES, (d) => {
+          const list = purchaseList(d);
+          if (!list.some((x) => x.id === pid)) throw Object.assign(new Error('No such purchase'), { status: 404 });
+          return { purchases: list.flatMap((x) => (x.id !== pid ? [x] : b ? [cleanPurchase(b, pid)] : [])) };
+        }, `${b ? 'Purchase changed' : 'Purchase removed'}: ${pid}`);
+        return json({ ok: true, purchases: out.purchases });
+      }
+    }
     return json({ error: 'Not found' }, 404);
   } catch (e) {
     console.error(e);
-    return json({ error: e.message || 'Something went wrong' }, 502);
+    return json({ error: e.message || 'Something went wrong' }, e.status || 502);
   }
 };
 
