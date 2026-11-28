@@ -103,7 +103,9 @@ button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
 
 /* brand files a phone fetches for its home-screen icon, before anyone has the code */
 const PUBLIC = new Set(['/favicon.svg', '/favicon-32.png', '/apple-touch-icon.png', '/icon-192.png',
-  '/icon-512.png', '/site.webmanifest', '/logo.svg', '/logo-light.svg', '/logo-mark.svg', '/logo.png', '/logo-light.png']);
+  '/icon-512.png', '/site.webmanifest', '/logo.svg', '/logo-light.svg', '/logo-mark.svg', '/logo.png', '/logo-light.png',
+  // the assembly guide is open to anyone, so the QR card in the box works without the order code
+  '/assembly', '/assembly.html', '/manifest_516.json', '/manifest_363.json', '/meshes_516.b64.txt', '/meshes_363.b64.txt']);
 
 const HTML = { 'content-type': 'text/html; charset=utf-8', 'x-robots-tag': 'noindex' };
 

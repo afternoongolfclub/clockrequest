@@ -57,7 +57,9 @@ li small{display:block;color:var(--muted);font-size:13.5px;line-height:1.4}
 </header>
 <script>
 /* inside the order page's viewer the page supplies its own Back button */
-if (/[?&]embed=1/.test(location.search) || window.self !== window.top) document.documentElement.classList.add('embed');
+if (/[?&](embed|guide)=1/.test(location.search) || window.self !== window.top) document.documentElement.classList.add('embed');
+// opened from the QR card in the box (no order-site visit before it): no link back to the order form
+try { if (!document.referrer || new URL(document.referrer).origin !== location.origin) document.documentElement.classList.add('embed'); } catch (e) {}
 </script>
 <main>
   <section>
